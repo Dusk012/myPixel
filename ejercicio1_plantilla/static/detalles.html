@@ -4,41 +4,136 @@
 <head>
     <meta charset="UTF-8">
     <title>Mi primera web</title>
+    <link href="css/detalles.css" rel="stylesheet" type="text/css" /> 
 </head>
 
 <body>
 
-    <img src="gato.png">
 
+    <a href="./index.html">
+        <img src="img/icono.png" width="150" height="auto" alt="Ícono de enlace">
+    </a>
 
-    <a type = "text/html" href = "./index.html"> Index</a>
-    |
-    <a type = "text/html" href = "./detalles.html"> Detalles</a>
-    |
-    <a type = "text/html" href = "./bocetos.html"> Bocetos</a>
-    |
-    <a type = "text/html" href = "./miembros.html"> Miembros</a>
-    |
-    <a type = "text/html" href = "./planificacion.html"> Planificacion</a>
-    |
-    <a type = "text/html" href = "./contacto.html"> Contacto</a>
+    <div class = "barra"> 
+        <a href="./detalles.html" class="enlace">Detalles</a>
+        |
+        <a href="./bocetos.html" class="enlace">Bocetos</a>
+        |
+        <a href="./miembros.html" class="enlace" >Miembros</a>
+        |
+        <a href="./planificacion.html" class="enlace">Planificación</a>
+        |
+        <a href="./contacto.html" class="enlace">Contacto</a>
+    </div>
 
     <h1>
-       ¿Que queremos hacer?
+      MyPixel proyect
     </h1>
+
+    <p class="slogan"><em> MyPixel, valoramos cada trazo.</em></p>
 
    <!-- No aparece como aqui, sino que rellena la ventana de forma automatica-->
 
-    <p> 
-        MyPixel será una página web centrada en torno al dibujo, 
-        en la cual los usuarios podrán compartir, comentar y hasta aprender a dibujar estilos de todo tipo y género. 
-        Una vez siendo usuario registrado, podrán acceder al sistema de “Mastering” 
-        en la cual al postear imágenes o comentarios recibirán puntuación de otros registrados 
-        y se podrá ver en el perfil que tan profesional, divertido o interesante es una persona o post, 
-        la puntuación puede ser positivas o negativas. Además la existencia de un sistema de pago o 
-        comisión podrá ayudar más a los creadores a crear contenido y a los fans apoyar a sus artistas 
-        favoritos en la cual cobramos transacción. 
+   <h2>
+    Desarrollo
+   </h2>
+
+    <p class="texto"> 
+        MyPixel es una plataforma web innovadora diseñada para artistas, aficionados y amantes del dibujo. 
+        Su objetivo principal es crear un espacio donde los usuarios puedan compartir, aprender y conectar a través del arte. 
+        Lo que hace única a MyPixel es su sistema de "Mastering", 
+        que permite a los usuarios recibir puntuaciones por sus publicaciones y comentarios, 
+        reflejando su nivel de profesionalismo, creatividad o impacto en la comunidad. 
+        Además, la plataforma incluye un sistema de pagos y comisiones que permite a los artistas monetizar su trabajo y 
+        a los fans apoyar directamente a sus creadores favoritos. MyPixel no solo es una red social para artistas, 
+        sino también una herramienta para crecer, mejorar y destacar en el mundo del arte.
+
+
     </p>
+
+    <h2>
+        Usuarios
+    </h2>
+
+    <div class="texto">
+        <ol>
+            <li>Administradores</li>
+            <ul>
+                <li>Acceso completo a todas las funciones de la plataforma.</li>
+                <li>Gestionan usuarios, perfiles y contenido.</li>
+                <li>Tienen control sobre la interfaz de usuario (IU) y los chats globales o grupales.</li>
+            </ul>
+
+            <li>Auditores:</li>
+            <ul>
+                <li>Responsables de moderar el contenido.</li>
+                <li>Pueden categorizar contenido explícito o no especificado.</li>
+                <li>Tienen autoridad para borrar publicaciones o comentarios que violen las normas de la comunidad y bloquear usuarios.</li>
+            </ul>
+
+            <li>Artistas (Lv 1 - 6):</li>
+            <ul>
+                <li>Usuarios registrados que pueden clasificarse en distintos niveles según su actividad y contribución en la plataforma.</li>
+                <li>Pueden publicar contenido, abrir comisiones y monetizar su trabajo.</li>
+                <li>Acceden al sistema de "Mastering" para recibir puntuaciones y mejorar su reputación.</li>
+            </ul>
+
+            <li>Visitantes:</li>
+            <ul>
+                <li>Usuarios no registrados que solo pueden acceder a contenido público (SFW - Safe For Work) y ver noticias.</li>
+                <li>No pueden interactuar con publicaciones, comentar o usar funciones avanzadas.</li>
+            </ul>
+        </ol>
+    </div>
+
+    <h2>
+        Tareas
+    </h2>
+
+    <div class="texto">
+        <ol>
+            <li>Publicación</li>
+            <ul>
+                <li>Sistema de gestión de publicaciones donde los usuarios pueden subir imágenes, agregar descripciones y etiquetas.</li>
+                <li>Usuarios que la usan: Artistas, Auditores (para moderar) y Administradores (para gestionar).</li>
+                <li>Detalles: Las publicaciones pueden recibir puntuaciones positivas o negativas de otros usuarios, lo que afecta la reputación del artista.</li>
+            </ul>
+        
+            <li>Foro</li>
+            <ul>
+                <li>Espacio de discusión dividido en subsistemas donde los usuarios pueden postear comentarios, responder a otros y comunicarse directamente con los artistas.</li>
+                <li>Usuarios que la usan: Todos los usuarios registrados (Artistas, Auditores y Administradores).</li>
+                <li>Detalles: Los hilos del foro pueden ser moderados por Auditores para mantener un ambiente respetuoso.</li>
+            </ul>
+        
+            <li>Perfil</li>
+            <ul>
+                <li>Sistema de gestión de perfiles donde los usuarios pueden personalizar su información, mostrar su nivel de "Mastering" y su reputación.</li>
+                <li>Usuarios que la usan: Todos los usuarios registrados.</li>
+                <li>Detalles: Los perfiles muestran estadísticas como puntuaciones recibidas, nivel de actividad y contenido destacado.</li>
+            </ul>
+        
+            <li>Nivelación (Mastering)</li>
+            <ul>
+                <li>Subsistema que clasifica a los usuarios en niveles (Lv 1 - 6) según su actividad, puntuaciones recibidas y contribuciones.</li>
+                <li>Usuarios que la usan: Artistas.</li>
+                <li>Detalles: Los niveles reflejan la profesionalidad, creatividad e impacto del usuario en la comunidad.</li>
+            </ul>
+        
+            <li>Tienda</li>
+            <ul>
+                <li>Dividida en dos secciones:</li>
+                <ul>
+                    <li>Contenido pagado: Los usuarios pueden comprar obras exclusivas de los artistas.</li>
+                    <li>Comisiones: Los artistas pueden ofrecer servicios de dibujo personalizados.</li>
+                </ul>
+                <li>Usuarios que la usan: Artistas (para vender) y todos los usuarios registrados (para comprar).</li>
+                <li>Detalles: MyPixel cobra una comisión por transacción, apoyando a los artistas y generando ingresos para la plataforma.</li>
+            </ul>
+        </ol>
+        
+       
+    </div>
 
 </body>
 
