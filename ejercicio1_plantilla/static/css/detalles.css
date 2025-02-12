@@ -4,9 +4,18 @@ body{
 
 }
 
-.barra { /*idea proporcionada por DeepSeek*/
+h1{
+    display: flex;
+    justify-content: center; 
+    
+}
+
+.barra { 
+    /*idea proporcionada por DeepSeek*/
     display: flex;
     align-items: center;
+    /*idea proporcionada por DeepSeek*/
+
     gap: 20px; 
     text-decoration-color: aliceblue;
     font-family:'Courier New';
@@ -23,10 +32,21 @@ body{
 .slogan{
     font-size: 20px;
     font-family: cursive;
+    display: flex;
+    justify-content: center; 
 
 }
 
 .texto{
+    background-color: rgb(73, 178, 238);
     font-family: 'Times New Roman';
     font-size: 18px;
+    border: 1px solid #ccc;
+    
+    /*idea proporcionada por DeepSeek*/
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    /*idea proporcionada por DeepSeek*/
+   
+
 }
