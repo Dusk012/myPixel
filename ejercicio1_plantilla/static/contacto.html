@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/detalles.css" rel="stylesheet" type="text/css" /> 
+    <link href="css/detalles.css" rel="stylesheet" type="text/css"> 
     <title>Contacto</title>
 </head>
 <body>
     <a href="./index.html">
-        <img src="img/icono.png" width="150" height="auto" alt="Ícono de enlace">
+        <img src="img/icono.png" width="150" alt="Ícono de enlace">
     </a>
 
     <div class = "barra"> 
@@ -25,24 +25,25 @@
 
     <fieldset>
         <legend>Información personal:</legend>
-        Nombre: <input type="text" size="50"><br>
-        E-mail: <input type="text" size="50"><br>
+        <p>Nombre: <input type="text" size="50"></p>
+        <p>E-mail: <input type="text" size="50"></p>
         <p>Motivo de consulta:</p>
-        <label><input type="radio" name="motivo" value="evaluacion" />
+        <label><input type="radio" name="motivo" value="evaluacion">
         Evaluación</label>
-        <label><input type="radio" name="motivo" value="sugerencias" />
+        <label><input type="radio" name="motivo" value="sugerencias">
         Sugerencias</label>
-        <label><input type="radio" name="motivo" value="criticas" />
+        <label><input type="radio" name="motivo" value="criticas">
         Críticas</label>
 
        
-        <p> <input name="terminos" type="checkbox" value="terminos"/> Marque esta casilla para verificar que ha leido nuestros terminos y condiciones del servicio</p>
+        <p> <input name="terminos" type="checkbox" value="terminos"> Marque esta casilla para verificar que ha leido nuestros terminos y condiciones del servicio</p>
 
         <textarea name="nombre" rows="4" cols="50">
         
         </textarea>
 
         <button type="button" onclick="">Enviar</button>
+
     </fieldset>
 </body>
 </html>
