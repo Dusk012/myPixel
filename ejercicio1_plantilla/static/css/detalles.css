@@ -52,10 +52,10 @@ h1{
 }
 
 figure {
-    border: thin #c0c0c0 solid;
     display: flex;
     flex-flow: column;
     padding: 5px;
+    min-width: 200px;
     max-width: 500px;
     margin: auto;
   }
@@ -63,10 +63,10 @@ figure {
   img {
     max-width: 500px;
     max-height: 300px;
+    object-fit: contain;
   }
   
   figcaption {
-    background-color: #222;
     color: #fff;
     font: italic smaller sans-serif;
     padding: 3px;
