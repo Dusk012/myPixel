@@ -4,15 +4,15 @@
     <div class="saludo">
     <% if (session.login) { %>
         <div class = "barra"> 
-        <a href="/vistas/paginas/usuarios" class="enlace">Perfil</a>
+        <a href="/vistas/paginas/usuarios/profile.ejs" class="enlace">Perfil</a>
         |
         <a href="/vistas/paginas/imagenes/submit.ejs" class="enlace">Panel del creador</a>
         |
-        <a href="/vistas/paginas/desafios" class="enlace" >Desafíos</a>
+        <a href="/vistas/paginas/desafios/desafios.ejs" class="enlace" >Desafíos</a>
         |
-        <a href="/vistas/paginas/foro" class="enlace">Foro</a>
+        <a href="/vistas/paginas/foro/foro.ejs" class="enlace">Foro</a>
         |
-        <a href="/vistas/paginas/tienda" class="enlace">Tienda</a>
+        <a href="/vistas/paginas/tienda/shop.ejs" class="enlace">Tienda</a>
     </div>
     <% } else { %>
         <div class = "barra"> 
@@ -29,7 +29,7 @@
 </header>
 
 <header>
-    <a href="paginas/Usuarios/index">
+    <a href="pagina.ejs">
         <img src="img/icono.png" width="150" alt="Ícono de enlace">
     </a>
     <%= mostrarBarra(session) %>
