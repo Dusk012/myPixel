@@ -1,16 +1,36 @@
 <!-- Cabecera de la página web -->
 
-<% function mostrarSaludo(session) { %>
+<% function mostrarBarra(session) { %>
     <div class="saludo">
     <% if (session.login) { %>
-        <p>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></p>
+        <div class = "barra"> 
+        <a href="/vistas/paginas/usuarios" class="enlace">Perfil</a>
+        |
+        <a href="/vistas/paginas/imagenes/submit.ejs" class="enlace">Panel del creador</a>
+        |
+        <a href="/vistas/paginas/desafios" class="enlace" >Desafíos</a>
+        |
+        <a href="/vistas/paginas/foro" class="enlace">Foro</a>
+        |
+        <a href="/vistas/paginas/tienda" class="enlace">Tienda</a>
+    </div>
     <% } else { %>
-        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+        <div class = "barra"> 
+            <a href="/vistas/paginas/usuarios/viewLogin.ejs" class="enlace">Iniciar Sesión</a>
+            |
+            <a href="/vistas/paginas/usuarios/viewRegister.ejs" class="enlace">Registrarse</a>
+        </div>
     <% } %>
     </div>
 <% } %>
 
 <header>
     <h1>Mi gran página web</h1>
-    <%= mostrarSaludo(session) %>
+</header>
+
+<header>
+    <a href="paginas/Usuarios/index">
+        <img src="img/icono.png" width="150" alt="Ícono de enlace">
+    </a>
+    <%= mostrarBarra(session) %>
 </header>
