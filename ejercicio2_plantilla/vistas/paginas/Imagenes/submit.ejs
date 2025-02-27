@@ -1,0 +1,13 @@
+<h1>Subir archivos</h1>
+<form action="/usuarios/login" method="POST">
+    <label for="nombreImg">Nombre del archivo:</label>
+    <input type="text" name="Nombre" required>
+    <p></p>
+    <label for="descripcionImg">Descripción de la imagen:</label>
+    <input type="text" name="Descripción" required>
+    <p></p>
+    <label for="imagen">Imagen:</label>
+    <input type="file" name="imagen" id="imagen" accept="image/*" required>
+    <p></p>
+    <button type="submit">Enviar</button>
+</form>
