@@ -12,7 +12,7 @@ export function viewLogin(req, res) {
 export function doLogin(req, res) {
     body('username').escape(); // Se asegura que eliminar caracteres problemáticos
     body('password').escape(); // Se asegura que eliminar caracteres problemáticos
-
+  
     let contenido = 'paginas/viewLogin', error = null;
 
     const { username, password } = req.body;
@@ -51,11 +51,14 @@ export function doLogout(req, res, next) {
     delete req.session.esAdmin;
 
     res.render('pagina', {
+
         contenido: 'paginas/Usuarios/logout',
+
         session: {}
     });
     
 }
+
 
 export function viewSubmit(req, res) {
     let contenido = 'paginas/submit';
@@ -96,3 +99,5 @@ export function doSubmit(req, res) {
         error 
     });
 }
+
+
