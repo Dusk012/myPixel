@@ -25,17 +25,20 @@
 
     <fieldset>
         <legend>Información personal:</legend>
+
         <p>Nombre: <input type="text" size="50"></p>
         <p>E-mail: <input type="text" size="50"></p>
-        <p>Motivo de consulta:</p>
-        <label><input type="radio" name="motivo" value="evaluacion">
-        Evaluación</label>
-        <label><input type="radio" name="motivo" value="sugerencias">
-        Sugerencias</label>
-        <label><input type="radio" name="motivo" value="criticas">
-        Críticas</label>
 
-       
+        <p>Motivo de consulta:</p>
+        <input type="radio" name="motivo" value="evaluacion" id="evaluacion">
+        <label for="evaluacion">Evaluación</label>
+
+        <input type="radio" name="motivo" value="sugerencias" id="sugerencias">
+        <label for="sugerencias">Sugerencias</label>
+
+        <input type="radio" name="motivo" value="criticas" id="criticas">
+        <label for="criticas">Críticas</label>
+        
         <p> <input name="terminos" type="checkbox" value="terminos"> Marque esta casilla para verificar que ha leido nuestros terminos y condiciones del servicio</p>
 
         <textarea name="nombre" rows="4" cols="50">

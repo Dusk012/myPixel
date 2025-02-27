@@ -1,0 +1,16 @@
+<!-- Cabecera de la página web -->
+
+<% function mostrarSaludo(session) { %>
+    <div class="saludo">
+    <% if (session.login) { %>
+        <p>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></p>
+    <% } else { %>
+        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+    <% } %>
+    </div>
+<% } %>
+
+<header>
+    <h1>Mi gran página web</h1>
+    <%= mostrarSaludo(session) %>
+</header>
