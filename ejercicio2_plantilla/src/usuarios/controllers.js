@@ -30,7 +30,7 @@ export function doLogin(req, res) {
         if (user.esAdmin) {
             req.session.esAdmin = true;
         }
-        contenido = 'paginas/usuarios/index';
+        contenido = 'paginas/index';
     }
     else{
         error = 'Usuario o contraseña incorrectos';
@@ -70,7 +70,7 @@ export function viewSubmit(req, res) {
 }
 
 export function doSubmit(req, res) {
-    let contenido = 'paginas/Imagenes', error = null;
+    let contenido = 'paginas/imagenes', error = null;
 
     const { imagen } = req.body;
 
