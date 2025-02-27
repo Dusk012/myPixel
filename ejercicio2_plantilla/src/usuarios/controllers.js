@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 export function viewLogin(req, res) {
-    let contenido = 'paginas/viewLogin';
+    let contenido = 'paginas/usuarios/viewLogin';
     res.render('pagina', {
         contenido,
         session: req.session,
@@ -13,7 +13,7 @@ export function doLogin(req, res) {
     body('username').escape(); // Se asegura que eliminar caracteres problemáticos
     body('password').escape(); // Se asegura que eliminar caracteres problemáticos
   
-    let contenido = 'paginas/viewLogin', error = null;
+    let contenido = 'paginas/usuarios/viewLogin', error = null;
 
     const { username, password } = req.body;
 
@@ -30,7 +30,7 @@ export function doLogin(req, res) {
         if (user.esAdmin) {
             req.session.esAdmin = true;
         }
-        contenido = 'paginas/index';
+        contenido = 'paginas/usuarios/index';
     }
     else{
         error = 'Usuario o contraseña incorrectos';
