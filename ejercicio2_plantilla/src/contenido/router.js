@@ -3,9 +3,9 @@ import express from 'express';
 const contenidoRouter = express.Router();
 
 contenidoRouter.get('/normal', (req, res) => {
-    let contenido = 'paginas/noRegistrado';
+    let contenido = 'paginas/usuarios/noRegistrado';
     if (req.session.login) {
-        contenido = 'paginas/normal';
+        contenido = 'paginas/usuarios/normal';
     }
     res.render('pagina', {
         contenido,
@@ -14,9 +14,9 @@ contenidoRouter.get('/normal', (req, res) => {
 });
 
 contenidoRouter.get('/admin', (req, res) => {
-    let contenido = 'paginas/noPermisos';
+    let contenido = 'paginas/usuarios/noPermisos';
     if (req.session.esAdmin) {
-        contenido = 'paginas/admin';
+        contenido = 'paginas/usuarios/admin';
     }
     res.render('pagina', {
         contenido,
