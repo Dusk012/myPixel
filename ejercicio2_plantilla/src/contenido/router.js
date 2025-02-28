@@ -13,6 +13,17 @@ contenidoRouter.get('/normal', (req, res) => {
     });
 });
 
+contenidoRouter.get('/coordinador', (req, res) => {
+    let contenido = 'paginas/noPermisos';
+    if (req.session.esAdmin) {
+        contenido = 'paginas/admin';
+    }
+    res.render('pagina', {
+        contenido,
+        session: req.session
+    });
+});
+
 contenidoRouter.get('/admin', (req, res) => {
     let contenido = 'paginas/usuarios/noPermisos';
     if (req.session.esAdmin) {
