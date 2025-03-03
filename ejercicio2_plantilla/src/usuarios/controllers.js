@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
 export function viewLogin(req, res) {
-    let contenido = 'paginas/viewLogin';
+    let contenido = 'paginas/usuarios/viewLogin';
     res.render('pagina', {
         contenido,
         session: req.session,
@@ -13,7 +13,7 @@ export function doLogin(req, res) {
     body('username').escape(); // Se asegura que eliminar caracteres problemáticos
     body('password').escape(); // Se asegura que eliminar caracteres problemáticos
   
-    let contenido = 'paginas/viewLogin', error = null;
+    let contenido = 'paginas/usuarios/viewLogin', error = null;
 
     const { username, password } = req.body;
 
@@ -53,7 +53,6 @@ export function doLogout(req, res, next) {
     res.render('pagina', {
 
         contenido: 'paginas/Usuarios/logout',
-
         session: {}
     });
     
@@ -61,42 +60,23 @@ export function doLogout(req, res, next) {
 
 
 export function viewSubmit(req, res) {
-    let contenido = 'paginas/submit';
+    let contenido = 'paginas/Imagenes/submit';
     res.render('pagina', {
         contenido,
         session: req.session,
-        error: null
+        mensaje: null
     });
 }
 
 export function doSubmit(req, res) {
-    let contenido = 'paginas/Imagenes', error = null;
+    let contenido = 'paginas/Imagenes/submit', mensaje = null;
 
     const { imagen } = req.body;
-
-    const users = {
-        Usuario: { password: 'userpass', nombre: 'Usuario' },
-        Administrador: { password: 'adminpass', nombre: 'Administrador', esAdmin: true }
-    };
-
-    const user = users[username];
-
-    if (user && user.password === password) {
-        req.session.login = true;
-        req.session.nombre = user.nombre;
-        if (user.esAdmin) {
-            req.session.esAdmin = true;
-        }
-        contenido = 'paginas/index';
-    }
-    else{
-        error = 'Usuario o contraseña incorrectos';
-    }
 
     res.render('pagina', {
         contenido,
         session: req.session,
-        error 
+        mensaje: "La imagen ha sido subida con éxito."
     });
 }
 
