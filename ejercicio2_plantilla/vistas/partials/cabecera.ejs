@@ -16,17 +16,17 @@
     </div>
     <% } else { %>
         <div class = "barra"> 
-            <a href="/vistas/paginas/usuarios/viewLogin.ejs" class="enlace">Iniciar Sesión</a>
+            <a href="/usuarios/login" class="enlace">Iniciar Sesión</a>
             |
-            <a href="/vistas/paginas/usuarios/viewRegister.ejs" class="enlace">Registrarse</a>
+            <a href="/usuarios/register" class="enlace">Registrarse</a>
         </div>
     <% } %>
     </div>
 <% } %>
 
 <header>
-    <a href="pagina.ejs">
-        <img src="img/icono.png" width="150" alt="Ícono de enlace">
+    <a href="/">
+        <img src="../img/icono.png" width="150" alt="Ícono de enlace">
     </a>
     <%= mostrarBarra(session) %>
 </header>
