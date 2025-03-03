@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/usuarios/viewLogin';
@@ -80,4 +80,60 @@ export function doSubmit(req, res) {
     });
 }
 
+export function viewRegister(req, res) {
+    let contenido = 'paginas/usuarios/viewRegister';
+    res.render('pagina', {
+        contenido,
+        session: req.session,
+        error: null
+    });
+}
 
+export const validateRegister = [
+    body('username')
+        .notEmpty().withMessage('El nombre de usuario es requerido')
+        .isLength({ min: 3 }).withMessage('El nombre de usuario debe tener al menos 3 caracteres'),
+    body('password')
+        .notEmpty().withMessage('La contraseña es requerida')
+        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
+    body('confirmPassword')
+        .custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error('Las contraseñas no coinciden');
+            }
+            return true;
+        }),
+    body('nombre')
+        .notEmpty().withMessage('El nombre es requerido')
+];
+
+export function doRegister(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
+
+        return res.render('pagina', {
+            contenido: 'paginas/usuarios/viewRegister',
+            session: req.session,
+            errors: errorMessages, // Pasar todos los errores como un array
+            error: 'Por favor, corrige los errores en el formulario.' // Mensaje general
+        });
+    }
+
+    const { username, password, confirmPassword, nombre } = req.body;
+
+    try {
+        const nuevoUsuario = Usuario.registrar(username, password, confirmPassword, nombre);
+        res.redirect('/login');
+    } catch (e) {
+        let error = 'Error al registrar el usuario';
+        if (e.name === 'UsuarioYaExiste') {
+            error = 'El nombre de usuario ya está en uso';
+        }
+        res.render('pagina', {
+            contenido: 'paginas/usuarios/viewRegister',
+            session: req.session,
+            error
+        });
+    }
+}
