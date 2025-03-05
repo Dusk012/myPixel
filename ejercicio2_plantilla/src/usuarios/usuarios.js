@@ -1,5 +1,5 @@
 
-import bcrypt from "bcryptjs";
+//import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
@@ -29,6 +29,7 @@ export class Usuario {
     }
 
     static #insert(usuario) {
+        console.log("insert entrado")
         let result = null;
         try {
             const username = usuario.#username;
@@ -50,6 +51,7 @@ export class Usuario {
     }
 
     static #update(usuario) {
+        console.log("Update entrado")
         const username = usuario.#username;
         const password = usuario.#password;
         const nombre = usuario.nombre;
@@ -105,12 +107,14 @@ export class Usuario {
     }
 
     persist() {
+        console.log("Persist entrado")
         if (this.#id === null) return Usuario.#insert(this);
         return Usuario.#update(this);
     }
 
-    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
-        // Validar que las contraseñas coincidan
+    registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
+        // Validar que las contraseñas coincida
+        console.log("estoy en registrar")
         if (password !== confirmPassword) {
             throw new Error('Las contraseñas no coinciden');
         }
