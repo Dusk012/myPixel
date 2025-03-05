@@ -3,7 +3,7 @@ import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
 
 export function viewLogin(req, res) {
-    let contenido = 'paginas/usuarios/viewLogin';
+    let contenido = 'paginas/Usuarios/viewLogin';
     res.render('pagina', {
         contenido,
         session: req.session,
@@ -15,7 +15,7 @@ export function doLogin(req, res) {
     body('username').escape(); // Se asegura que eliminar caracteres problemáticos
     body('password').escape(); // Se asegura que eliminar caracteres problemáticos
   
-    let contenido = 'paginas/usuarios/viewLogin', error = null;
+    let contenido = 'paginas/Usuarios/viewLogin', error = null;
 
     const { username, password } = req.body;
 
@@ -43,6 +43,19 @@ export function doLogin(req, res) {
         session: req.session,
         error 
     });
+}
+
+export function viewRegister(req, res) {
+    let contenido = 'paginas/Usuarios/viewRegister';
+    res.render('pagina', {
+        contenido,
+        session: req.session,
+        error: null
+    });
+}
+
+export function doRegister(req, res) {
+    //TODO
 }
 
 export function doLogout(req, res, next) {
