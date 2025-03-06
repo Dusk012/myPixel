@@ -12,37 +12,30 @@ export function viewLogin(req, res) {
 }
 
 export function doLogin(req, res) {
-    body('username').escape(); // Se asegura que eliminar caracteres problemáticos
-    body('password').escape(); // Se asegura que eliminar caracteres problemáticos
-  
-    let contenido = 'paginas/Usuarios/viewLogin', error = null;
+    body('username').escape();
+    body('password').escape();
+    // Capturo las variables username y password
+    const username = req.body.username.trim();
+    const password = req.body.password.trim();
 
-    const { username, password } = req.body;
-
-    const users = {
-        Usuario: { password: 'userpass', nombre: 'Usuario' },
-        Administrador: { password: 'adminpass', nombre: 'Administrador', esAdmin: true }
-    };
-
-    const user = users[username];
-
-    if (user && user.password === password) {
+    try {
+        const usuario = Usuario.login(username, password);
         req.session.login = true;
-        req.session.nombre = user.nombre;
-        if (user.esAdmin) {
-            req.session.esAdmin = true;
-        }
-        contenido = 'paginas/index';
-    }
-    else{
-        error = 'Usuario o contraseña incorrectos';
-    }
+        req.session.nombre = usuario.nombre;
+        req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
 
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error 
-    });
+        return res.render('pagina', {
+            contenido: 'paginas/index',
+            session: req.session
+        });
+
+    } catch (e) {
+        res.render('pagina', {
+            contenido: 'paginas/Usuarios/viewLogin',
+            session: req.session,
+            error: 'El usuario o contraseña no son válidos'
+        })
+    }
 }
 
 export function viewRegister(req, res) {
@@ -52,10 +45,6 @@ export function viewRegister(req, res) {
         session: req.session,
         error: null
     });
-}
-
-export function doRegister(req, res) {
-    //TODO
 }
 
 export function doLogout(req, res, next) {
@@ -92,15 +81,6 @@ export function doSubmit(req, res) {
         contenido,
         session: req.session,
         mensaje: "La imagen ha sido subida con éxito."
-    });
-}
-
-export function viewRegister(req, res) {
-    let contenido = 'paginas/usuarios/viewRegister';
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
     });
 }
 

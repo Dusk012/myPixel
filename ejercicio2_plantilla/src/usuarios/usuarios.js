@@ -1,5 +1,4 @@
-
-//import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
@@ -23,6 +22,7 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
+        console.log("Creo un usuario (otra vez)");
         const { password, rol, nombre, id } = usuario;
 
         return new Usuario(username, password, nombre, rol, id);
@@ -66,15 +66,18 @@ export class Usuario {
 
 
     static login(username, password) {
+        console.log("Entro en login");
         let usuario = null;
         try {
             usuario = this.getUsuarioByUsername(username);
         } catch (e) {
+            console.log("He cascado :(");
+            console.log(e);
             throw new UsuarioOPasswordNoValido(username, { cause: e });
         }
-
+        console.log("Todo ha ido bien de momento :D");
         // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
-        if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
+        //if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
 
         return usuario;
     }
@@ -112,7 +115,7 @@ export class Usuario {
         return Usuario.#update(this);
     }
 
-    registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
+    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
         // Validar que las contraseñas coincida
         console.log("estoy en registrar")
         if (password !== confirmPassword) {
@@ -122,9 +125,13 @@ export class Usuario {
         // Encriptar la contraseña antes de guardarla
         const hashedPassword = bcrypt.hashSync(password, 10); // Usar un salt de 10
     
+        const usuario = this.#getByUsernameStmt.get({ username });
+        if (usuario !== undefined) throw new UsuarioYaExiste(username);
+        console.log("No esta el usuario");
+        const id = null;
         // Crear una nueva instancia de Usuario
-        const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol);
-    
+        const nuevoUsuario = new Usuario(username, password, nombre, rol, id);
+        console.log("He construido el usuario y llamare a persist.")
         // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
     }
