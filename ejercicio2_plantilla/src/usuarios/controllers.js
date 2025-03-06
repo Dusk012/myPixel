@@ -106,13 +106,14 @@ export function doRegister(req, res) {
     console.log("Estoy en doRegister")
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("Hay problemas con estos datos...")
         const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
 
         return res.render('pagina', {
             contenido: 'paginas/usuarios/viewRegister',
             session: req.session,
             errors: errorMessages, // Pasar todos los errores como un array
-            error // Mensaje general
+            error: "Por favor. corrija los errores." // Mensaje general
         });
     }
 
