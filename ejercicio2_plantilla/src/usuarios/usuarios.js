@@ -77,7 +77,7 @@ export class Usuario {
         }
         console.log("Todo ha ido bien de momento :D");
         // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
-        //if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
+        if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
 
         return usuario;
     }
@@ -130,7 +130,7 @@ export class Usuario {
         console.log("No esta el usuario");
         const id = null;
         // Crear una nueva instancia de Usuario
-        const nuevoUsuario = new Usuario(username, password, nombre, rol, id);
+        const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol, id);
         console.log("He construido el usuario y llamare a persist.")
         // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
