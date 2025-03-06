@@ -9,9 +9,6 @@ usuariosRouter.get('/login', viewLogin);
 usuariosRouter.post('/login', doLogin);
 usuariosRouter.get('/logout', doLogout);
 
-usuariosRouter.get('/register', viewRegister);
-usuariosRouter.post('/register', doRegister);
-
 usuariosRouter.get('/submit', viewSubmit);
 usuariosRouter.post('/submit', doSubmit);
 
