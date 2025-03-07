@@ -65,7 +65,7 @@ contenidoRouter.get('/perfil', (req, res) => {
 contenidoRouter.get('/panel', (req, res) => {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
-        contenido = 'paginas/Usuarios/panel';
+        contenido = 'paginas/imagenes/submit';
     }
     res.render('pagina', {
         contenido,
