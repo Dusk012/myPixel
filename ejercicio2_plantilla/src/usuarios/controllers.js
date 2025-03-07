@@ -48,7 +48,6 @@ export function viewRegister(req, res) {
 }
 
 export function doLogout(req, res, next) {
-    let contenido = 'paginas/index';
 
     delete req.session.login;
     delete req.session.nombre;
@@ -76,7 +75,7 @@ export function doSubmit(req, res) {
     let contenido = 'paginas/Imagenes/submit', mensaje = null;
 
     const { imagen } = req.body;
-
+    
     res.render('pagina', {
         contenido,
         session: req.session,
