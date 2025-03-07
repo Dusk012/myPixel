@@ -2,7 +2,6 @@
     <div class="saludo">
     <% if (session.login) { %>
         <h1>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></h1>
-        <p><strong>Username:</strong> <%= session.username %></p>
         <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
         <p>📸 No hay foto de perfil</p>
     <% } else { %>
