@@ -48,7 +48,6 @@ export function viewRegister(req, res) {
 }
 
 export function doLogout(req, res, next) {
-    let contenido = 'paginas/index';
 
     delete req.session.login;
     delete req.session.nombre;
@@ -73,10 +72,10 @@ export function viewSubmit(req, res) {
 }
 
 export function doSubmit(req, res) {
-    let contenido = 'paginas/Imagenes/submit', mensaje = null;
+    let contenido = 'paginas/index', mensaje = null;
 
     const { imagen } = req.body;
-
+    
     res.render('pagina', {
         contenido,
         session: req.session,
@@ -103,10 +102,8 @@ export const validateRegister = [
 ];
 
 export function doRegister(req, res) {
-    console.log("Estoy en doRegister")
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log("Hay problemas con estos datos...")
         const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
 
         return res.render('pagina', {
@@ -120,9 +117,7 @@ export function doRegister(req, res) {
     const { username, password, confirmPassword, nombre } = req.body;
 
     try {
-        console.log("Pre-registrar")
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
-        console.log("No hay error")
         const error = null;
         res.render('pagina', {
             contenido: 'paginas/usuarios/viewLogin',

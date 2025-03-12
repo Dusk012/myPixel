@@ -16,7 +16,7 @@
 
     <h2>Bienvenido a MyPixel, Regístrate</h2>
     <form action="/usuarios/register" method="POST" enctype="">
-        <!-- Agrupar campos relacionados con fieldset -->
+        
         <fieldset>
             <legend>Datos de Registro</legend>
             <p>
@@ -24,25 +24,21 @@
                 <input type="text" name="nombre" required>
             </p>
             
-            <!-- Campo para el nombre de usuario -->
             <p>
                 <div><label>Nombre_Usuario:</label></div>
                 <input type="text" name="username" required>
             </p>
 
-            <!-- Campo para la contraseña -->
             <p>
                 <div><label >Contraseña:</label></div>
                 <input type="password" name="password" required>
             </p>
 
-            <!-- Campo para confirmar la contraseña -->
             <p>
                 <div><label >Confirmar_Contraseña:</label></div>
                 <input type="password" name="confirmPassword" required>
             </p>
 
-            <!-- Campo para el nombre -->
            
 
             <button type="submit">Registrarse</button>
