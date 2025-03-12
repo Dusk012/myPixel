@@ -1,0 +1,16 @@
+<% function mostrarSaludo(session) { %>
+    <div class="saludo">
+    <% if (session.login) { %>
+        <h1>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></h1>
+        <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
+        <p>📸 No hay foto de perfil</p>
+    <% } else { %>
+        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+    <% } %>
+    </div>
+<% } %>
+    
+<body>
+    <%= mostrarSaludo(session) %>
+</body>
+    

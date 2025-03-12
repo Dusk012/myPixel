@@ -4,29 +4,31 @@
     <div class="saludo">
     <% if (session.login) { %>
         <div class = "barra"> 
-        <a href="/vistas/paginas/usuarios/profile.ejs" class="enlace">Perfil</a>
+        <a href="/contenido/perfil" class="enlace">Perfil</a>
         |
-        <a href="/vistas/paginas/imagenes/submit.ejs" class="enlace">Panel del creador</a>
+        <a href="/contenido/panel" class="enlace">Panel del creador</a>
         |
-        <a href="/vistas/paginas/desafios/desafios.ejs" class="enlace" >Desafíos</a>
+        <a href="/contenido/desafios" class="enlace" >Desafíos</a>
         |
-        <a href="/vistas/paginas/foro/foro.ejs" class="enlace">Foro</a>
+        <a href="/contenido/foro" class="enlace">Foro</a>
         |
-        <a href="/vistas/paginas/tienda/shop.ejs" class="enlace">Tienda</a>
+        <a href="/contenido/tienda" class="enlace">Tienda</a>
+        |
+        <a href="/usuarios/logout" class="enlace">Logout</a>
     </div>
     <% } else { %>
         <div class = "barra"> 
-            <a href="/vistas/paginas/usuarios/viewLogin.ejs" class="enlace">Iniciar Sesión</a>
+            <a href="/usuarios/login" class="enlace">Iniciar Sesión</a>
             |
-            <a href="/vistas/paginas/usuarios/viewRegister.ejs" class="enlace">Registrarse</a>
+            <a href="/usuarios/register" class="enlace">Registrarse</a>
         </div>
     <% } %>
     </div>
 <% } %>
 
 <header>
-    <a href="pagina.ejs">
-        <img src="img/icono.png" width="150" alt="Ícono de enlace">
+    <a href="/">
+        <img src="../img/icono.png" width="150" alt="Ícono de enlace">
     </a>
     <%= mostrarBarra(session) %>
 </header>
