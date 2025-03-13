@@ -136,3 +136,26 @@ export function doRegister(req, res) {
         });
     }
 }
+
+export const validateComment = [
+    body('comentario')
+        .notEmpty()
+        .isLength({ max: 140 }).withMessage('El comentario no puede exceder los 140 caracteres.'),
+];
+
+export function sendComment(req, res){
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
+
+        return res.render('pagina', {
+            contenido: 'paginas/foro/foro',
+            session: req.session,
+            errors: errorMessages, // Pasar todos los errores como un array
+            error: "Por favor. corrija los errores." // Mensaje general
+        });
+    }
+
+
+}
