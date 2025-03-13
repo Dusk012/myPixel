@@ -20,20 +20,20 @@ CREATE TABLE "Foros" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 )
 
-CREATE TABLE "Fotos" (
-	"id"	INTEGER NOT NULL,
-	"nombre"	TEXT NOT NULL,
-	"descripcion"	TEXT,
-	"fecha"	TEXT,
-	"puntuacion"	INTEGER,
-	"estado"	TEXT,
-	"id_usuario"	INTEGER NOT NULL,
-	"id_foro"	INTEGER NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
-)
-
+CREATE TABLE Fotos (
+    id          INTEGER NOT NULL,
+    nombre      TEXT    NOT NULL,
+    descripcion TEXT,
+    fecha       TEXT,
+    puntuacion  INTEGER,
+    estado      TEXT,
+    id_usuario  INTEGER NOT NULL,
+    id_foro     INTEGER NOT NULL,
+    contenido   TEXT    NOT NULL,
+    PRIMARY KEY (id AUTOINCREMENT),
+    FOREIGN KEY (id_foro) REFERENCES Foros (id),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios (id) 
+);
 CREATE TABLE "Encargos" (
 	"id"	INTEGER NOT NULL,
 	"precio"	REAL,
