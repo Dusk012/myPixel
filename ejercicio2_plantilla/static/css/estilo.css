@@ -64,10 +64,11 @@ nav a:hover {
 
 /* Estilo del contenido principal */
 main {
+    
     padding: 10px;
-    float: left;
+    float: center;
     min-height: 600px;
-    width: 880px;
+    width:100%-10px;
     background-color: #3e3e5e;
     border-radius: 8px;
 }
@@ -101,7 +102,7 @@ label {
     display: block;
     margin-bottom: 10px;
 }
-
+/* Inspirado en IA*/
 /* Estilo para los campos de entrada */
 input[type = "file"]::file-selector-button {
     
