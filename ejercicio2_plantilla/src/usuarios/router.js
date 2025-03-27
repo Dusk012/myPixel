@@ -26,5 +26,4 @@ usuariosRouter.post('/register'
 })
 , doRegister);
 
-
 export default usuariosRouter;

@@ -62,7 +62,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Estilo del contenido principal */
+/* Contenido principal */
 main {
     padding: 10px;
     float: left;
@@ -81,7 +81,7 @@ footer {
     text-align: center;
 }
 
-/* Estilo para los formularios */
+/* Formularios */
 fieldset {
     border: 1px solid black;
     width: 15em;
@@ -102,7 +102,7 @@ label {
     margin-bottom: 10px;
 }
 
-/* Estilo para los campos de entrada */
+/* Campos de entrada */
 input[type = "file"]::file-selector-button {
     
     padding: 10px;
@@ -129,7 +129,7 @@ input[type="text"], input[type="password"] , input[type = "file"], input[type ="
     font-size: 14px;
 }
 
-/* Estilo de los botones */
+/* Botones */
 button {
     background-color: #ffcc00;
     color: #1e1e2e;
@@ -150,26 +150,26 @@ button:hover {
     transform: scale(1.1);
 }
 
-/* Estilos para mensajes de error */
+/* Errores */
 .error-message {
     color: red;
     font-size: 0.9em;
     margin-top: 5px;
 }
 
-/* Estilo para el contenedor de saludo */
+/* Saludo */
 div.saludo {
     width: 100%;
     text-align: right;
 }
 
-/* Estilo de los mensajes de error en el formulario */
+/* Mensajes de error en el formulario */
 .error-message {
     color: red;
     font-size: 0.9em;
 }
 
-/* Asegurarse de que el contenedor principal tenga un fondo oscuro */
+/* El contenedor principal tenga un fondo oscuro */
 .container {
     background: #2e2e3e;
     padding: 20px;
@@ -177,7 +177,7 @@ div.saludo {
     box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
 }
 
-/* Ajustes para los campos de entrada */
+/* Campos de entrada */
 .input-container {
     margin-bottom: 10px;
 }
