@@ -1,104 +1,194 @@
+/* Importando la fuente 'Press Start 2P' para el estilo retro */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Estilos generales */
 body {
-	background-color: #CDCDCD;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #1e1e2e;
+    color: black;
+    margin: 0;
+    padding: 0;
 }
 
+/* Contenedor principal de la página */
 div#contenedor {
-	width: 900px;
-	margin: auto;
-	border: 1px solid black;
-	background-color: #aaaaaa;
-	margin-top: 30px;
+    width: 80%;
+    margin: 20px auto;
+    background: #2e2e3e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
 }
 
+/* Cabecera */
 header {
-	padding: 30px;
-	height: 100px;
-	background-color: #303030;
-	color: white;
+    padding: 30px;
+    height: 100px;
+    background: linear-gradient(90deg, #ff6b6b, #6b6bff);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    color: white;
 }
 
+/* Enlaces del header */
 header a, header a:visited {
-	color: white;
-	font-weight: bold;
-	text-decoration: none;
-} 
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
 
 header a:hover {
-	color: red;
-	font-weight: bold;
-	text-decoration: underline;
-} 
+    color: orange;
+    font-weight: bold;
+    text-decoration: underline;
+}
 
-
+/* Barra de navegación */
 nav {
-	padding: 10px;
-	float: left;
-	width: 170px;
-	height: 400px;
-	background-color: #dddddd;
+    padding: 10px;
+    float: left;
+    width: 170px;
+    height: 400px;
+    background-color: #dddddd;
 }
 
 nav a, nav a:visited {
-	color: red;
-	font-weight: bold;
-	text-decoration: none;
-} 
+    color: red;
+    font-weight: bold;
+    text-decoration: none;
+}
 
 nav a:hover {
-	color: red;
-	text-decoration: underline;
-} 
-
-
-aside {
-	padding: 10px;
-	float: right;
-	width: 170px;
-	height: 400px;
-	background-color: #dddddd;
+    color: red;
+    text-decoration: underline;
 }
 
+/* Contenido principal */
 main {
-	padding: 10px;
-	float: left;
-	min-height: 600px;
-	width: 880px;
-	background-color: white;
+    padding: 10px;
+    float: left;
+    min-height: 600px;
+    width: 98%;
+    background-color: #3e3e5e;
+    border-radius: 8px;
 }
 
-footer	 {
-	clear: both;
-	padding: 20px;
-	background-color: #303030;
-	color: white;
-	text-align: center;
+/* Pie de página */
+footer {
+    clear: both;
+    padding: 20px;
+    background-color: #303030;
+    color: white;
+    text-align: center;
 }
 
-div.saludo {
-	width: 100%;
-	text-align: right;
-}
-
+/* Formularios */
 fieldset {
-	border: 1px solid black;
-	width: 15em;
-	margin: 0 auto;
+    border: 1px solid black;
+    width: 15em;
+    margin: 0 auto;
+    background: #3e3e5e;
+    border-radius: 10px;
 }
 
 legend {
-	color: #fff;
-	background: #303030;
-	border: 1px solid black;
-	padding: 2px 6px;
-} 
-
-label {
-	float: left;
-	text-align: right;
-	margin-right: 0.5em;
-	display: block;
+    color: #fff;
+    background: #303030;
+    border: 1px solid black;
+    padding: 2px 6px;
 }
 
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Campos de entrada */
+input[type = "file"]::file-selector-button {
+    
+    padding: 10px;
+    margin-top: 5px;
+    background: #444;
+    color: #fff;
+    border: 4px solid #555;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+}
+
+
+
+input[type="text"], input[type="password"] , input[type = "file"], input[type ="imagen" ]{
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background: #444;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+}
+
+/* Botones */
 button {
-	margin-left: 100px;
-} 
+    background-color: #ffcc00;
+    color: #1e1e2e;
+    padding: 10px 15px;
+    border: 2px solid #ff6b6b;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Press Start 2P', cursive;
+    transition: transform 0.3s ease, background 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #ff6b6b;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* Errores */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Saludo */
+div.saludo {
+    width: 100%;
+    text-align: right;
+}
+
+/* Mensajes de error en el formulario */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}
+
+/* El contenedor principal tenga un fondo oscuro */
+.container {
+    background: #2e2e3e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Campos de entrada */
+.input-container {
+    margin-bottom: 10px;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    background: #444;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+}
