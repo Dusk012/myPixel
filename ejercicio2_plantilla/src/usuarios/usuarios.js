@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { ErrorDatos } from "../db.js";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
@@ -63,15 +64,16 @@ export class Usuario {
     }
 
 
-    static login(username, password) {
+    static async login(username, password) {
         let usuario = null;
         try {
             usuario = this.getUsuarioByUsername(username);
         } catch (e) {
             throw new UsuarioOPasswordNoValido(username, { cause: e });
         }
-        // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
-        if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
+
+        const passwordMatch = await bcrypt.compare(password, usuario.#password);
+        if ( ! passwordMatch ) throw new UsuarioOPasswordNoValido(username);
 
         return usuario;
     }
