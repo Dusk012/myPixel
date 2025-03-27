@@ -1,6 +1,7 @@
-import { body, validationResult } from 'express-validator';
+import { validationResult, matchedData } from 'express-validator';
 import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
+import { render } from '../utils/render.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -11,32 +12,41 @@ export function viewLogin(req, res) {
     });
 }
 
-export function doLogin(req, res) {
-    body('username').escape();
-    body('password').escape();
+export async function doLogin(req, res) {
+    const result = validationResult(req);
+    if (! result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return render(req, res, 'paginas/Usuarios/viewLogin', {
+            errores,
+            datos
+        });
+    }
     // Capturo las variables username y password
-    const username = req.body.username.trim();
-    const password = req.body.password.trim();
+    const username = req.body.username;
+    const password = req.body.password;
 
     try {
-        const usuario = Usuario.login(username, password);
-        req.session.login = true;
+        const usuario = await Usuario.login(username, password);
+       
         req.session.nombre = usuario.nombre;
-        req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
+        req.session.rol = usuario.rol;
 
-        return res.render('pagina', {
-            contenido: 'paginas/index',
-            session: req.session
-        });
+        res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
+        req.session.login = true;
+        return res.redirect('paginas/index');
 
     } catch (e) {
-        res.render('pagina', {
-            contenido: 'paginas/Usuarios/viewLogin',
-            session: req.session,
-            error: 'El usuario o contraseña no son válidos'
-        })
+        const datos = matchedData(req);
+        
+        render(req, res, 'paginas/Usuarios/viewLogin', {
+            error: 'El usuario o contraseña no son válidos',
+            datos,
+            errores: {}
+        });
     }
 }
+
 
 export function viewRegister(req, res) {
     let contenido = 'paginas/Usuarios/viewRegister';
@@ -83,24 +93,6 @@ export function doSubmit(req, res) {
     });
 }
 
-export const validateRegister = [
-    body('username')
-        .notEmpty().withMessage('El nombre de usuario es requerido')
-        .isLength({ min: 3 }).withMessage('El nombre de usuario debe tener al menos 3 caracteres'),
-    body('password')
-        .notEmpty().withMessage('La contraseña es requerida')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
-    body('confirmPassword')
-        .custom((value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error('Las contraseñas no coinciden');
-            }
-            return true;
-        }),
-    body('nombre')
-        .notEmpty().withMessage('El nombre es requerido')
-];
-
 export function doRegister(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -110,7 +102,7 @@ export function doRegister(req, res) {
             contenido: 'paginas/usuarios/viewRegister',
             session: req.session,
             errors: errorMessages, // Pasar todos los errores como un array
-            error: "Por favor. corrija los errores." // Mensaje general
+            error: "Por favor corrija los errores." // Mensaje general
         });
     }
 
@@ -136,13 +128,13 @@ export function doRegister(req, res) {
         });
     }
 }
-
+/*
 export const validateComment = [
     body('comentario')
         .notEmpty()
         .isLength({ max: 140 }).withMessage('El comentario no puede exceder los 140 caracteres.'),
 ];
-
+*/
 export function sendComment(req, res){
     const errors = validationResult(req);
 
