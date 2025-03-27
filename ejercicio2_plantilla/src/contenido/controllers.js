@@ -1,8 +1,6 @@
-import { validationResult, matchedData } from 'express-validator';
-import { Usuario, RolesEnum } from './usuarios.js';
-import usuariosRouter from './router.js';
+/*import { validationResult, matchedData } from 'express-validator';
+import controllersRouter from './router.js';
 import { render } from '../utils/render.js';
-
 
 export function noRegistrado(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
@@ -14,7 +12,7 @@ export function noRegistrado(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewForo(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -26,7 +24,7 @@ export function viewForo(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewDesafios(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -38,7 +36,7 @@ export function viewDesafios(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewShop(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -50,7 +48,7 @@ export function viewShop(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewProfile(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -62,7 +60,7 @@ export function viewProfile(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewSubmit(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -74,7 +72,7 @@ export function viewSubmit(req, res) {
         session: req.session,
         error: null
     });
-};
+}
 
 export function viewAdmin(req, res) {
     let contenido = 'paginas/noPermisos';
@@ -85,7 +83,7 @@ export function viewAdmin(req, res) {
         contenido,
         session: req.session
     });
-};
+}
 
 export function viewNoPermisos(req, res) {
     let contenido = 'paginas/Usuarios/noPermisos';
@@ -96,6 +94,4 @@ export function viewNoPermisos(req, res) {
         contenido,
         session: req.session
     });
-};
-
-export default contenidoRouter;
+}*/
