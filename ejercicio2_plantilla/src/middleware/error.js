@@ -1,3 +1,5 @@
+import { render } from '../utils/render.js';
+
 export function errorHandler (err, req, res, next) {
 
     if (res.headersSent) {
@@ -11,7 +13,7 @@ export function errorHandler (err, req, res, next) {
         statusCode = err.statusCode;
     }
 
-    // Comprobamossi el error tiene una propiedad que podamos usar como mensaje
+    // Comprobamos si el error tiene una propiedad que podamos usar como mensaje
     let message = 'Oops, ha ocurrido un error';
     if ('message' in err) {
         message = err.message;
@@ -35,7 +37,7 @@ export function errorHandler (err, req, res, next) {
         });
     }
     // Si es otro tipo de petición (e.g generada por el usuario) mostramos página de error
-    render(eq, res, 'paginas/error', {
+    render(req, res, 'paginas/error', {
         message
     });
 }

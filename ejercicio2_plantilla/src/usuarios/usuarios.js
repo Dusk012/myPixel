@@ -96,9 +96,8 @@ export class Usuario {
         return this.#id;
     }
 
-    set password(nuevoPassword) {
-        // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
-        this.#password = bcrypt.hashSync(nuevoPassword);
+    async cambiaPassword(nuevoPassword) {
+        this.#password = bcrypt.hashSync(nuevoPassword);    
     }
 
     get username() {

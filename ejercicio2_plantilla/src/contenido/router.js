@@ -6,7 +6,7 @@ import { noRegistrado, viewForo, viewDesafios, viewShop, viewProfile, viewSubmit
 
 const contenidoRouter = express.Router();
 
-contenidoRouter.get('/normal', noRegistrado());
+contenidoRouter.get('/index', noRegistrado());
 
 contenidoRouter.get('/foro', viewForo());
 
@@ -27,10 +27,10 @@ import express from 'express';
 
 const contenidoRouter = express.Router();
 
-contenidoRouter.get('/normal', (req, res) => {
+contenidoRouter.get('/index', (req, res) => {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {
-        contenido = 'paginas/Usuarios/normal';
+        contenido = 'paginas/index';
     }
     res.render('pagina', {
         contenido,

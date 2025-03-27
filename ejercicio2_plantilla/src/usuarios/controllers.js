@@ -22,23 +22,24 @@ export async function doLogin(req, res) {
             datos
         });
     }
-    // Capturo las variables username y password
+    // Capturamos las variables username y password
     const username = req.body.username;
     const password = req.body.password;
 
     try {
         const usuario = await Usuario.login(username, password);
-       
+        req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
-        req.session.login = true;
-        return res.redirect('paginas/index');
+        
+        return res.redirect('../contenido/index');
 
     } catch (e) {
         const datos = matchedData(req);
-        
+        req.log.warn("Problemas al hacer login del usuario '%s'", username);
+        req.log.debug('El usuario %s, no ha podido logarse: %s', username, e.message);
         render(req, res, 'paginas/Usuarios/viewLogin', {
             error: 'El usuario o contraseña no son válidos',
             datos,
