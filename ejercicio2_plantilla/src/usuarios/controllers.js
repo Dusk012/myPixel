@@ -5,10 +5,9 @@ import { render } from '../utils/render.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
+    render(req, res, contenido, {
+        datos: {},
+        errores: {}
     });
 }
 

@@ -5,8 +5,9 @@
                 <% if (locals.error) { %>
                     <p><strong><%= locals.error %></strong></p>
                 <% } %>
-                <div><label>Username:</label><input type="text" name="username" value="<%= datos.username %>" /><%- helpers.error(errores, 'username') %></div>
-                <div><label>Contraseña:</label><input type="password" name="password" /><%- helpers.error(errores, 'password') %></div>
+                <div><label>Username:</label><input type="text" name="username" value="<%=datos.username %>"><%- helpers.error(errores, 'username') %></div>
+                <p></p>
+                <div><label>Contraseña:</label><input type="password" name="password"><%- helpers.error(errores, 'password') %></div>
                 <div><button type="submit">Enviar</button></div>
             </fieldset>
         </form>

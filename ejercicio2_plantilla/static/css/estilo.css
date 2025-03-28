@@ -157,6 +157,10 @@ button:hover {
     margin-top: 5px;
 }
 
+span.error {
+	color: red;
+}
+
 /* Saludo */
 div.saludo {
     width: 100%;

@@ -2,22 +2,23 @@ import express from 'express';
 import { body} from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
 import { viewLogin, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment/*, validateComment*/ } from './controllers.js';
+import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
 
-usuariosRouter.get('/login', autenticado(null), viewLogin);
+usuariosRouter.get('/login', autenticado(null), asyncHandler(viewLogin));
 usuariosRouter.post('/login', autenticado(null, 'paginas/contenido/index'), 
     body('username', 'No puede ser vacío').trim().notEmpty(), 
     body('password', 'No puede ser vacío').trim().notEmpty(), 
-    doLogin);
-usuariosRouter.get('/logout', doLogout);
+    asyncHandler(doLogin));
+usuariosRouter.get('/logout', asyncHandler(doLogout));
 
-usuariosRouter.get('/submit', viewSubmit);
-usuariosRouter.post('/submit', doSubmit);
+usuariosRouter.get('/submit', asyncHandler(viewSubmit));
+usuariosRouter.post('/submit', asyncHandler(doSubmit));
 
-usuariosRouter.post('/comentar'/*, validateComment*/, sendComment);
+usuariosRouter.post('/comentar'/*, validateComment*/, asyncHandler(sendComment));
 
-usuariosRouter.get('/register', autenticado(null, '/paginas/contenido/index'), viewRegister);
+usuariosRouter.get('/register', autenticado(null, '/paginas/contenido/index'), asyncHandler(viewRegister));
 usuariosRouter.post('/register', 
     body('username', 'Sólo puede contener números y letras').trim().matches(/^[A-Z0-9]*$/i), 
     body('username', 'No puede ser vacío').trim().notEmpty(), 
@@ -26,6 +27,6 @@ usuariosRouter.post('/register',
     body('confirmPassword', 'La contraseña no coincide').custom((value, { req }) => {
     return value === req.body.password;
 })
-, doRegister);
+, asyncHandler(doRegister));
 
 export default usuariosRouter;
