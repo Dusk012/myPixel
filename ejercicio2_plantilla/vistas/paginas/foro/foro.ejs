@@ -118,38 +118,24 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Foro de Pixel Art</h1>
-        <div class="header-right">
-            <button class="button">Crear Foro</button>
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar...">
-                <img src="https://cdn-icons-png.flaticon.com/512/622/622669.png" alt="Lupa">
-            </div>
-        </div>
-    </div>
-    
-    <div class="container">
-        <div class="post">
-            <h3>Usuario1</h3>
-            <p>Este es mi nuevo post en el foro. ¡Miren esta foto!</p>
-            <img src="https://www.pixelstalk.net/wp-content/uploads/images6/Pixel-Art-Wallpaper-HD.png" alt="Imagen subida">
-            <div class="comment-section">
-                <div class="comment">Usuario2: ¡Genial foto!</div>
-                <div class="comment">Usuario3: Me encanta la vista.</div>
-            </div>
-            <button class="button forum-encargos">Foro Encargos</button>
-        </div>
-        
-        <div class="post">
-            <h3>Usuario4</h3>
-            <p>Hola a todos, comparto una nueva imagen.</p>
-            <img src="https://www.pixelstalk.net/wp-content/uploads/images1/Best-Pixel-Art-Backgrounds-HD.png" alt="Imagen subida">
-            <div class="comment-section">
-                <div class="comment">Usuario5: ¡Muy bonito!</div>
-            </div>
-            <button class="button forum-encargos">Foro Encargos</button>
-        </div>
-    </div>
+    <h1>Foro</h1>
+    <% if (posts && posts.length > 0) { %>
+        <ul>
+         <% posts.forEach(post => { %>
+            <li>
+                <a href="/foro/thread/<%= post.id %>">
+                    <strong><%= post.content %></strong>
+                </a>
+                <p>Publicado por <%= post.userId %> el <%= post.date %></p>
+            </li>
+        <% }) %>
+    </ul>
+    <% } else { %>
+       <p>No hay posts disponibles.</p>
+    <% } %>
+
+
+    <a href="/foro/crearPost">Crear nuevo post</a>
+
 </body>
 </html>

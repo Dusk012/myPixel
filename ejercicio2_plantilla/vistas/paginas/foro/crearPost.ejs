@@ -1,0 +1,15 @@
+<body>
+    <h1>Crear un nuevo Post</h1>
+
+    <% if (error) { %>
+        <div style="color: red;"><%= error %></div>
+    <% } %>
+
+    <form action="/foro/createPost" method="POST">
+        <label for="content">Contenido:</label><br>
+        <textarea name="content" id="content" rows="4" required></textarea><br>
+        <button type="submit">Crear Post</button>
+    </form>
+
+    <a href="/foro">Volver al foro</a>
+</body>
