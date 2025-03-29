@@ -1,42 +1,52 @@
 <% function mostrarSaludo(session) { %>
-    <div class="saludo">
-    <% if (session.login) { %>
-        <h1>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></h1>
-        <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
-        
-        <p>📸 Selecciona tu foto de perfil:</p>
-        <div class="perfil-opciones" style="display: flex; gap: 1px; align-items: center;">
-            <button onclick="seleccionarFoto('Perfil1.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                <img src="../img/Perfil1.png" width="150" alt="Ícono de enlace">
-            </button>
-            <button onclick="seleccionarFoto('Perfil2.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                <img src="../img/Perfil2.png" width="150" alt="Ícono de enlace">
-            </button>
-            <button onclick="seleccionarFoto('Perfil3.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                <img src="../img/Perfil3.png" width="150" alt="Ícono de enlace">
-            </button>
-            <button onclick="seleccionarFoto('Perfil4.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                <img src="../img/Perfil4.png" width="150" alt="Ícono de enlace">
-            </button>
-            <button onclick="seleccionarFoto('Perfil5.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                <img src="../img/Perfil5.png" width="150" alt="Ícono de enlace">
-            </button>
-        </div>
-        <p id="foto-seleccionada">No has seleccionado ninguna foto.</p>
+    <div class="saludo" style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%;">
+        <% if (session.login) { %>
+            <!-- Foto de perfil seleccionada -->
+            <div id="foto-perfil-seleccionada" style="width: 70px; height: 70px; border: 2px solid rgb(255, 255, 255); border-radius: 50%; overflow: hidden;">
+                <img src="../img/Perfil1.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
 
-        <img src="/static/img/Perfil4.png">
-        
-        <script>
-            function seleccionarFoto(foto) {
-                document.getElementById('foto-seleccionada').innerText = `Has seleccionado: ${foto}`;
-            }
-        </script>
-        
-        
-    <% } else { %>
-        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
-    <% } %>
+            <!-- Texto de bienvenida -->
+            <div style="text-align: right;">
+                <h1>Bienvenido, <%= session.nombre %></h1>
+                <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
+            </div>
+        <% } else { %>
+            <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+        <% } %>
     </div>
+
+    <% if (session.login) { %>
+        <div style="text-align: right; margin-top: 1px;">
+            <p>📸 Selecciona tu foto de perfil:</p>
+            <div class="perfil-opciones" style="display: flex; align-items: center; justify-content: flex-end;">
+                <button onclick="seleccionarFoto('Perfil1.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                    <img src="../img/Perfil1.png" width="120" alt="Ícono de enlace" style="border: 2px solid rgb(255, 255, 255); border-radius: 50%;">
+                </button>
+                <button onclick="seleccionarFoto('Perfil2.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                    <img src="../img/Perfil2.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                </button>
+                <button onclick="seleccionarFoto('Perfil3.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                    <img src="../img/Perfil3.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                </button>
+                <button onclick="seleccionarFoto('Perfil4.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                    <img src="../img/Perfil4.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                </button>
+                <button onclick="seleccionarFoto('Perfil5.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                    <img src="../img/Perfil5.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                </button>
+            </div>
+            <p id="foto-seleccionada" style="margin-top: 10px;"></p>
+        </div>
+    <% } %>
+
+    <script>
+        function seleccionarFoto(foto) {
+            document.getElementById('foto-seleccionada').innerText = `Has seleccionado: ${foto}`;
+            const fotoPerfilSeleccionada = document.getElementById('foto-perfil-seleccionada').querySelector('img');
+            fotoPerfilSeleccionada.src = `../img/${foto}`;
+        }
+    </script>
 <% } %>
 
 <body>
