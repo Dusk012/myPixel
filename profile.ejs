@@ -1,0 +1,45 @@
+<% function mostrarSaludo(session) { %>
+    <div class="saludo">
+    <% if (session.login) { %>
+        <h1>Bienvenido, <%= session.nombre %> | <a href="/usuarios/logout">Logout</a></h1>
+        <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
+        
+        <p>📸 Selecciona tu foto de perfil:</p>
+        <div class="perfil-opciones" style="display: flex; gap: 1px; align-items: center;">
+            <button onclick="seleccionarFoto('Perfil1.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                <img src="../img/Perfil1.png" width="150" alt="Ícono de enlace">
+            </button>
+            <button onclick="seleccionarFoto('Perfil2.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                <img src="../img/Perfil2.png" width="150" alt="Ícono de enlace">
+            </button>
+            <button onclick="seleccionarFoto('Perfil3.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                <img src="../img/Perfil3.png" width="150" alt="Ícono de enlace">
+            </button>
+            <button onclick="seleccionarFoto('Perfil4.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                <img src="../img/Perfil4.png" width="150" alt="Ícono de enlace">
+            </button>
+            <button onclick="seleccionarFoto('Perfil5.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                <img src="../img/Perfil5.png" width="150" alt="Ícono de enlace">
+            </button>
+        </div>
+        <p id="foto-seleccionada">No has seleccionado ninguna foto.</p>
+
+        <img src="/static/img/Perfil4.png">
+        
+        <script>
+            function seleccionarFoto(foto) {
+                document.getElementById('foto-seleccionada').innerText = `Has seleccionado: ${foto}`;
+            }
+        </script>
+        
+        
+    <% } else { %>
+        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+    <% } %>
+    </div>
+<% } %>
+
+<body>
+    <!-- Llamada a la función mostrarSaludo -->
+    <%= mostrarSaludo(session) %>
+</body>
