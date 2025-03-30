@@ -34,8 +34,7 @@ export async function doLogin(req, res) {
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         req.session.login = true;
-        return res.redirect('paginas/index');
-
+        return res.redirect('/')
     } catch (e) {
         const datos = matchedData(req);
         

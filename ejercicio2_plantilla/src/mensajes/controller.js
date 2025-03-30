@@ -1,5 +1,5 @@
 import { validationResult, matchedData } from 'express-validator';
-import { Forum, ForumMessage, MessageType } from '../models/mensajeForo.js';
+import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
@@ -8,13 +8,13 @@ const forum = new Forum();
 export function viewForum(req, res) {
     try {
         const posts = forum.getOriginalPosts();
-        render(req, res, 'paginas/foro/foro', {
+        return render(req, res, 'paginas/foro/foro', {
             posts,
             error: null,
             session: req.session
         });
     } catch (e) {
-        render(req, res, 'paginas/foro/foro', {
+        return render(req, res, 'paginas/foro/foro', {
             error: 'Error al cargar el foro',
             session: req.session
         });
@@ -30,14 +30,14 @@ export function viewThread(req, res) {
             throw new Error('Post no encontrado');
         }
 
-        render(req, res, 'paginas/foro/hilo', {
+        return render(req, res, 'paginas/foro/hilo', {
             post,
             replies: post.replies,
             error: null,
             session: req.session
         });
     } catch (e) {
-        render(req, res, 'paginas/foro/hilo', {
+        return render(req, res, 'paginas/foro/hilo', {
             error: e.message,
             session: req.session
         });
@@ -45,7 +45,7 @@ export function viewThread(req, res) {
 }
 
 export function viewCreatePost(req, res) {
-    render(req, res, 'paginas/foro/crearPost', {
+    return render(req, res, 'paginas/foro/crearPost', {
         error: null,
         datos: {},
         errores: {},
@@ -62,13 +62,13 @@ export function viewStats(req, res) {
             latestPost: posts.length > 0 ? posts[0] : null
         };
 
-        render(req, res, 'paginas/foro/estadisticas', {
+        return render(req, res, 'paginas/foro/estadisticas', {
             stats,
             error: null,
             session: req.session
         });
     } catch (e) {
-        render(req, res, 'paginas/foro/estadisticas', {
+        return render(req, res, 'paginas/foro/estadisticas', {
             error: 'Error al calcular estadísticas',
             session: req.session
         });
@@ -107,7 +107,7 @@ export async function createPost(req, res) {
         res.setFlash('Post creado exitosamente');
         res.redirect(`/foro/thread/${post.id}`);
     } catch (e) {
-        render(req, res, 'paginas/foro/crearPost', {
+        return render(req, res, 'paginas/foro/crearPost', {
             error: e.message,
             datos: req.body,
             errores: {},
@@ -239,7 +239,7 @@ export function sendComment(req, res) {
         res.setFlash('Comentario enviado exitosamente');
         res.redirect('back');
     } catch (e) {
-        render(req, res, 'paginas/foro/foro', {
+        return render(req, res, 'paginas/foro/foro', {
             error: e.message,
             session: req.session
         });

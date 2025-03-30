@@ -8,6 +8,7 @@ import pinoHttp  from 'pino-http';
 const pinoMiddleware = pinoHttp(config.logger.http(logger));
 import { flashMessages } from './middleware/flash.js';
 import { errorHandler } from './middleware/error.js';
+import mensajesRouter from './mensajes/router.js';
 
 export const app = express();
 
@@ -30,4 +31,5 @@ app.get('/', (req, res) => {
 })
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
+app.use('/mensajes', mensajesRouter);
 app.use(errorHandler);
