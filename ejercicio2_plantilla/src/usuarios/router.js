@@ -1,18 +1,32 @@
 import express from 'express';
-
-import { viewLogin, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, validateRegister } from './controllers.js';
-
+import { body} from 'express-validator';
+import { autenticado } from '../middleware/auth.js';
+import { viewLogin, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment/*, validateComment*/ } from './controllers.js';
+import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
 
-usuariosRouter.get('/login', viewLogin);
-usuariosRouter.post('/login', doLogin);
-usuariosRouter.get('/logout', doLogout);
+usuariosRouter.get('/login', autenticado(null), asyncHandler(viewLogin));
+usuariosRouter.post('/login', autenticado(null, 'paginas/contenido/index'), 
+    body('username', 'No puede ser vacío').trim().notEmpty(), 
+    body('password', 'No puede ser vacío').trim().notEmpty(), 
+    asyncHandler(doLogin));
+usuariosRouter.get('/logout', asyncHandler(doLogout));
 
-usuariosRouter.get('/submit', viewSubmit);
-usuariosRouter.post('/submit', doSubmit);
+usuariosRouter.get('/submit', asyncHandler(viewSubmit));
+usuariosRouter.post('/submit', asyncHandler(doSubmit));
 
-usuariosRouter.get('/register', viewRegister);
-usuariosRouter.post('/register', validateRegister, doRegister);
+usuariosRouter.post('/comentar'/*, validateComment*/, asyncHandler(sendComment));
+
+usuariosRouter.get('/register', autenticado(null, '/paginas/contenido/index'), asyncHandler(viewRegister));
+usuariosRouter.post('/register', 
+    body('username', 'Sólo puede contener números y letras').trim().matches(/^[A-Z0-9]*$/i), 
+    body('username', 'No puede ser vacío').trim().notEmpty(), 
+    body('nombre', 'No puede ser vacío').trim().notEmpty(), 
+    body('password', 'La contraseña no tiene entre 6 y 10 caracteres').trim().isLength({ min: 6, max: 10 }), 
+    body('confirmPassword', 'La contraseña no coincide').custom((value, { req }) => {
+    return value === req.body.password;
+})
+, asyncHandler(doRegister));
 
 export default usuariosRouter;

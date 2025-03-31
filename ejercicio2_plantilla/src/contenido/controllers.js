@@ -1,45 +1,20 @@
-/*import express from 'express';
-import { body} from 'express-validator';
+/*import { validationResult, matchedData } from 'express-validator';
+import controllersRouter from './router.js';
+import { render } from '../utils/render.js';
 
-import { noRegistrado, viewForo, viewDesafios, viewShop, viewProfile, viewSubmit, viewNoPermisos, viewAdmin } from './controllers.js';
-
-
-const contenidoRouter = express.Router();
-
-contenidoRouter.get('/index', noRegistrado());
-
-contenidoRouter.get('/foro', viewForo());
-
-contenidoRouter.get('/desafios', viewDesafios());
-
-contenidoRouter.get('/tienda', viewShop());
-
-contenidoRouter.get('/perfil', viewProfile());
-
-contenidoRouter.get('/panel', viewSubmit());
-
-contenidoRouter.get('/coordinador', viewNoPermisos());
-
-contenidoRouter.get('/admin', viewAdmin());
-
-export default contenidoRouter;*/
-import express from 'express';
-
-const contenidoRouter = express.Router();
-
-contenidoRouter.get('/index', (req, res) => {
+export function noRegistrado(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {
-        contenido = 'paginas/index';
+        contenido = 'paginas/Usuarios/normal';
     }
     res.render('pagina', {
         contenido,
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/foro', (req, res) => {
+export function viewForo(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
         contenido = 'paginas/foro/foro';
@@ -49,9 +24,9 @@ contenidoRouter.get('/foro', (req, res) => {
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/desafios', (req, res) => {
+export function viewDesafios(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
         contenido = 'paginas/desafios/desafios';
@@ -61,9 +36,9 @@ contenidoRouter.get('/desafios', (req, res) => {
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/tienda', (req, res) => {
+export function viewShop(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
         contenido = 'paginas/tienda/shop';
@@ -73,9 +48,9 @@ contenidoRouter.get('/tienda', (req, res) => {
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/perfil', (req, res) => {
+export function viewProfile(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
         contenido = 'paginas/Usuarios/profile';
@@ -85,9 +60,9 @@ contenidoRouter.get('/perfil', (req, res) => {
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/panel', (req, res) => {
+export function viewSubmit(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
     if (req.session.login) {
         contenido = 'paginas/imagenes/submit';
@@ -97,9 +72,9 @@ contenidoRouter.get('/panel', (req, res) => {
         session: req.session,
         error: null
     });
-});
+}
 
-contenidoRouter.get('/coordinador', (req, res) => {
+export function viewAdmin(req, res) {
     let contenido = 'paginas/noPermisos';
     if (req.session.esAdmin) {
         contenido = 'paginas/admin';
@@ -108,9 +83,9 @@ contenidoRouter.get('/coordinador', (req, res) => {
         contenido,
         session: req.session
     });
-});
+}
 
-contenidoRouter.get('/admin', (req, res) => {
+export function viewNoPermisos(req, res) {
     let contenido = 'paginas/Usuarios/noPermisos';
     if (req.session.esAdmin) {
         contenido = 'paginas/Usuarios/admin';
@@ -119,6 +94,4 @@ contenidoRouter.get('/admin', (req, res) => {
         contenido,
         session: req.session
     });
-});
-
-export default contenidoRouter;
+}*/
