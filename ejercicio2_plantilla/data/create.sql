@@ -13,23 +13,24 @@ CREATE TABLE "Usuarios" (
 );
 
 CREATE TABLE "Foros" (
-	"id"	INTEGER NOT NULL,
-	"titulo"	INTEGER NOT NULL,
-	"descripcion"	INTEGER,
-	"estado"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
-)
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "titulo" TEXT NOT NULL,
+    "descripcion" TEXT,
+    "estado" TEXT,
+    "id_usuario" INTEGER NOT NULL,
+    FOREIGN KEY ("id_usuario") REFERENCES "Usuarios"("id")
+);
 
-CREATE TABLE Fotos (
-    id          INTEGER NOT NULL,
-    nombre      TEXT    NOT NULL,
-    descripcion TEXT,
-    fecha       TEXT,
-    puntuacion  INTEGER,
-    estado      TEXT,
-    id_usuario  INTEGER NOT NULL,
-    id_foro     INTEGER NOT NULL,
-    contenido   TEXT    NOT NULL,
+CREATE TABLE "Fotos" (
+    "id"          INTEGER NOT NULL,
+    "nombre"      TEXT    NOT NULL,
+    "descripcion" TEXT,
+    "fecha"       TEXT,
+    "puntuacion"  INTEGER,
+    "estado"      TEXT,
+    "id_usuario"  INTEGER NOT NULL,
+    "id_foro"     INTEGER NOT NULL,
+    "contenido"   TEXT    NOT NULL,
     PRIMARY KEY (id AUTOINCREMENT),
     FOREIGN KEY (id_foro) REFERENCES Foros (id),
     FOREIGN KEY (id_usuario) REFERENCES Usuarios (id) 
