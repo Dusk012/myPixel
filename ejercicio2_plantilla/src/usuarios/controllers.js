@@ -50,12 +50,52 @@ export async function doLogin(req, res) {
 
 export function viewRegister(req, res) {
     let contenido = 'paginas/Usuarios/viewRegister';
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
+    render(req, res, contenido, {
+        datos: {},
+        errores: {}
     });
 }
+
+export async function doRegister(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
+        const datos = matchedData(req);
+        let contenido = 'paginas/usuarios/viewRegister';
+        render(req, res, contenido, {
+            errors: errorMessages, // Pasar todos los errores como un array
+            error: "Por favor corrija los errores.", // Mensaje general
+            errores: {},
+            datos
+        });
+    }
+
+    const { username, password, confirmPassword, nombre } = req.body;
+
+    try {
+        const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
+        req.session.login = true;
+        req.session.nombre = usuario.nombre;
+        req.session.rol = usuario.rol;
+
+        res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
+        
+        return res.redirect('../contenido/index');
+            
+    } catch (e) {
+        const datos = matchedData(req);
+        let error = 'Error al registrar el usuario';
+        if (e.name === 'UsuarioYaExiste') {
+            error = 'El nombre de usuario ya está en uso';
+        }
+        render(req, res, 'paginas/usuarios/viewRegister', {
+            datos,
+            error,
+            errores: {}
+        });
+    }
+}
+
 
 export function doLogout(req, res, next) {
 
@@ -93,41 +133,7 @@ export function doSubmit(req, res) {
     });
 }
 
-export function doRegister(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
 
-        return res.render('pagina', {
-            contenido: 'paginas/usuarios/viewRegister',
-            session: req.session,
-            errors: errorMessages, // Pasar todos los errores como un array
-            error: "Por favor corrija los errores." // Mensaje general
-        });
-    }
-
-    const { username, password, confirmPassword, nombre } = req.body;
-
-    try {
-        const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
-        const error = null;
-        res.render('pagina', {
-            contenido: 'paginas/usuarios/viewLogin',
-            session: req.session,
-            error});
-            
-    } catch (e) {
-        let error = 'Error al registrar el usuario';
-        if (e.name === 'UsuarioYaExiste') {
-            error = 'El nombre de usuario ya está en uso';
-        }
-        res.render('pagina', {
-            contenido: 'paginas/usuarios/viewRegister',
-            session: req.session,
-            error
-        });
-    }
-}
 /*
 export const validateComment = [
     body('comentario')
