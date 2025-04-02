@@ -29,12 +29,13 @@ export class Foto {
             const { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido } = foto;
             const datos = { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido };
             result = this.#insertStmt.run(datos);
+        console.log("insert salido");
             foto.id = result.lastInsertRowid;
         } catch (e) {
             if (e.code === 'SQLITE_CONSTRAINT') {
                 throw new FotoYaExiste(foto.#nombre);
             }
-            throw new ErrorDatosFoto('No se ha insertado la foto', { cause: e });
+            throw new ErrorDatosFoto('No se ha insertado la foto' + e, { cause: e });
         }
         return foto;
     }
@@ -74,8 +75,7 @@ export class Foto {
     static registrar(nombre, descripcion, imagen, id_usuario, id_foro) {
         
             // Crear una nueva instancia
-        console.log("paso por aquiiiiiiii");
-            const nuevaFoto = new Foto(id, nombre, descripcion, new Date().toISOString(), 0, 'Visible', id_usuario, id_foro, imagen);
+            const nuevaFoto = new Foto(null, nombre, descripcion, new Date().toISOString(), 0, 'Visible', "1", id_foro, imagen);
             // Persistir el usuario en la base de datos
             return nuevaFoto.persist();
     }
@@ -91,7 +91,7 @@ export class FotoNoEncontrada extends Error {
 export class ErrorDatosFoto extends Error {
     constructor(message, options) {
         super(message, options);
-        this.name = 'ErrorDatos';
+        this.name = 'Error en los datos: ' + message + " " + options;
     }
 }
 

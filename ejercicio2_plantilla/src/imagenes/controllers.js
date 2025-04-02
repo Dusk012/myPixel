@@ -41,17 +41,20 @@ export async function doSubmit(req, res) {
 
     } catch (e) {
         const datos = matchedData(req);
-        let error = 'Error al subir la imagen';
+        let error = 'Error al subir la imagen: ' + e;
         if (e.name === '') {
             error = 'El nombre de la imagen ya está en uso';
         }
         render(req, res, 'paginas/imagenes/submit', {
-            error: 'Existe un problema con la subida de tu imagen',
+            error,
             datos,
             errores: {}
         });
     }
 
-    res.sendFile(join(config.uploads, req.params.id));
+    
 }
 
+export function viewImagen(request, response) {
+        response.sendFile(join(config.uploads, request.params.id));
+    }
