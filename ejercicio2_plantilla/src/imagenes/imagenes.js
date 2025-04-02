@@ -1,26 +1,29 @@
+import { ErrorDatos } from "../db.js";
+
 export class Foto {
-    static #getByIdStmt = null;
+    static #getByNombreStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
 
     static initStatements(db) {
-        if (this.#getByIdStmt !== null) return;
+        if (this.#getByNombreStmt !== null) return;
 
-        this.#getByIdStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
+        this.#getByNombreStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
     }
 
     static getFotoById(id) {
-        const foto = this.#getByIdStmt.get({ id });
+        const foto = this.#getByNombreStmt.get({ id });
         if (!foto) throw new FotoNoEncontrada(id);
 
         return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
     }
 
     static #insert(foto) {
+        console.log("insert entrado");
         let result = null;
         try {
             const { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido } = foto;
@@ -28,7 +31,10 @@ export class Foto {
             result = this.#insertStmt.run(datos);
             foto.id = result.lastInsertRowid;
         } catch (e) {
-            throw new ErrorDatos('No se ha insertado la foto', { cause: e });
+            if (e.code === 'SQLITE_CONSTRAINT') {
+                throw new FotoYaExiste(foto.#nombre);
+            }
+            throw new ErrorDatosFoto('No se ha insertado la foto', { cause: e });
         }
         return foto;
     }
@@ -46,7 +52,9 @@ export class Foto {
         if (result.changes === 0) throw new FotoNoEncontrada(id);
     }
 
-    constructor(id, nombre, descripcion, fecha, puntuacion = 0, estado = 'Visible', id_usuario, id_foro, contenido) {
+    #nombre;
+
+    constructor(id, nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -62,6 +70,15 @@ export class Foto {
         if (this.id === null) return Foto.#insert(this);
         return Foto.#update(this);
     }
+
+    static registrar(nombre, descripcion, imagen, id_usuario, id_foro) {
+        
+            // Crear una nueva instancia
+        console.log("paso por aquiiiiiiii");
+            const nuevaFoto = new Foto(id, nombre, descripcion, new Date().toISOString(), 0, 'Visible', id_usuario, id_foro, imagen);
+            // Persistir el usuario en la base de datos
+            return nuevaFoto.persist();
+    }
 }
 
 export class FotoNoEncontrada extends Error {
@@ -71,9 +88,17 @@ export class FotoNoEncontrada extends Error {
     }
 }
 
-export class ErrorDatos extends Error {
+export class ErrorDatosFoto extends Error {
     constructor(message, options) {
         super(message, options);
         this.name = 'ErrorDatos';
+    }
+}
+
+export class FotoYaExiste extends Error {
+    
+    constructor(nombre, options) {
+        super(`Foto ya existe: ${nombre}`, options);
+        this.name = 'FotoYaExiste';
     }
 }

@@ -87,18 +87,6 @@ contenidoRouter.get('/perfil', (req, res) => {
     });
 });
 
-contenidoRouter.get('/panel', (req, res) => {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/imagenes/submit';
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
-});
-
 contenidoRouter.get('/coordinador', (req, res) => {
     let contenido = 'paginas/noPermisos';
     if (req.session.esAdmin) {

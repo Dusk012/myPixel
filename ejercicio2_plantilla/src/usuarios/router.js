@@ -1,7 +1,7 @@
 import express from 'express';
 import { body} from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
-import { viewLogin, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment/*, validateComment*/ } from './controllers.js';
+import { viewLogin, doLogin, doLogout, viewRegister, doRegister, sendComment/*, validateComment*/ } from './controllers.js';
 import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
@@ -12,9 +12,6 @@ usuariosRouter.post('/login', autenticado(null, 'paginas/contenido/index'),
     body('password', 'No puede ser vacío').trim().notEmpty(), 
     asyncHandler(doLogin));
 usuariosRouter.get('/logout', asyncHandler(doLogout));
-
-usuariosRouter.get('/submit', asyncHandler(viewSubmit));
-usuariosRouter.post('/submit', asyncHandler(doSubmit));
 
 usuariosRouter.post('/comentar'/*, validateComment*/, asyncHandler(sendComment));
 

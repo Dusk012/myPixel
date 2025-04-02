@@ -112,28 +112,6 @@ export function doLogout(req, res, next) {
 }
 
 
-export function viewSubmit(req, res) {
-    let contenido = 'paginas/Imagenes/submit';
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        mensaje: null
-    });
-}
-
-export function doSubmit(req, res) {
-    let contenido = 'paginas/index', mensaje = null;
-
-    const { imagen } = req.body;
-    
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        mensaje: "La imagen ha sido subida con éxito."
-    });
-}
-
-
 /*
 export const validateComment = [
     body('comentario')

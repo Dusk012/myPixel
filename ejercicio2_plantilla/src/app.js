@@ -2,6 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
+import imagenesRouter from './imagenes/router.js';
 import contenidoRouter from './contenido/router.js';
 import { logger } from './logger.js';
 import pinoHttp  from 'pino-http';
@@ -29,5 +30,6 @@ app.get('/', (req, res) => {
     res.render('pagina', params);
 })
 app.use('/usuarios', usuariosRouter);
+app.use('/imagenes', imagenesRouter);
 app.use('/contenido', contenidoRouter);
 app.use(errorHandler);
