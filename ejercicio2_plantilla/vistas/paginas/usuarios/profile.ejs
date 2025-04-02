@@ -3,7 +3,7 @@
         <% if (session.login) { %>
             <!-- Foto de perfil seleccionada -->
             <div id="foto-perfil-seleccionada" style="width: 70px; height: 70px; border: 2px solid rgb(255, 255, 255); border-radius: 50%; overflow: hidden;">
-                <img src="../img/Perfil1.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="../img/Perfil<%= session.foto_perfil%>.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
 
             <!-- Texto de bienvenida -->
@@ -42,7 +42,11 @@
 
     <script>
         function seleccionarFoto(foto) {
-            document.getElementById('foto-seleccionada').innerText = `Has seleccionado: ${foto}`;
+            // extraer el num del perfil del nombre del archivo ("Perfil1.png" se convertiria en "1")
+            const numeroPerfil = foto.match(/\d+/)[0];
+
+            document.getElementById('foto-seleccionada').innerText = `Has seleccionado Perfil ${numeroPerfil}`;
+ 
             const fotoPerfilSeleccionada = document.getElementById('foto-perfil-seleccionada').querySelector('img');
             fotoPerfilSeleccionada.src = `../img/${foto}`;
         }
