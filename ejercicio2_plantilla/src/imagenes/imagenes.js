@@ -35,7 +35,7 @@ export class Foto {
             if (e.code === 'SQLITE_CONSTRAINT') {
                 throw new FotoYaExiste(foto.#nombre);
             }
-            throw new ErrorDatosFoto('No se ha insertado la foto' + e, { cause: e });
+            throw new ErrorDatosFoto('No se ha insertado la foto: ' + e, { cause: e });
         }
         return foto;
     }
@@ -91,7 +91,7 @@ export class FotoNoEncontrada extends Error {
 export class ErrorDatosFoto extends Error {
     constructor(message, options) {
         super(message, options);
-        this.name = 'Error en los datos: ' + message + " " + options;
+        this.name = 'Error en los datos: ' + message + "; " + options;
     }
 }
 
