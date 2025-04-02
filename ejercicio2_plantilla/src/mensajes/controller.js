@@ -7,6 +7,7 @@ const forum = new Forum();
 
 export function viewForum(req, res) {
     try {
+        console.log(render);
         const posts = forum.getOriginalPosts();
         return render(req, res, 'paginas/foro/foro', {
             posts,
@@ -23,16 +24,15 @@ export function viewForum(req, res) {
 
 export function viewThread(req, res) {
     try {
-        const messageId = parseInt(req.params.id);
-        const post = forum.getMessage(messageId);
-        
-        if (!post || post.type !== MessageType.ORIGINAL) {
-            throw new Error('Post no encontrado');
+        console.log(render);
+        const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
+        const my_forum = forum.dame_id(forumId);
+        if (!my_forum) {
+            throw new Error('Foro no encontrado');
         }
 
         return render(req, res, 'paginas/foro/hilo', {
-            post,
-            replies: post.replies,
+            forum: my_forum,
             error: null,
             session: req.session
         });
@@ -43,6 +43,7 @@ export function viewThread(req, res) {
         });
     }
 }
+
 
 export function viewCreatePost(req, res) {
     return render(req, res, 'paginas/foro/crearPost', {
@@ -89,23 +90,22 @@ export async function createPost(req, res) {
     }
 
     try {
-        const { content } = req.body;
+        const { title, desc, content } = req.body;
         const userId = req.session.usuarioId; // Asumimos que el usuario está en sesión
         
         // Generar ID (en producción usaría la BD)
         const id = Date.now(); 
         const date = new Date().toISOString();
         
-        const post = forum.createPost(
-            id,
-            1, // forumId (podría ser dinámico para múltiples foros)
-            content,
-            date,
-            userId
+        // Crear un nuevo foro y obtener la referencia a ese foro
+        const newForum = forum.createForum(
+            title,
+            desc,
+            'Activo'
         );
 
         res.setFlash('Post creado exitosamente');
-        res.redirect(`/foro/thread/${post.id}`);
+        res.redirect(`/mensajes/thread/${newForum.id}`);
     } catch (e) {
         return render(req, res, 'paginas/foro/crearPost', {
             error: e.message,

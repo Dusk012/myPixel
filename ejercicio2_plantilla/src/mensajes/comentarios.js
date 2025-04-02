@@ -13,8 +13,8 @@ export class ForumMessage {
     static #deleteStmt = null;
 
     static initStatements(db) {
-        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id, forumId, content, date, userId) VALUES (@id, @forumId, @content, @date, @userId)');
-        this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario) VALUES (@forumId, @content, @date, @userId)');
+        this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');        
     }
 
     static #insert(comentario) {
@@ -30,7 +30,7 @@ export class ForumMessage {
     
                 comentario.#id = result.lastInsertRowid;
             } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
-                throw new ErrorDatos('No se ha podido comentar', { cause: e });
+                throw new Error('No se ha podido comentar', { cause: e });
             }
             return comentario;
     }
@@ -48,7 +48,7 @@ export class ForumMessage {
 
             result = this.#deleteStmt.run(datos);
         } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
-            throw new ErrorDatos('No se ha podido eliminar el comentario', { cause: e });
+            throw new Error('No se ha podido eliminar el comentario', { cause: e });
         }
         return comentario;
 }
@@ -197,6 +197,7 @@ export class Forum {
 
     
     static #getByTituloStmt = null;
+    static #getByIdStmt = null;
     static #insertStmt = null;
     static #deleteStmt = null;
     #messages = new Map(); // Almacena todos los mensajes por ID
@@ -206,7 +207,8 @@ export class Forum {
         if (this.#getByTituloStmt !== null) return;
 
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
-        this.#insertStmt = db.prepare('INSERT INTO Foros(id, titulo, descripcion, estado) VALUES (@id, @titulo, @descripcion, @estado)');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Foros WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
 
@@ -218,7 +220,7 @@ export class Forum {
             const { id, descripcion, estado } = forum;
     
             return new Forum(id, titulo, descripcion, estado);
-        }
+    }
     
         static #insert(forum) {
             let result = null;
@@ -232,7 +234,8 @@ export class Forum {
     
                 forum.#id = result.lastInsertRowid;
             } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
-                throw new ErrorDatos('No se ha podido crear el foro', { cause: e });
+                console.log(e);
+                throw new Error('No se ha podido crear el foro', { cause: e });
             }
             return forum;
         }
@@ -248,9 +251,21 @@ export class Forum {
                 result = this.#deleteStmt.run(datos);
     
             } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
-                throw new ErrorDatos('No se ha podido eliminar el foro', { cause: e });
+                throw new Error('No se ha podido eliminar el foro', { cause: e });
             }
             return forum;
+        }
+
+        static getForumById(id) {
+            console.log("Entro en getForumById")
+            const forum = this.#getByIdStmt.get({ id });
+            if (!forum) throw new Error('Foro no encontrado');
+            return new Forum(forum.id, forum.titulo, forum.descripcion, forum.estado);
+        }
+
+        dame_id(id){
+            console.log("Entre a dame_id");
+            return Forum.getForumById(id);
         }
 
     /**
@@ -326,6 +341,26 @@ export class Forum {
         
         return true;
     }
+
+
+    createForum(titulo, descripcion, estado) {
+        // Validación básica de los parámetros
+        if (!titulo || !descripcion || !estado) {
+            if(!estado && titulo && descripcion) console.log("Me falta estado, pero todo lo demas esta OK.")
+            throw new Error("Todos los campos son obligatorios");
+        }
+
+        // Crear una nueva instancia de Forum
+        const foro = new Forum(titulo, descripcion, estado);
+
+        // Llamar al método persist() para guardar el foro en la base de datos
+        foro.persist();
+
+        // Retornar el foro creado
+        return foro;
+    }
+
+    
     
 
     /**
@@ -394,5 +429,12 @@ export class ForoNoEncontrado extends Error {
     constructor(titulo, options) {
         super(`Foro no encontrado: ${titulo}`, options);
         this.name = 'ForoNoEncontrado';
+    }
+}
+
+export class ForoNoEncontradoPorID extends Error {
+    constructor(id, options) {
+        super(`La ID no corresponde con ningun foro: ${id}`, options);
+        this.name = 'ForoNoEncontradoID';
     }
 }

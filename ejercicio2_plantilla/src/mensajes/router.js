@@ -6,7 +6,7 @@ import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createRep
 const mensajesRouter = express.Router(); // Colocamos esto primero
 
 mensajesRouter.get('/foro', viewForum);
-mensajesRouter.get('/thread', viewThread);
+mensajesRouter.get('/thread/:id', viewThread);
 mensajesRouter.get('/post', viewCreatePost);
 mensajesRouter.get('/stats', viewStats);
 
