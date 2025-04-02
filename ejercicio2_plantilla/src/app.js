@@ -1,3 +1,4 @@
+
 import express from 'express';
 import session from 'express-session';
 import { config } from './config.js';
@@ -28,6 +29,10 @@ app.get('/', (req, res) => {
         session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
     }
     res.render('pagina', params);
+    res.render('pagina', {
+        contenido: 'paginas/index',
+        session: req.session
+    });
 })
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);

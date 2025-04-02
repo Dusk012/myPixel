@@ -7,6 +7,5 @@ export function render(req, res, contenido, params) {
         helpers: {
             error
         },
-        ...params
     });
 }
