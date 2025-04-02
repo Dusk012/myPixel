@@ -34,6 +34,7 @@ export async function doLogin(req, res) {
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         req.session.login = true;
+<<<<<<< Updated upstream
         return res.redirect('/')
 =======
         return res.redirect('../contenido/index');
