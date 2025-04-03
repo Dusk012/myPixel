@@ -4,6 +4,7 @@ import { render } from '../utils/render.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
+const thread = new ForumMessage();
 
 export function viewForum(req, res) {
     try {
@@ -27,13 +28,15 @@ export async function viewThread(req, res) {
         console.log(render);
         const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
         const my_forum = await forum.dame_id(forumId);
+        console.log(my_forum);
+        const my_thread = await thread.dame_comentarios(forumId);
         if (!my_forum) {
             throw new Error('Foro no encontrado');
         }
 
         render(req, res, 'paginas/foro/hilo', {
             forum: my_forum,
-            replies: {},
+            replies: my_thread,
             error: null,
             session: req.session
         });
@@ -91,13 +94,8 @@ export async function createPost(req, res) {
     }
 
     try {
-        const { title, desc, content } = req.body;
-        const userId = req.session.usuarioId; // Asumimos que el usuario está en sesión
-        
-        // Generar ID (en producción usaría la BD)
-        const id = Date.now(); 
-        const date = new Date().toISOString();
-        
+        const { title, desc } = req.body;
+                
         // Crear un nuevo foro y obtener la referencia a ese foro
         const newForum = forum.createForum(
             title,
@@ -125,34 +123,24 @@ export async function createReply(req, res) {
     }
 
     try {
-        const { content } = req.body;
-        const parentId = parseInt(req.params.id);
-        const userId = req.session.usuarioId;
-        
-        // Verificar que el padre existe
-        const parent = forum.getMessage(parentId);
-        if (!parent) {
-            throw new Error('Mensaje padre no encontrado');
-        }
+        const { content } = req.body; //Comentario 
+        const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
+        const userId = req.session.usuarioId; //ID del usuario que ha comentado
 
-        // Generar ID y fecha
-        const id = Date.now();
-        const date = new Date().toISOString();
+        // Generar fecha
+        const date = new Date().toISOString(); //Fecha del comentario
         
-        forum.createReply(
-            id,
-            parent.forumId,
+        forum.createPost( //Crea comentario en el foro
+            parentId,
             content,
             date,
-            userId,
-            parentId
+            userId
         );
 
-        res.setFlash('Respuesta publicada exitosamente');
-        res.redirect(`/foro/thread/${parentId}`);
+        res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {
         res.setFlash(e.message);
-        res.redirect('back');
+        res.redirect(`/mensajes/thread/${parentId}`);
     }
 }
 
