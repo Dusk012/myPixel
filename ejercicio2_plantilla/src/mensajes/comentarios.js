@@ -11,10 +11,12 @@ export const MessageType = Object.freeze({
 export class ForumMessage {
     static #insertStmt = null;
     static #deleteStmt = null;
+    static #getCommentsById = null;
 
     static initStatements(db) {
         this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario) VALUES (@forumId, @content, @date, @userId)');
-        this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');        
+        this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
+        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro');   
     }
 
     static #insert(comentario) {
@@ -58,16 +60,21 @@ export class ForumMessage {
     #content;
     #date;
     #userId;
-    #type;
-    #replies;
-    #parentId;
+    //#type;
+    //#replies;
+    //#parentId;
 
-    constructor(forumId, content, date, userId, type, parentId = null) {
+    constructor(id = null, forumId, content, date, userId) {
+        if (id !== null) {
+            this.#id = id;  // Comentario existente
+        } else {
+            this.#id = null;  // Comentario nuevo
+        }
         // Validaciones básicas
-        if (!forumId || !content || !date || !userId || !type) {
+        if (!forumId || !content || !date || !userId ) {
             throw new Error("Todos los campos obligatorios deben ser proporcionados");
         }
-        
+        /*
         if (!Object.values(MessageType).includes(type)) {
             throw new Error(`Tipo de mensaje inválido: ${type}`);
         }
@@ -75,15 +82,14 @@ export class ForumMessage {
         if (type === MessageType.REPLY && !parentId) {
             throw new Error("Los mensajes de respuesta deben tener un parentId");
         }
-
-        this.#id = null;
+        */
         this.#forumId = forumId;
         this.#content = content;
         this.#date = date;
         this.#userId = userId;
-        this.#type = type;
-        this.#parentId = parentId;
-        this.#replies = []; // Array para almacenar respuestas directas
+        //this.#type = type;
+        //this.#parentId = parentId;
+        //this.#replies = []; // Array para almacenar respuestas directas
     }
 
     // Getters (solo lectura)
@@ -92,10 +98,10 @@ export class ForumMessage {
     get content() { return this.#content; }
     get date() { return this.#date; }
     get userId() { return this.#userId; }
-    get type() { return this.#type; }
-    get parentId() { return this.#parentId; }
-    get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
-    get replyCount() { return this.#replies.length; }
+    //get type() { return this.#type; }
+    //get parentId() { return this.#parentId; }
+    //get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
+    //get replyCount() { return this.#replies.length; }
 
     // Setters con validación
     set content(newContent) { 
@@ -112,6 +118,7 @@ export class ForumMessage {
      * @returns {ForumMessage} - Retorna this para encadenamiento
      */
     addReply(reply) {
+        /*
         if (!(reply instanceof ForumMessage)) {
             throw new Error("Solo se pueden agregar instancias de ForumMessage como respuestas");
         }
@@ -121,8 +128,9 @@ export class ForumMessage {
         if (reply.parentId !== this.id) {
             throw new Error("La respuesta debe referenciar a este mensaje como padre");
         }
+        */
         
-        this.#replies.push(reply);
+        //this.#replies.push(reply);
         reply.persist();
         return this.persist();
     }
@@ -133,6 +141,7 @@ export class ForumMessage {
      * @returns {boolean} - True si se eliminó, false si no se encontró
      */
     removeReply(replyId) {
+        /*
         const reply = this.#replies.find(reply => reply.id === replyId);
         if (reply) {
             this.#replies = this.#replies.filter(r => r.id !== replyId);
@@ -140,6 +149,8 @@ export class ForumMessage {
             return true;
         }
         return false;
+        */
+       console.log("FUNCION POR REFACTORIZAR");
     }
 
     /**
@@ -148,7 +159,9 @@ export class ForumMessage {
      * @returns {ForumMessage|null} - La respuesta encontrada o null
      */
     findReply(replyId) {
-        return this.#replies.find(reply => reply.id === replyId) || null;
+        //return this.#replies.find(reply => reply.id === replyId) || null;
+        console.log("FUNCION POR REFACTORIZAR");
+
     }
 
     /**
@@ -156,16 +169,39 @@ export class ForumMessage {
      * @returns {boolean}
      */
     hasReplies() {
-        return this.#replies.length > 0;
+        //return this.#replies.length > 0;
+        console.log("FUNCION POR REFACTORIZAR"); //Refactorizar usando la funcion de getCommentsById
+        return false;
     }
 
     persist() {
         if(this.#id === null) return ForumMessage.#insert(this);
     }
 
+    static getComments( id_foro ) {
+        // Ejecutamos la consulta que obtiene todos los foros
+        const rows = this.#getCommentsById.all( id_foro );
+        
+        // Si no se encuentran foros, retornamos un arreglo vacío
+        if (!rows || rows.length === 0) {
+            return [];
+        }
+
+        // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
+        return rows.map(comment => new ForumMessage(comment.id, comment.forumId, comment.content, comment.date, comment.userId));
+    }
+
+    dame_comentarios( id_foro ){
+        return ForumMessage.getComments( id_foro );
+    }
+
     
 
     // Métodos de fábrica estáticos para creación controlada de mensajes
+
+    static createComment(id, forumId, content, data, userId){
+        return new ForumMessage(id, forumId, content, data, userId);
+    }
     
     /**
      * Crea un mensaje original (post principal)

@@ -19,10 +19,12 @@
 
     <hr>
 
-    <h2>Escribe una respuesta</h2>
-    <% if (error) { %>
-        <div style="color: red;"><%= error %></div>
-    <% } %>
+    <h2>Escribe una respuesta:</h2>
+    <form action="/mensajes/reply" method="POST">
+        <label for="content">Comentario:</label><br>
+        <textarea name="content" id="content" rows="4" required></textarea><br>
+        <button type="submit">Publicar comentario</button>
+    </form>
     
 
     <a href="/mensajes/foro">Volver al foro</a>
