@@ -1,13 +1,12 @@
 <body>
     <h1>Foro</h1>
-    <% if (posts && posts.length > 0) { %>
+    <% if (foros && foros.length > 0) { %>
         <ul>
-         <% posts.forEach(post => { %>
+         <% foros.forEach(foro => { %>
             <li>
-                <a href="/foro/thread/<%= post.id %>">
-                    <strong><%= post.content %></strong>
+                <a href="/mensajes/thread/<%= foro.id %>">
+                    <strong><%= foro.titulo %></strong>
                 </a>
-                <p>Publicado por <%= post.userId %> el <%= post.date %></p>
             </li>
         <% }) %>
     </ul>

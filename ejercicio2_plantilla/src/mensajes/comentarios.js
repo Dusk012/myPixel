@@ -195,7 +195,7 @@ export class ForumMessage {
  */
 export class Forum {
 
-    
+    static #getAllStmt = null;
     static #getByTituloStmt = null;
     static #getByIdStmt = null;
     static #insertStmt = null;
@@ -206,6 +206,7 @@ export class Forum {
     static initStatements(db) {
         if (this.#getByTituloStmt !== null) return;
 
+        this.#getAllStmt = db.prepare('SELECT * FROM Foros');
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
         this.#getByIdStmt = db.prepare('SELECT F.titulo, F.descripcion, F.estado FROM Foros F WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
@@ -263,8 +264,24 @@ export class Forum {
             return new Forum(forum.titulo, forum.descripcion, forum.estado);
         }
 
+        static getForums() {
+            // Ejecutamos la consulta que obtiene todos los foros
+            const rows = this.#getAllStmt.all();
+            
+            // Si no se encuentran foros, retornamos un arreglo vacío
+            if (!rows || rows.length === 0) {
+                return [];
+            }
+    
+            // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
+            return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id));
+        }
+
+        dame_foros(){
+            return Forum.getForums();
+        }
+
         dame_id(id){
-            console.log("Entre a dame_id");
             return Forum.getForumById(id);
         }
 
@@ -399,11 +416,16 @@ export class Forum {
     #descripcion;
     #estado;
 
-    constructor(titulo, descripcion, estado) {
-            this.#id = null;
-            this.#titulo = titulo;
-            this.#descripcion = descripcion;
-            this.#estado = estado;
+    constructor(titulo, descripcion, estado, id = null) {
+        if (id !== null) {
+            this.#id = id;  // Foro existente
+        } else {
+            this.#id = null;  // Foro nuevo
+        }
+
+        this.#titulo = titulo;
+        this.#descripcion = descripcion;
+        this.#estado = estado;
     }
 
     get id() {
@@ -412,6 +434,14 @@ export class Forum {
 
     get titulo() {
         return this.#titulo;
+    }
+
+    get descripcion() {
+        return this.#descripcion;
+    }
+
+    get estado() {
+        return this.#estado;
     }
 
     persist() {

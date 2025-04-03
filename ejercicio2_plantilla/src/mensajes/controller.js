@@ -8,10 +8,9 @@ const forum = new Forum();
 export function viewForum(req, res) {
     try {
         console.log(render);
-        const posts = forum.getOriginalPosts();
-        console.log("Estoy llamando vien a ver el foro principal");
+        const foros = forum.dame_foros();
         return render(req, res, 'paginas/foro/foro', {
-            posts,
+            foros,
             error: null,
             session: req.session
         });
