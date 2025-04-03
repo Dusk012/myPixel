@@ -70,10 +70,6 @@ export class ForumMessage {
         } else {
             this.#id = null;  // Comentario nuevo
         }
-        // Validaciones básicas
-        if (!forumId || !content || !date || !userId ) {
-            throw new Error("Todos los campos obligatorios deben ser proporcionados");
-        }
         /*
         if (!Object.values(MessageType).includes(type)) {
             throw new Error(`Tipo de mensaje inválido: ${type}`);
@@ -180,7 +176,7 @@ export class ForumMessage {
 
     static getComments( id_foro ) {
         // Ejecutamos la consulta que obtiene todos los foros
-        const rows = this.#getCommentsById.all( id_foro );
+        const rows = this.#getCommentsById.all( {id_foro} );
         
         // Si no se encuentran foros, retornamos un arreglo vacío
         if (!rows || rows.length === 0) {
