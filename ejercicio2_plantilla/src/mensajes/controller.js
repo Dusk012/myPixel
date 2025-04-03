@@ -34,6 +34,7 @@ export async function viewThread(req, res) {
 
         render(req, res, 'paginas/foro/hilo', {
             forum: my_forum,
+            replies: {},
             error: null,
             session: req.session
         });

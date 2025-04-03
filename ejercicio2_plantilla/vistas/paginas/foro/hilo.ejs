@@ -23,10 +23,6 @@
     <% if (error) { %>
         <div style="color: red;"><%= error %></div>
     <% } %>
-    <form action="/foro/reply/<%= post.id %>" method="POST">
-        <label for="content">Contenido:</label><br>
-        <textarea name="content" id="content" rows="4" required></textarea><br>
-        <button type="submit">Responder</button>
-    </form>
+    
 
     <a href="/foro">Volver al foro</a>

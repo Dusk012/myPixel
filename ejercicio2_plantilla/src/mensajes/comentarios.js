@@ -207,7 +207,7 @@ export class Forum {
         if (this.#getByTituloStmt !== null) return;
 
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
-        this.#getByIdStmt = db.prepare('SELECT * FROM Foros WHERE id = @id');
+        this.#getByIdStmt = db.prepare('SELECT F.titulo, F.descripcion, F.estado FROM Foros F WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
@@ -260,7 +260,7 @@ export class Forum {
             console.log("Entro en getForumById")
             const forum = this.#getByIdStmt.get({ id });
             if (!forum) throw new Error('Foro no encontrado');
-            return new Forum(forum.id, forum.titulo, forum.descripcion, forum.estado);
+            return new Forum(forum.titulo, forum.descripcion, forum.estado);
         }
 
         dame_id(id){
