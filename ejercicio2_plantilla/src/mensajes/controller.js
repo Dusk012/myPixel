@@ -9,6 +9,7 @@ export function viewForum(req, res) {
     try {
         console.log(render);
         const posts = forum.getOriginalPosts();
+        console.log("Estoy llamando vien a ver el foro principal");
         return render(req, res, 'paginas/foro/foro', {
             posts,
             error: null,
@@ -22,22 +23,22 @@ export function viewForum(req, res) {
     }
 }
 
-export function viewThread(req, res) {
+export async function viewThread(req, res) {
     try {
         console.log(render);
         const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
-        const my_forum = forum.dame_id(forumId);
+        const my_forum = await forum.dame_id(forumId);
         if (!my_forum) {
             throw new Error('Foro no encontrado');
         }
 
-        return render(req, res, 'paginas/foro/hilo', {
+        render(req, res, 'paginas/foro/hilo', {
             forum: my_forum,
             error: null,
             session: req.session
         });
     } catch (e) {
-        return render(req, res, 'paginas/foro/hilo', {
+        render(req, res, 'paginas/foro/hilo', {
             error: e.message,
             session: req.session
         });
