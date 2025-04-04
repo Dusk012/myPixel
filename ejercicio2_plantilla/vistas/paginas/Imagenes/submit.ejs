@@ -1,5 +1,5 @@
 <h1>Subir archivos</h1>
-<form action="/imagenes/submit" method="POST">
+<form action="/imagenes/submit" method="POST" enctype="multipart/form-data">
     <% if (locals.error) { %>
         <p><strong><%= locals.error %></strong></p>
     <% } %>
@@ -7,7 +7,7 @@
     <p></p>
     <div><label>Descripción de la imagen:</label><input type="text" name="descripcion" value="<%=datos.descripcion %>"><%- helpers.error(errores, 'descripcion') %></div>
     <p></p>
-    <div><label>Imagen:</label><input type="file" name="imagen" id="imagen" accept="image/*" "><%- helpers.error(errores, 'imagen') %></div>
+    <div><label>Imagen:</label><input type="file" name="foto" id="imagen" accept="image/*" "><%- helpers.error(errores, 'imagen') %></div>
     <p></p>
     <div><img id="preview" src="" alt="Vista previa" style="display: none; max-width: 1000px;"></div>
     <p></p>

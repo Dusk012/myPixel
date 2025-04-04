@@ -72,10 +72,10 @@ export class Foto {
         return Foto.#update(this);
     }
 
-    static registrar(nombre, descripcion, imagen, id_usuario, id_foro) {
+    static registrar(nombre, descripcion, imagen, username, id_foro) {
         
             // Crear una nueva instancia
-            const nuevaFoto = new Foto(null, nombre, descripcion, new Date().toISOString(), 0, 'Visible', "1", id_foro, imagen);
+            const nuevaFoto = new Foto(null, nombre, descripcion, new Date().toISOString(), 0, 'Visible', username, id_foro, imagen);
             // Persistir el usuario en la base de datos
             return nuevaFoto.persist();
     }

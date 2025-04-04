@@ -43,7 +43,32 @@ CREATE TABLE "Foros" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 DROP TABLE IF EXISTS "Fotos";
-CREATE TABLE Fotos (id INTEGER NOT NULL, nombre TEXT NOT NULL, descripcion TEXT, fecha TEXT, puntuacion INTEGER, estado TEXT, id_usuario INTEGER NOT NULL, id_foro INTEGER NOT NULL, contenido TEXT NOT NULL, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_foro) REFERENCES Foros (id), FOREIGN KEY (id_usuario) REFERENCES Usuarios (id));
+CREATE TABLE "Fotos" (
+	"id"	INTEGER NOT NULL,
+	"nombre"	TEXT NOT NULL,
+	"descripcion"	TEXT,
+	"fecha"	TEXT,
+	"puntuacion"	INTEGER NOT NULL,
+	"estado"	TEXT,
+	"id_usuario"	INTEGER,
+	"id_foro"	INTEGER,
+	"contenido"	TEXT NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
+	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("username")
+);
 DROP TABLE IF EXISTS "Usuarios";
-CREATE TABLE Usuarios (id INTEGER NOT NULL, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rol TEXT NOT NULL DEFAULT 'U' CHECK (rol IN ('U', 'A')), nombre TEXT NOT NULL, nivel INTEGER NOT NULL DEFAULT (1), reputacion INTEGER NOT NULL DEFAULT (0), estado TEXT NOT NULL DEFAULT ACTIVO, fecha_registro TEXT, foto_perfil INTEGER, PRIMARY KEY (id AUTOINCREMENT));
+CREATE TABLE "Usuarios" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"username"	TEXT NOT NULL UNIQUE,
+	"password"	TEXT NOT NULL,
+	"rol"	TEXT NOT NULL DEFAULT 'U' CHECK("rol" IN ('U', 'A')),
+	"nombre"	TEXT NOT NULL,
+	"nivel"	INTEGER NOT NULL DEFAULT (1),
+	"reputacion"	INTEGER NOT NULL DEFAULT (0),
+	"estado"	TEXT NOT NULL DEFAULT ACTIVO,
+	"fecha_registro"	TEXT,
+	"foto_perfil"	INTEGER,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
 COMMIT;

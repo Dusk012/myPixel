@@ -30,6 +30,7 @@ export async function doLogin(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
+        req.session.username = usuario.username;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         
@@ -77,6 +78,7 @@ export async function doRegister(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
+        req.session.username = usuario.username;
 
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
         

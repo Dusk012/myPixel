@@ -15,7 +15,8 @@ export function viewSubmit(req, res) {
 
 export async function doSubmit(req, res) {
     const result = validationResult(req);
-    if (!result.isEmpty()) {
+    const errores = result.array();
+    if (!result.isEmpty() && !errores.some(err => err.path === 'foto')) {
         const errores = result.mapped();
         const datos = matchedData(req);
         return render(req, res, 'paginas/imagenes/submit', {
@@ -27,15 +28,11 @@ export async function doSubmit(req, res) {
 
     const nombre = req.body.nombre;
     const descripcion = req.body.descripcion;
-    const imagen = req.body.imagen;
-
+    const imagen = req.file.filename;
     try {
-        const foto = await Foto.registrar(nombre, descripcion, imagen, req.session.id, null);
-        /*req.session.login = true;
-        req.session.nombre = usuario.nombre;
-        req.session.rol = usuario.rol;*/
+        const foto = await Foto.registrar(nombre, descripcion, imagen, req.session.username, null);
 
-        res.setFlash(`Imagen subida con éxito: ${foto.nombre}`);
+        res.setFlash(`Imagen subida con éxito: ${nombre}`);
         
         return res.redirect('../contenido/index');
 
@@ -54,7 +51,3 @@ export async function doSubmit(req, res) {
 
     
 }
-
-export function viewImagen(request, response) {
-        response.sendFile(join(config.uploads, request.params.id));
-    }

@@ -4,6 +4,7 @@ import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
 import imagenesRouter from './imagenes/router.js';
 import contenidoRouter from './contenido/router.js';
+import bodyParser from 'body-parser';
 import { logger } from './logger.js';
 import pinoHttp  from 'pino-http';
 const pinoMiddleware = pinoHttp(config.logger.http(logger));
