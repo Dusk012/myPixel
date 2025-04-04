@@ -12,7 +12,7 @@ mensajesRouter.get('/post', viewCreatePost);
 mensajesRouter.get('/stats', viewStats);
 
 mensajesRouter.post('/post', createPost);
-mensajesRouter.post('/reply', createReply);
+mensajesRouter.post('/reply/:id', createReply);
 mensajesRouter.get('/message', editMessage);
 mensajesRouter.post('/message', deleteMessage);
 mensajesRouter.post('/comment', sendComment);

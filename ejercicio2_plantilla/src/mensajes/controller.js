@@ -1,6 +1,7 @@
 import { validationResult, matchedData } from 'express-validator';
 import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
+import { Usuario } from '../usuarios/usuarios.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
@@ -28,7 +29,6 @@ export async function viewThread(req, res) {
         console.log(render);
         const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
         const my_forum = await forum.dame_id(forumId);
-        console.log(my_forum);
         const my_thread = await thread.dame_comentarios(forumId);
         if (!my_forum) {
             throw new Error('Foro no encontrado');
@@ -123,9 +123,10 @@ export async function createReply(req, res) {
     }
 
     try {
+        
         const { content } = req.body; //Comentario 
         const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
-        const userId = req.session.usuarioId; //ID del usuario que ha comentado
+        const userId = req.session.userId;
 
         // Generar fecha
         const date = new Date().toISOString(); //Fecha del comentario
@@ -139,7 +140,6 @@ export async function createReply(req, res) {
 
         res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {
-        res.setFlash(e.message);
         res.redirect(`/mensajes/thread/${parentId}`);
     }
 }

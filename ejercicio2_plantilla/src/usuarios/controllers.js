@@ -30,7 +30,9 @@ export async function doLogin(req, res) {
         const usuario = await Usuario.login(username, password);
        
         req.session.nombre = usuario.nombre;
+        req.session.username = usuario.username;
         req.session.rol = usuario.rol;
+        req.session.userId = usuario.id;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         req.session.login = true;
@@ -61,6 +63,9 @@ export function doLogout(req, res, next) {
     delete req.session.login;
     delete req.session.nombre;
     delete req.session.esAdmin;
+    delete req.session.rol;
+    delete req.session.userId;
+    delete req.session.username;
 
     res.render('pagina', {
 

@@ -64,7 +64,7 @@ export class ForumMessage {
     //#replies;
     //#parentId;
 
-    constructor(id = null, forumId, content, date, userId) {
+    constructor(forumId, content, date, userId, id = null) {
         if (id !== null) {
             this.#id = id;  // Comentario existente
         } else {
@@ -113,7 +113,7 @@ export class ForumMessage {
      * @param {ForumMessage} reply - La respuesta a añadir
      * @returns {ForumMessage} - Retorna this para encadenamiento
      */
-    addReply(reply) {
+    addReply() {
         /*
         if (!(reply instanceof ForumMessage)) {
             throw new Error("Solo se pueden agregar instancias de ForumMessage como respuestas");
@@ -127,7 +127,6 @@ export class ForumMessage {
         */
         
         //this.#replies.push(reply);
-        reply.persist();
         return this.persist();
     }
 
@@ -184,7 +183,7 @@ export class ForumMessage {
         }
 
         // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-        return rows.map(comment => new ForumMessage(comment.id, comment.forumId, comment.content, comment.date, comment.userId));
+        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.id));
     }
 
     dame_comentarios( id_foro ){
@@ -195,8 +194,8 @@ export class ForumMessage {
 
     // Métodos de fábrica estáticos para creación controlada de mensajes
 
-    static createComment(id, forumId, content, data, userId){
-        return new ForumMessage(id, forumId, content, data, userId);
+    static createComment(forumId, content, data, userId){
+        return new ForumMessage(forumId, content, data, userId);
     }
     
     /**
@@ -240,7 +239,7 @@ export class Forum {
 
         this.#getAllStmt = db.prepare('SELECT * FROM Foros');
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
-        this.#getByIdStmt = db.prepare('SELECT F.titulo, F.descripcion, F.estado FROM Foros F WHERE id = @id');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
@@ -293,7 +292,7 @@ export class Forum {
             console.log("Entro en getForumById")
             const forum = this.#getByIdStmt.get({ id });
             if (!forum) throw new Error('Foro no encontrado');
-            return new Forum(forum.titulo, forum.descripcion, forum.estado);
+            return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id);
         }
 
         static getForums() {
@@ -320,10 +319,10 @@ export class Forum {
     /**
      * Crea y añade un mensaje original al foro
      */
-    createPost(id, forumId, content, date, userId) {
-        const post = ForumMessage.createOriginal(id, forumId, content, date, userId);
-        this.#messages.set(id, post);
-        return post;
+    createPost(forumId, content, date, userId) {
+        const post = ForumMessage.createComment(forumId, content, date, userId);
+        //this.#messages.set(id, post);
+        return post.addReply();
     }
 
     /**
