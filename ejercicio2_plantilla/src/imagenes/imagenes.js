@@ -1,24 +1,32 @@
 import { ErrorDatos } from "../db.js";
 
 export class Foto {
-    static #getByNombreStmt = null;
+    static #getByIdStmt = null;
+    static #getByContenidoStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
 
     static initStatements(db) {
-        if (this.#getByNombreStmt !== null) return;
+        if (this.#getByIdStmt !== null) return;
 
-        this.#getByNombreStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
+        this.#getByContenidoStmt = db.prepare('SELECT * FROM Fotos WHERE contenido = @contenido');
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
     }
 
     static getFotoById(id) {
-        const foto = this.#getByNombreStmt.get({ id });
+        const foto = this.#getByIdStmt.get({ id });
         if (!foto) throw new FotoNoEncontrada(id);
 
+        return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
+    }
+
+    static getFotoByContenido(contenido) {
+        const foto = this.#getByContenidoStmt.get({ contenido });
+        if (!foto) throw new FotoNoEncontrada(contenido);
         return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
     }
 
@@ -74,10 +82,12 @@ export class Foto {
 
     static registrar(nombre, descripcion, imagen, username, id_foro) {
         
-            // Crear una nueva instancia
             const nuevaFoto = new Foto(null, nombre, descripcion, new Date().toISOString(), 0, 'Visible', username, id_foro, imagen);
-            // Persistir el usuario en la base de datos
             return nuevaFoto.persist();
+    }
+
+    static async actualizarFoto(foto) {
+        return this.#update(foto);
     }
 }
 

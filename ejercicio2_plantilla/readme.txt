@@ -6,3 +6,5 @@ Cosas que faltan por hacer
 - Mostrar las imagenes de la base de datos en algún lado
 - Incluir más funcionalidades a las fotos (baja, modificar)
 - Foro
+- Mejorar las fotos
+- Los enlaces (a) te killea la session (de momento error y normal)

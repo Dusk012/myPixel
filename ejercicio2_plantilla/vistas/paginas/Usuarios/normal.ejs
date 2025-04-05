@@ -1,6 +1,20 @@
-<h1>Imágenes destacadas</h1>
-<img src="/uploads/<%= imagen %>" alt="Imagen aleatoria" style="max-width: 600px;">
-<p><a href="/">Ver otra imagen</a></p>
+<h1>Imágen destacada</h1>
+<table>
+
+    <tr>
+        <td><%= data.nombre %></td>
+    </tr>
+    <tr>
+        <td><img src="/uploads/<%= imagen %>"></td>
+    </tr>
+    <table>
+        <tr>
+            <td>Descripción: <%= data.descripcion %></td>
+            <td><p></p></td>
+            <td><button id="btnPuntuar">❤️ <span id="puntuacion"><%= data.puntuacion %></span></button></td>
+        </tr>
+    </table>
+</table>
 
 <%
 const flashMsg = getAndClearFlash();
@@ -21,3 +35,19 @@ if (flashDialogEl) {
 }
 
 </script>
+
+<script>
+    document.getElementById('btnPuntuar').addEventListener('click', async function () {
+        const puntuacionElement = document.getElementById('puntuacion');
+        let puntuacion = parseInt(puntuacionElement.textContent, 10);
+        puntuacion++;
+        puntuacionElement.textContent = puntuacion;
+    
+        fetch('/contenido/normal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contenido: '<%= imagen %>', puntuacion })
+        });
+    });
+    </script>
+    

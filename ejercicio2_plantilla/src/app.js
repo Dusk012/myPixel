@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
     }
     res.render('pagina', params);
 })
+app.use('/uploads', express.static('uploads'));
 app.use('/usuarios', usuariosRouter);
 app.use('/imagenes', imagenesRouter);
 app.use('/contenido', contenidoRouter);

@@ -37,7 +37,7 @@ export async function doSubmit(req, res) {
 
         res.setFlash(`Imagen subida con éxito: ${nombre}`);
         
-        return res.redirect('../contenido/index');
+        return res.redirect('../contenido/normal');
 
     } catch (e) {
         const datos = matchedData(req);
