@@ -1,4 +1,4 @@
-export function autenticado(urlNoAutenticado = '/usuarios/viewLogin', urlAutenticado) {
+export function autenticado(urlNoAutenticado = '/usuarios/login', urlAutenticado) {
     return (req, res, next) => {
         if (req.session != null && req.session.login) {
             if (urlAutenticado != undefined) return res.redirect(urlAutenticado);
@@ -15,7 +15,7 @@ export function tieneRol(rol = RolesEnum.ADMIN){
     return (req, res, next) => {
         if (req.session != null && req.session.rol === rol) return next();
         res.render('pagina', {
-            contenido: 'paginas/index',
+            contenido: 'paginas/noPermisos',
             session: req.session
         });
     }

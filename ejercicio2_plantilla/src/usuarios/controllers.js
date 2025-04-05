@@ -5,9 +5,10 @@ import { render } from '../utils/render.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
-    render(req, res, contenido, {
-        datos: {},
-        errores: {}
+    res.render('pagina', {
+        contenido,
+        session: req.session,
+        error: null
     });
 }
 
@@ -21,24 +22,24 @@ export async function doLogin(req, res) {
             datos
         });
     }
-    // Capturamos las variables username y password
+    // Capturo las variables username y password
     const username = req.body.username;
     const password = req.body.password;
 
     try {
         const usuario = await Usuario.login(username, password);
-        req.session.login = true;
+       
         req.session.nombre = usuario.nombre;
+        req.session.username = usuario.username;
         req.session.rol = usuario.rol;
+        req.session.userId = usuario.id;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
-        
-        return res.redirect('../contenido/index');
-
+        req.session.login = true;
+        return res.redirect('/')
     } catch (e) {
         const datos = matchedData(req);
-        req.log.warn("Problemas al hacer login del usuario '%s'", username);
-        req.log.debug('El usuario %s, no ha podido logarse: %s', username, e.message);
+        
         render(req, res, 'paginas/Usuarios/viewLogin', {
             error: 'El usuario o contraseña no son válidos',
             datos,
@@ -62,6 +63,9 @@ export function doLogout(req, res, next) {
     delete req.session.login;
     delete req.session.nombre;
     delete req.session.esAdmin;
+    delete req.session.rol;
+    delete req.session.userId;
+    delete req.session.username;
 
     res.render('pagina', {
 

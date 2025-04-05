@@ -1,21 +1,20 @@
 import express from 'express';
-import { verForo, obtenerForos, crearForo} from './controller.js';
+import { body } from 'express-validator';
+import asyncHandler from 'express-async-handler';
 
-const router = express.Router();
+import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, editMessage, deleteMessage, sendComment } from './controller.js';
 
-// Ruta para obtener la lista de foros
-router.get('/foros', obtenerForos);
+const mensajesRouter = express.Router(); // Colocamos esto primero
 
-// Ruta para crear un foro
-router.post('/foros', crearForo);
+mensajesRouter.get('/foro', viewForum);
+mensajesRouter.get('/thread/:id', asyncHandler(viewThread));
+mensajesRouter.get('/post', viewCreatePost);
+mensajesRouter.get('/stats', viewStats);
 
-// Ruta para ver un foro en /contenido/foro/:id
-router.get('contenido/foro/:id', verForo);
+mensajesRouter.post('/post', createPost);
+mensajesRouter.post('/reply/:id', createReply);
+mensajesRouter.get('/message', editMessage);
+mensajesRouter.post('/message', deleteMessage);
+mensajesRouter.post('/comment', sendComment);
 
-// Ruta para obtener comentarios de un foro específico
-
-
-// Ruta para agregar un comentario en un foro específico
-
-
-export default router;
+export default mensajesRouter; //router.js

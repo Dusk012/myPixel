@@ -1,0 +1,16 @@
+<h1>Estadísticas del Foro</h1>
+
+    <% if (error) { %>
+        <div style="color: red;"><%= error %></div>
+    <% } %>
+
+    <p>Total de posts: <%= stats.totalPosts %></p>
+    <p>Total de respuestas: <%= stats.totalReplies %></p>
+
+    <% if (stats.latestPost) { %>
+        <h2>Último Post</h2>
+        <p><strong><%= stats.latestPost.content %></strong></p>
+        <p>Publicado por <%= stats.latestPost.userId %> el <%= stats.latestPost.date %></p>
+    <% } %>
+
+    <a href="/foro">Volver al foro</a>

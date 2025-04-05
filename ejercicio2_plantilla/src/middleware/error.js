@@ -13,7 +13,7 @@ export function errorHandler (err, req, res, next) {
         statusCode = err.statusCode;
     }
 
-    // Comprobamos si el error tiene una propiedad que podamos usar como mensaje
+    // Comprobamossi el error tiene una propiedad que podamos usar como mensaje
     let message = 'Oops, ha ocurrido un error';
     if ('message' in err) {
         message = err.message;
