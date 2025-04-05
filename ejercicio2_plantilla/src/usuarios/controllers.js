@@ -34,7 +34,7 @@ export async function doLogin(req, res) {
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         
-        return res.redirect('../contenido/index');
+        return res.redirect('../contenido/normal');
 
     } catch (e) {
         const datos = matchedData(req);
@@ -82,7 +82,7 @@ export async function doRegister(req, res) {
 
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
         
-        return res.redirect('../contenido/index');
+        return res.redirect('../contenido/normal');
             
     } catch (e) {
         const datos = matchedData(req);
@@ -104,6 +104,7 @@ export function doLogout(req, res, next) {
     delete req.session.login;
     delete req.session.nombre;
     delete req.session.esAdmin;
+    delete req.session.username;
 
     res.render('pagina', {
 

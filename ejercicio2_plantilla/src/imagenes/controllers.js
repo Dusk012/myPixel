@@ -6,7 +6,10 @@ import { config } from '../config.js';
 import session from 'express-session';
 
 export function viewSubmit(req, res) {
-    let contenido = 'paginas/Imagenes/submit';
+    let contenido = 'paginas/Usuarios/noRegistrado';
+    if (req.session.login) {
+        contenido = 'paginas/Usuarios/submit';
+    }
     render(req, res, contenido, {
         datos: {},
         errores: {}

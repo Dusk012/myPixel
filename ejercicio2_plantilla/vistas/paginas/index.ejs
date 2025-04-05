@@ -1,21 +1,2 @@
 <h1>Página principal</h1>
-<p> Esta es la página principal de MyPixel donde aparecerán todos los contenidos descritos en el plan de la web.</p>
-<%
-const flashMsg = getAndClearFlash();
-if( flashMsg ) {
-%>
-<dialog id="flashModal">
-    <form method="dialog">
-    <p><%= flashMsg %></p>
-    <button>Cerrar</button>
-    </form>
-</dialog>
-<% } %>
-
-<script>
-const flashDialogEl = document.getElementById("flashModal");
-if (flashDialogEl) {
-    flashDialogEl.showModal();
-}
-
-</script>
+<p> Bienvenidos a MyPixel, inicie sesión o registrese para comenzar a interactuar.</p>

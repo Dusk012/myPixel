@@ -24,17 +24,34 @@ contenidoRouter.get('/admin', viewAdmin());
 
 export default contenidoRouter;*/
 import express from 'express';
+import { render } from '../utils/render.js';
 
 const contenidoRouter = express.Router();
 
-contenidoRouter.get('/index', (req, res) => {
+contenidoRouter.get('/normal', (req, res) => {
+
     let contenido = 'paginas/Usuarios/noRegistrado';
+    let imagen = null;
     if (req.session.login) {
-        contenido = 'paginas/index';
+        contenido = 'paginas/Usuarios/normal';
+    
+
+    const rutaUploads = path.join(process.cwd(), 'uploads');
+
+    // Leer la carpeta de imágenes
+        fs.readdir(rutaUploads, (err, archivos) => {
+            //Para elegir la imagen aleatoriamente usamos ChatGpt
+            if (!err && archivos.length > 0) {
+                
+                if (imagenes.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * imagenes.length);
+                    imagen = imagenes[randomIndex];
+                }
+            }
+        });
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
+    render(req, res, contenido, {
+        imagen,
         error: null
     });
 });

@@ -24,9 +24,10 @@ app.use(flashMessages);
 app.use('/', express.static(config.recursos));
 app.get('/', (req, res) => {
     // Parámetros que estarán disponibles en la plantilla
+    req.session.login = false;
     const params = {
         contenido: 'paginas/index', // fichero ejs que tiene el contenido específico para esta vista
-        session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
+        session: req.session // Necesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
     }
     res.render('pagina', params);
 })
