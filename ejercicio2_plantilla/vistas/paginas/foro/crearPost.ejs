@@ -1,10 +1,6 @@
 <body>
     <h1>Crear un nuevo foro</h1>
-
-    <% if (error) { %>
-        <div style="color: red;"><%= error %></div>
-    <% } %>
-
+    
     <form action="/mensajes/post" method="POST">
         <label for="title">Titulo:</label><br>
         <textarea name="title" id="title" rows="2" required></textarea><br>

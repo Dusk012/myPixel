@@ -1,14 +1,12 @@
 import { validationResult, matchedData } from 'express-validator';
 import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
-import { Usuario } from '../usuarios/usuarios.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
 const thread = new ForumMessage();
 
 export function viewForum(req, res) {
-    try {
         console.log(render);
         const foros = forum.dame_foros();
         return render(req, res, 'paginas/foro/foro', {
@@ -16,20 +14,13 @@ export function viewForum(req, res) {
             error: null,
             session: req.session
         });
-    } catch (e) {
-        return render(req, res, 'paginas/foro/foro', {
-            error: 'Error al cargar el foro',
-            session: req.session
-        });
-    }
 }
 
-export async function viewThread(req, res) {
-    try {
+export function viewThread(req, res) {
         console.log(render);
         const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
-        const my_forum = await forum.dame_id(forumId);
-        const my_thread = await thread.dame_comentarios(forumId);
+        const my_forum = forum.dame_id(forumId);
+        const my_thread = thread.dame_comentarios(forumId);
         if (!my_forum) {
             throw new Error('Foro no encontrado');
         }
@@ -40,12 +31,6 @@ export async function viewThread(req, res) {
             error: null,
             session: req.session
         });
-    } catch (e) {
-        render(req, res, 'paginas/foro/hilo', {
-            error: e.message,
-            session: req.session
-        });
-    }
 }
 
 
@@ -59,7 +44,6 @@ export function viewCreatePost(req, res) {
 }
 
 export function viewStats(req, res) {
-    try {
         const posts = forum.getOriginalPosts();
         const stats = {
             totalPosts: posts.length,
@@ -72,12 +56,6 @@ export function viewStats(req, res) {
             error: null,
             session: req.session
         });
-    } catch (e) {
-        return render(req, res, 'paginas/foro/estadisticas', {
-            error: 'Error al calcular estadísticas',
-            session: req.session
-        });
-    }
 }
 
 export async function createPost(req, res) {
@@ -123,7 +101,6 @@ export async function createReply(req, res) {
     }
 
     try {
-        
         const { content } = req.body; //Comentario 
         const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
         const userId = req.session.userId;
