@@ -1,7 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
-import { viewLogin, perfilGet, actualizarFotoPerfil, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment } from './controllers.js';
+import { viewLogin, perfilGet, actualizarFotoPerfil, darseDeBaja, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment } from './controllers.js';
 import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
@@ -34,5 +34,6 @@ usuariosRouter.post('/register',
 // Ruta para actualizar la foto de perfil
 usuariosRouter.get('/perfil', asyncHandler(perfilGet));
 usuariosRouter.post('/perfil', asyncHandler(actualizarFotoPerfil));
+usuariosRouter.post('/darseDeBaja', asyncHandler(darseDeBaja));
 
 export default usuariosRouter;
