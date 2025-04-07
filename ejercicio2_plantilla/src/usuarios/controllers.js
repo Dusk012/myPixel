@@ -5,9 +5,10 @@ import { render } from '../utils/render.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
-    render(req, res, contenido, {
-        datos: {},
-        errores: {}
+    res.render('pagina', {
+        contenido,
+        session: req.session,
+        error: null
     });
 }
 
@@ -21,26 +22,25 @@ export async function doLogin(req, res) {
             datos
         });
     }
-    // Capturamos las variables username y password
+    // Capturo las variables username y password
     const username = req.body.username;
     const password = req.body.password;
 
     try {
         const usuario = await Usuario.login(username, password);
-        req.session.username = usuario.username;
-        req.session.login = true;
+       
         req.session.nombre = usuario.nombre;
+        req.session.username = usuario.username;
         req.session.rol = usuario.rol;
-        req.session.foto_perfil = usuario.foto_perfil; // Guardamos la foto de perfil
+        req.session.userId = usuario.id;
+        req.session.foto_perfil = usuario.foto_perfil;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
-        
-        return res.redirect('../contenido/index');
-
+        req.session.login = true;
+        return res.redirect('/')
     } catch (e) {
         const datos = matchedData(req);
-        req.log.warn("Problemas al hacer login del usuario '%s'", username);
-        req.log.debug('El usuario %s, no ha podido logarse: %s', username, e.message);
+        
         render(req, res, 'paginas/Usuarios/viewLogin', {
             error: 'El usuario o contraseña no son válidos',
             datos,
@@ -48,6 +48,7 @@ export async function doLogin(req, res) {
         });
     }
 }
+
 
 export function viewRegister(req, res) {
     let contenido = 'paginas/Usuarios/viewRegister';
@@ -59,14 +60,22 @@ export function viewRegister(req, res) {
 }
 
 export function doLogout(req, res, next) {
+
     delete req.session.login;
     delete req.session.nombre;
     delete req.session.esAdmin;
+    delete req.session.rol;
+    delete req.session.userId;
+    delete req.session.username;
+
     res.render('pagina', {
+
         contenido: 'paginas/Usuarios/logout',
         session: {}
     });
+    
 }
+
 
 export function viewSubmit(req, res) {
     let contenido = 'paginas/Imagenes/submit';
@@ -143,20 +152,19 @@ export async function darseDeBaja(req, res) {
     }
 
     try {
-        // Eliminar al usuario de la base de datos
         //console.log(`El usuario ${username} ha solicitado darse de baja.`);
-        Usuario.eliminarUsuario(username); // Llamamos a la función para eliminar al usuario
-        
-        // Destruir la sesión del usuario
-        req.session.destroy(err => {
-            if (err) {
-                console.error('Error al destruir la sesión:', err);
-                return res.status(500).json({ success: false, error: 'Error al cerrar la sesión.' });
-            }
+        Usuario.eliminarUsuario(username); // Eliminar al usuario de la base de datos
+        res.redirect('/usuarios/logout'); // Redirigir al logout
 
-            // Redirigir al logout o enviar una respuesta de éxito
-            return res.redirect('/usuarios/logout');
-        });
+        // req.session.destroy(err => {
+        //     if (err) {
+        //         console.error('Error al destruir la sesión:', err);
+        //         return res.status(500).json({ success: false, error: 'Error al cerrar la sesión.' });
+        //     }
+
+        //     //console.log('Sesión destruida correctamente. Redirigiendo a logout...');
+        //     res.redirect('/usuarios/logout'); // Redirigir al logout
+        // });
     } catch (e) {
         console.error('Error al dar de baja:', e);
         return res.status(500).render('pagina', {
@@ -202,7 +210,13 @@ export function doRegister(req, res) {
         });
     }
 }
-
+/*
+export const validateComment = [
+    body('comentario')
+        .notEmpty()
+        .isLength({ max: 140 }).withMessage('El comentario no puede exceder los 140 caracteres.'),
+];
+*/
 export function sendComment(req, res){
     const errors = validationResult(req);
 
@@ -216,4 +230,6 @@ export function sendComment(req, res){
             error: "Por favor. corrija los errores." // Mensaje general
         });
     }
+
+
 }
