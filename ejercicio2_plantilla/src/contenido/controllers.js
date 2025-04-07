@@ -103,9 +103,9 @@ export function viewProfile(req, res) {
 */
 
 export function viewAdmin(req, res) {
-    let contenido = 'paginas/noPermisos';
+    let contenido = 'paginas/Usuarios/noPermisos';
     if (req.session.esAdmin) {
-        contenido = 'paginas/admin';
+        contenido = 'paginas/Usuarios/admin';
     }
     res.render('pagina', {
         contenido,
