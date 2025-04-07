@@ -36,10 +36,10 @@ export class Usuario {
         if (result.changes === 0) {
             throw new Error(`No se pudo eliminar el usuario: ${username}`);
         }
-        //console.log(`Usuario ${username} eliminado correctamente.`);
     }
-
+    
     static #insert(usuario) {
+        console.log("insert entrado")
         let result = null;
         try {
             const username = usuario.#username;
@@ -47,12 +47,12 @@ export class Usuario {
             const nombre = usuario.nombre;
             const rol = usuario.rol;
             const foto_perfil = usuario.foto_perfil;
-            const datos = { username, password, nombre, rol, foto_perfil };
+            const datos = {username, password, nombre, rol, foto_perfil};
 
             result = this.#insertStmt.run(datos);
 
             usuario.#id = result.lastInsertRowid;
-        } catch (e) {
+        } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
             if (e.code === 'SQLITE_CONSTRAINT') {
                 throw new UsuarioYaExiste(usuario.#username);
             }
@@ -67,13 +67,14 @@ export class Usuario {
         const nombre = usuario.nombre;
         const rol = usuario.rol;
         const foto_perfil = usuario.foto_perfil;
-        const datos = { username, password, nombre, rol, foto_perfil, id: usuario.#id };
+        const datos = {username, password, nombre, rol, foto_perfil, id: usuario.#id};
 
         const result = this.#updateStmt.run(datos);
         if (result.changes === 0) throw new UsuarioNoEncontrado(username);
 
         return usuario;
     }
+
 
     static async login(username, password) {
         let usuario = null;
@@ -84,7 +85,7 @@ export class Usuario {
         }
 
         const passwordMatch = await bcrypt.compare(password, usuario.#password);
-        if (!passwordMatch) throw new UsuarioOPasswordNoValido(username);
+        if ( ! passwordMatch ) throw new UsuarioOPasswordNoValido(username);
 
         return usuario;
     }
@@ -102,14 +103,15 @@ export class Usuario {
         this.nombre = nombre;
         this.rol = rol;
         this.#id = id;
-        this.foto_perfil = foto_perfil ?? 1; // valor por defecto es 1
+        this.foto_perfil = foto_perfil ?? 1;
     }
 
     get id() {
         return this.#id;
     }
 
-    async cambiaPassword(nuevoPassword) {
+    set password(nuevoPassword) {
+        // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
         this.#password = bcrypt.hashSync(nuevoPassword);
     }
 
@@ -118,33 +120,25 @@ export class Usuario {
     }
 
     persist() {
-        if (this.#id === null) {
-            return Usuario.#insert(this);
-        }
-    
-        // Actualizamos en la base de datos
-        const updatedUsuario = Usuario.#update(this);
-    
-        // Actualizamos el valor de foto_perfil en el objeto actual
-        this.foto_perfil = updatedUsuario.foto_perfil;
-    
-        return updatedUsuario;
+        if (this.#id === null) return Usuario.#insert(this);
+        return Usuario.#update(this);
     }
 
-    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
+    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO, foto_perfil = 1) {
+        // Validar que las contraseñas coincida
         if (password !== confirmPassword) {
             throw new Error('Las contraseñas no coinciden');
         }
-
-        const hashedPassword = bcrypt.hashSync(password, 10);
-
+    
+        // Encriptar la contraseña antes de guardarla
+        const hashedPassword = bcrypt.hashSync(password, 10); // Usar un salt de 10
+    
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario !== undefined) throw new UsuarioYaExiste(username);
-
         const id = null;
-        const foto_perfil = 1; // Valor por defecto
+        // Crear una nueva instancia de U  suario
         const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol, id, foto_perfil);
-
+        // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
     }
 }
