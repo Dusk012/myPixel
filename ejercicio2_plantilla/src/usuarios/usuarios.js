@@ -10,6 +10,7 @@ export class Usuario {
     static #getByUsernameStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
+    static #deleteStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
@@ -17,6 +18,7 @@ export class Usuario {
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol, foto_perfil) VALUES (@username, @password, @nombre, @rol, @foto_perfil)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre, foto_perfil = @foto_perfil WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE username = @username');
     }
 
     static getUsuarioByUsername(username) {
@@ -26,6 +28,15 @@ export class Usuario {
         const { password, rol, nombre, id, foto_perfil } = usuario;
 
         return new Usuario(username, password, nombre, rol, id, foto_perfil);
+    }
+
+    static eliminarUsuario(username) {
+        const datos = { username };
+        const result = this.#deleteStmt.run(datos); // Ejecuta la consulta con el username
+        if (result.changes === 0) {
+            throw new Error(`No se pudo eliminar el usuario: ${username}`);
+        }
+        //console.log(`Usuario ${username} eliminado correctamente.`);
     }
 
     static #insert(usuario) {
