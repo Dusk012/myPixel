@@ -8,7 +8,7 @@ import session from 'express-session';
 export function viewSubmit(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {
-        contenido = 'paginas/Usuarios/submit';
+        contenido = 'paginas/imagenes/submit';
     }
     render(req, res, contenido, {
         datos: {},

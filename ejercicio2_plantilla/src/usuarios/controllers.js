@@ -27,13 +27,14 @@ export async function doLogin(req, res) {
 
     try {
         const usuario = await Usuario.login(username, password);
-        req.session.login = true;
+        
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
+        req.session.userId = usuario.id;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
-        
+        req.session.login = true;
         return res.redirect('../contenido/normal');
 
     } catch (e) {
@@ -75,13 +76,15 @@ export async function doRegister(req, res) {
 
     try {
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
-        req.session.login = true;
+
+        
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
+        req.session.userId = usuario.id;
 
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
-        
+        req.session.login = true;
         return res.redirect('../contenido/normal');
             
     } catch (e) {
