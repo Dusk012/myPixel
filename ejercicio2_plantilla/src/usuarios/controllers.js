@@ -59,17 +59,13 @@ export function viewRegister(req, res) {
 }
 
 export function doLogout(req, res, next) {
-
     delete req.session.login;
     delete req.session.nombre;
     delete req.session.esAdmin;
-
     res.render('pagina', {
-
         contenido: 'paginas/Usuarios/logout',
         session: {}
     });
-    
 }
 
 export function viewSubmit(req, res) {
@@ -118,7 +114,7 @@ export async function actualizarFotoPerfil(req, res) {
 
     const foto_perfil = req.body.foto_perfil; // Recibimos el número de la foto (1-5)
     const username = req.session.username; // Obtenemos el username del usuario desde la sesión
-
+    
     try {
         // Obtenemos el usuario actual desde la base de datos
         const usuario = Usuario.getUsuarioByUsername(username);
@@ -139,34 +135,34 @@ export async function actualizarFotoPerfil(req, res) {
 }
 
 export async function darseDeBaja(req, res) {
-    const result = validationResult(req);
-    if(!result.isEmpty()) {
-        const errores = result.mapped();
-        const datos = matchedData(req);
-        return render(req, res, 'paginas/Usuarios/profile', {
-            errores,
-            datos
-        });
-    }
-
-    const foto_perfil = req.body.foto_perfil; // Recibimos el número de la foto (1-5)
     const username = req.session.username; // Obtenemos el username del usuario desde la sesión
 
+    if (!username) {
+        console.error('Error: No se encontró el username en la sesión.');
+        return res.status(400).json({ success: false, error: 'Usuario no autenticado.' });
+    }
+
     try {
-        // Obtenemos el usuario actual desde la base de datos
-        const usuario = Usuario.getUsuarioByUsername(username);
-        // Actualizamos la foto de perfil
-        usuario.foto_perfil = foto_perfil;
-        usuario.persist(); // Guardamos los cambios en la base de datos
-        // Actualizamos la sesión para reflejar el cambio en tiempo real
-        req.session.foto_perfil = usuario.foto_perfil;
-        return res.redirect('/usuarios/perfil');
+        // Eliminar al usuario de la base de datos
+        //console.log(`El usuario ${username} ha solicitado darse de baja.`);
+        Usuario.eliminarUsuario(username); // Llamamos a la función para eliminar al usuario
+        
+        // Destruir la sesión del usuario
+        req.session.destroy(err => {
+            if (err) {
+                console.error('Error al destruir la sesión:', err);
+                return res.status(500).json({ success: false, error: 'Error al cerrar la sesión.' });
+            }
+
+            // Redirigir al logout o enviar una respuesta de éxito
+            return res.redirect('/usuarios/logout');
+        });
     } catch (e) {
-        console.error('Error al actualizar la foto de perfil:', e);
+        console.error('Error al dar de baja:', e);
         return res.status(500).render('pagina', {
             contenido: 'paginas/Usuarios/profile',
             session: req.session,
-            error: 'Error al actualizar la foto de perfil'
+            error: 'Error al darse de baja'
         });
     }
 }
@@ -220,6 +216,4 @@ export function sendComment(req, res){
             error: "Por favor. corrija los errores." // Mensaje general
         });
     }
-
-
 }
