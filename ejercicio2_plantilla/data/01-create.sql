@@ -48,8 +48,8 @@ CREATE TABLE "Fotos" (
 	"nombre"	TEXT NOT NULL,
 	"descripcion"	TEXT,
 	"fecha"	TEXT,
-	"puntuacion"	INTEGER NOT NULL,
-	"estado"	TEXT,
+	"puntuacion"	INTEGER,
+	"estado"	REAL,
 	"id_usuario"	INTEGER,
 	"id_foro"	INTEGER,
 	"contenido"	TEXT NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE "Fotos" (
 );
 DROP TABLE IF EXISTS "Usuarios";
 CREATE TABLE "Usuarios" (
-	"id"	INTEGER NOT NULL UNIQUE,
+	"id"	INTEGER NOT NULL,
 	"username"	TEXT NOT NULL UNIQUE,
 	"password"	TEXT NOT NULL,
 	"rol"	TEXT NOT NULL DEFAULT 'U' CHECK("rol" IN ('U', 'A')),
@@ -68,7 +68,7 @@ CREATE TABLE "Usuarios" (
 	"reputacion"	INTEGER NOT NULL DEFAULT (0),
 	"estado"	TEXT NOT NULL DEFAULT ACTIVO,
 	"fecha_registro"	TEXT,
-	"foto_perfil"	INTEGER,
+	"foto_perfil"	INTEGER NOT NULL DEFAULT (1),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 COMMIT;

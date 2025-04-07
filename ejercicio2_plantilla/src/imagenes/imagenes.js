@@ -37,7 +37,7 @@ export class Foto {
             const { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido } = foto;
             const datos = { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido };
             result = this.#insertStmt.run(datos);
-        console.log("insert salido");
+            console.log("insert salido");
             foto.id = result.lastInsertRowid;
         } catch (e) {
             if (e.code === 'SQLITE_CONSTRAINT') {

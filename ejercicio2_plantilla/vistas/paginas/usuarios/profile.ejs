@@ -1,16 +1,107 @@
-<% function mostrarSaludo(session) { %>
-    <div class="saludo">
-    <% if (session.login) { %>
-        <h1>Bienvenido, <%= session.nombre %></h1>
-        <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
-        <p>📸 No hay foto de perfil</p>
-    <% } else { %>
-        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
-    <% } %>
-    </div>
+<form id="form-foto-perfil" action="/usuarios/perfil" method="POST">
+    <% function mostrarSaludo(session) { %>
+        <div class="saludo" style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%;">
+            <% if (session.login) { %>
+                <!-- Foto de perfil seleccionada -->
+                <div id="foto-perfil-seleccionada" style="width: 70px; height: 70px; border: 2px solid rgb(255, 255, 255); border-radius: 50%; overflow: hidden;">
+                    <img src="../img/Perfil<%= session.foto_perfil %>.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <!-- Texto de bienvenida -->
+                <div style="text-align: right;">
+                    <h1>Bienvenid@, <%= session.nombre %></h1>
+                    <h1>username: <%= session.username %></h1>
+                    <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
+                </div>
+                <!-- Campos ocultos para enviar automáticamente el username y la foto_perfil -->
+                <input type="hidden" name="username" value="<%= session.username %>">
+                <input type="hidden" id="foto-perfil-input" name="foto_perfil" value="<%= session.foto_perfil %>">
+                <input type="hidden" id="darse_de_baja_input" name="darse_de_baja" value="<%= session.darse_de_baja %>">
+            <% } else { %>
+                <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+            <% } %>
+        </div>
+
+        <% if (session.login) { %>
+            <div style="text-align: right; margin-top: 1px;">
+                <p>📸 Selecciona tu foto de perfil:</p>
+                <div class="perfil-opciones" style="display: flex; align-items: center; justify-content: flex-end;">
+                    <button type="button" onclick="seleccionarFoto('Perfil1.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                        <img src="../img/Perfil1.png" width="120" alt="Ícono de enlace" style="border: 2px solid rgb(255, 255, 255); border-radius: 50%;">
+                    </button>
+                    <button type="button" onclick="seleccionarFoto('Perfil2.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                        <img src="../img/Perfil2.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    </button>
+                    <button type="button" onclick="seleccionarFoto('Perfil3.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                        <img src="../img/Perfil3.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    </button>
+                    <button type="button" onclick="seleccionarFoto('Perfil4.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                        <img src="../img/Perfil4.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    </button>
+                    <button type="button" onclick="seleccionarFoto('Perfil5.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
+                        <img src="../img/Perfil5.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    </button>
+                </div>
+                <p id="foto-seleccionada" style="margin-top: 10px;"></p>
+            </div>
+
+            <!-- Botón para enviar el formulario -->
+            <div style="text-align: right; margin-top: 10px;">
+                <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Guardar cambios en foto de perfil
+                </button>
+            </div>
+
+            <!-- Botón para darse de baja -->
+            <div style="text-align: right; margin-top: 10px;">
+                <button type="button" onclick="darseDeBaja()" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Darse de baja
+                </button>
+            </div>
+        <% } %>
+    </form>
+
+    <script>
+        function darseDeBaja() {
+            // Confirmar la acción
+            if (confirm('¿Estás seguro de que deseas darte de baja? Esta acción no se puede deshacer.')) {
+                // Enviar una solicitud POST al backend
+                fetch('/usuarios/darseDeBaja', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: '<%= session.username %>' }) // Enviar el username si es necesario
+                })
+                .then(response => {
+                    console.log(response.stringify());
+                    if (response.ok) {
+                        alert('Tu cuenta ha sido eliminada.');
+                        window.location.href = '/usuarios/logout'; // Redirigir al logout
+                    } else {
+                        alert('Hubo un problema al intentar darte de baja.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
+
+    <script>
+        function seleccionarFoto(foto) {
+           
+            // Extraer el número de la foto del nombre del archivo ("Perfil1.png" -> "1")
+            const numeroPerfil = foto.match(/\d+/)[0];
+
+            // Actualizar el campo oculto con el número de la foto seleccionada
+            document.getElementById('foto-perfil-input').value = numeroPerfil;
+
+            // Mostrar un mensaje indicando la selección
+            document.getElementById('foto-seleccionada').innerText = `Has seleccionado Perfil ${numeroPerfil}`;
+        }
+    </script>
 <% } %>
     
 <body>
+    <!-- Llamada a la función mostrarSaludo -->
     <%= mostrarSaludo(session) %>
 </body>
-    
