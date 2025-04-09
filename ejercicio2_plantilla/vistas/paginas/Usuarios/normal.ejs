@@ -1,15 +1,53 @@
-<h1>El efecto Dunning-Kruger: cuando sabemos menos de lo que creemos</h1>
-<p>El efecto Dunning-Kruger es un sesgo cognitivo en el que las personas con menos habilidades o 
-    conocimientos en un área tienden a sobreestimar su competencia. Fue descrito en 1999 por los 
-    psicólogos David Dunning y Justin Kruger tras una serie de experimentos que mostraban cómo los 
-    individuos menos capacitados solían evaluar su desempeño muy por encima de la realidad.</p>
-<p>Este fenómeno ocurre porque la falta de conocimiento impide reconocer los propios errores. 
-    En otras palabras, para saber lo poco que sabemos, primero necesitamos aprender más. 
-    Curiosamente, el efecto se revierte en personas altamente competentes, quienes tienden a subestimar 
-    su habilidad porque asumen que los demás saben tanto como ellos. </p>
-<p>
-    Podemos ver este sesgo en la vida cotidiana: desde debates en redes sociales hasta en el trabajo, 
-    donde alguien con poca experiencia puede mostrarse excesivamente confiado. Por eso, es fundamental 
-    mantener la humildad intelectual y seguir aprendiendo, recordando la famosa frase de Sócrates: 
-    "Solo sé que no sé nada".</p>
+<h1>Imágen destacada</h1>
+<table>
+
+    <tr>
+        <td><%= data.nombre %></td>
+    </tr>
+    <tr>
+        <td><img src="/uploads/<%= imagen %>"></td>
+    </tr>
+    <table>
+        <tr>
+            <td>Descripción: <%= data.descripcion %></td>
+            <td><p></p></td>
+            <td><button id="btnPuntuar">❤️ <span id="puntuacion"><%= data.puntuacion %></span></button></td>
+        </tr>
+    </table>
+</table>
+
+<%
+const flashMsg = getAndClearFlash();
+if( flashMsg ) {
+%>
+<dialog id="flashModal">
+    <form method="dialog">
+    <p><%= flashMsg %></p>
+    <button>Cerrar</button>
+    </form>
+</dialog>
+<% } %>
+
+<script>
+const flashDialogEl = document.getElementById("flashModal");
+if (flashDialogEl) {
+    flashDialogEl.showModal();
+}
+
+</script>
+
+<script>
+    document.getElementById('btnPuntuar').addEventListener('click', async function () {
+        const puntuacionElement = document.getElementById('puntuacion');
+        let puntuacion = parseInt(puntuacionElement.textContent, 10);
+        puntuacion++;
+        puntuacionElement.textContent = puntuacion;
+    
+        fetch('/contenido/normal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contenido: '<%= imagen %>', puntuacion })
+        });
+    });
+    </script>
     
