@@ -3,7 +3,7 @@ import { config } from './config.js';
 import { join } from 'node:path';
 
 const now = new Date();
-const logFile = `${now.toISOString()}.log`; // ó `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.log`;
+const logFile = /*`${now.toISOString()}.log`;*/ `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.log`;
 
 const transportConfig = {
     targets: [
