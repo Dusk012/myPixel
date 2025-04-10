@@ -2,7 +2,7 @@
 
 <% function mostrarBarra(session) { %>
     <% if (session.login) { %>
-        <div class="logo"><a href="/contenido/normal"><img src="../img/icono.png" width="150" alt="Ícono de enlace"></a></div>
+        <div class="logo"><a href="/contenido/normal"><img src="/img/icono.png" width="150" alt="Ícono de enlace"></a></div>
         <div class = "barra"> 
         <a href="/usuarios/perfil" class="enlace">Perfil</a>
         |
@@ -17,7 +17,7 @@
         <a href="/usuarios/logout" class="enlace">Logout</a>
     </div>
     <% } else { %>
-        <div class="logo"><a href="/"><img src="../img/icono.png" width="150" alt="Ícono de enlace"></a></div>
+        <div class="logo"><a href="/"><img src="/img/icono.png" width="150" alt="Ícono de enlace"></a></div>
         <div class = "barra"> 
             <a href="/usuarios/login" class="enlace">Iniciar Sesión</a>
             |
