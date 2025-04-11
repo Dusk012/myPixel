@@ -15,7 +15,26 @@ function createConnection() {
     };
     const db = new Database(join(dirname(import.meta.dirname), 'data', 'myPixel.db'), options);
     db.pragma('journal_mode = WAL'); // Necesario para mejorar la durabilidad y el rendimiento
+    createTablesIfNotExists(db);
+    
     return db;
+}
+
+function createTablesIfNotExists(db) {
+    const createProductosTable = `
+        CREATE TABLE IF NOT EXISTS Productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT,
+            price REAL NOT NULL,
+            image TEXT,
+            status TEXT NOT NULL CHECK (estado IN ('P', 'S')),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+
+    db.prepare(createProductosTable).run();
 }
 
 export function closeConnection(db = getConnection()) {

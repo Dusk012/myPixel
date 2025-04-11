@@ -1,39 +1,31 @@
-<body>
-    <div id="contenedor">
-        <h1>Subir archivos</h1>
+<h1>Subir archivos</h1>
+<form action="/imagenes/submit" method="POST" enctype="multipart/form-data">
+    <% if (locals.error) { %>
+        <p><strong><%= locals.error %></strong></p>
+    <% } %>
+    <div><label>Nombre del archivo:</label><input type="text" name="nombre" value="<%=datos.nombre %>"><%- helpers.error(errores, 'nombre') %></div>
+    <p></p>
+    <div><label>Descripción de la imagen:</label><input type="text" name="descripcion" value="<%=datos.descripcion %>"><%- helpers.error(errores, 'descripcion') %></div>
+    <p></p>
+    <div><label>Imagen:</label><input type="file" name="foto" id="imagen" accept="image/*" "><%- helpers.error(errores, 'imagen') %></div>
+    <p></p>
+    <div><img id="preview" src="" alt="Vista previa" style="display: none; max-width: 1000px;"></div>
+    <p></p>
+    <div><button type="submit">Enviar</button></div>
+</form>
 
-        <form action="/usuarios/submit" method="POST" enctype="multipart/form-data" class="reply-form">
-            <label for="nombreImg">Nombre del archivo:</label>
-            <input type="text" name="Nombre" required class="reply-textarea">
-
-            <label for="descripcionImg">Descripción de la imagen:</label>
-            <input type="text" name="Descripción" required class="reply-textarea">
-
-            <label for="imagen">Imagen:</label>
-            <input type="file" name="Imagen" id="imagen" accept="image/*" required class="reply-textarea">
-
-            <img id="preview" src="" alt="Vista previa" class="img-preview">
-
-            <button type="submit" class="btn-enviar-respuesta">Enviar</button>
-        </form>
-
-        <div class="volver-foro">
-            <a href="/mensajes/foro" class="btn-volver">← Volver al foro</a>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('imagen').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    </script>
-</body>
+<!--El scrip para mostrar como es la imagen antes de subirla ha sido apoyada en chatgpt -->
+<script>
+    document.getElementById('imagen').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

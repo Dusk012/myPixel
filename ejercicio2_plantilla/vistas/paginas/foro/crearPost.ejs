@@ -1,23 +1,14 @@
 <body>
-    <div id="contenedor">
-        <h1>Crear un nuevo foro</h1>
+    <h1>Crear un nuevo foro</h1>
+    
+    <form action="/mensajes/post" method="POST">
+        <label for="title">Titulo:</label><br>
+        <textarea name="title" id="title" rows="2" required></textarea><br>
 
-        <% if (error) { %>
-            <div class="error-message"><%= error %></div>
-        <% } %>
+        <label for="description">Descripción:</label><br>
+        <textarea name="desc" id="desc" rows="4"></textarea><br>
+        <button type="submit">Crear Post</button>
+    </form>
 
-        <form action="/mensajes/post" method="POST" class="reply-form">
-            <label for="title">Título:</label><br>
-            <textarea name="title" id="title" rows="2" required class="reply-textarea"></textarea><br>
-
-            <label for="desc">Descripción:</label><br>
-            <textarea name="desc" id="desc" rows="4" class="reply-textarea"></textarea><br>
-
-            <button type="submit" class="btn-enviar-respuesta">Crear Post</button>
-        </form>
-
-        <div class="volver-foro">
-            <a href="/mensajes/foro" class="btn-volver">← Volver al foro</a>
-        </div>
-    </div>
+    <a href="/mensajes/foro">Volver al foro</a>
 </body>

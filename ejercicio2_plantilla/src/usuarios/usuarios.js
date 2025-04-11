@@ -10,24 +10,34 @@ export class Usuario {
     static #getByUsernameStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
+    static #deleteStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol) VALUES (@username, @password, @nombre, @rol)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol, foto_perfil) VALUES (@username, @password, @nombre, @rol, @foto_perfil)');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre, foto_perfil = @foto_perfil WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE username = @username');
     }
 
     static getUsuarioByUsername(username) {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, id } = usuario;
+        const { password, rol, nombre, id, foto_perfil } = usuario;
 
-        return new Usuario(username, password, nombre, rol, id);
+        return new Usuario(username, password, nombre, rol, id, foto_perfil);
     }
 
+    static eliminarUsuario(username) {
+        const datos = { username };
+        const result = this.#deleteStmt.run(datos); // Ejecuta la consulta con el username
+        if (result.changes === 0) {
+            throw new Error(`No se pudo eliminar el usuario: ${username}`);
+        }
+    }
+    
     static #insert(usuario) {
         console.log("insert entrado")
         let result = null;
@@ -36,7 +46,8 @@ export class Usuario {
             const password = usuario.#password;
             const nombre = usuario.nombre;
             const rol = usuario.rol;
-            const datos = {username, password, nombre, rol};
+            const foto_perfil = usuario.foto_perfil;
+            const datos = {username, password, nombre, rol, foto_perfil};
 
             result = this.#insertStmt.run(datos);
 
@@ -55,7 +66,8 @@ export class Usuario {
         const password = usuario.#password;
         const nombre = usuario.nombre;
         const rol = usuario.rol;
-        const datos = {username, password, nombre, rol};
+        const foto_perfil = usuario.foto_perfil;
+        const datos = {username, password, nombre, rol, foto_perfil, id: usuario.#id};
 
         const result = this.#updateStmt.run(datos);
         if (result.changes === 0) throw new UsuarioNoEncontrado(username);
@@ -83,13 +95,15 @@ export class Usuario {
     #password;
     rol;
     nombre;
+    foto_perfil;
 
-    constructor(username, password, nombre, rol = RolesEnum.USUARIO, id = null) {
+    constructor(username, password, nombre, rol = RolesEnum.USUARIO, id = null, foto_perfil = 1) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
         this.rol = rol;
         this.#id = id;
+        this.foto_perfil = foto_perfil ?? 1;
     }
 
     get id() {
@@ -110,7 +124,7 @@ export class Usuario {
         return Usuario.#update(this);
     }
 
-    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO) {
+    static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO, foto_perfil = 1) {
         // Validar que las contraseñas coincida
         if (password !== confirmPassword) {
             throw new Error('Las contraseñas no coinciden');
@@ -122,8 +136,8 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario !== undefined) throw new UsuarioYaExiste(username);
         const id = null;
-        // Crear una nueva instancia de Usuario
-        const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol, id);
+        // Crear una nueva instancia de U  suario
+        const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol, id, foto_perfil);
         // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
     }

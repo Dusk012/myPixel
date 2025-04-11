@@ -1,22 +1,21 @@
 <body>
-    <div id="contenedor">
-        <h1>Foro</h1>
-        <% if (foros && foros.length > 0) { %>
-            <ul class="foro-lista">
-                <% foros.forEach(foro => { %>
-                    <li class="foro-item">
-                        <a href="/mensajes/thread/<%= foro.id %>">
-                            <strong><%= foro.titulo %></strong>
-                        </a>
-                    </li>
-                <% }) %>
-            </ul>
-        <% } else { %>
-            <p>No hay posts disponibles.</p>
-        <% } %>
+    <h1>Foro</h1>
+    <% if (foros && foros.length > 0) { %>
+        <ul>
+         <% foros.forEach(foro => { %>
+            <li>
+                <a href="/mensajes/thread/<%= foro.id %>">
+                    <strong><%= foro.titulo %></strong>
+                </a>
+            </li>
+        <% }) %>
+    </ul>
+    <% } else { %>
+       <p>No hay posts disponibles.</p>
+    <% } %>
 
-        <div class="crear-post">
-            <a href="/mensajes/post" class="btn-crear-post">Crear nuevo post</a>
-        </div>
-    </div>
+
+    <a href="/mensajes/post">Crear nuevo post</a>
+
 </body>
+</html>

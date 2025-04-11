@@ -1,5 +1,8 @@
+import { ErrorDatos } from "../db.js";
+
 export class Foto {
     static #getByIdStmt = null;
+    static #getByContenidoStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
@@ -8,6 +11,7 @@ export class Foto {
         if (this.#getByIdStmt !== null) return;
 
         this.#getByIdStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
+        this.#getByContenidoStmt = db.prepare('SELECT * FROM Fotos WHERE contenido = @contenido');
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
@@ -20,15 +24,26 @@ export class Foto {
         return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
     }
 
+    static getFotoByContenido(contenido) {
+        const foto = this.#getByContenidoStmt.get({ contenido });
+        if (!foto) throw new FotoNoEncontrada(contenido);
+        return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
+    }
+
     static #insert(foto) {
+        console.log("insert entrado");
         let result = null;
         try {
             const { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido } = foto;
             const datos = { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido };
             result = this.#insertStmt.run(datos);
+            console.log("insert salido");
             foto.id = result.lastInsertRowid;
         } catch (e) {
-            throw new ErrorDatos('No se ha insertado la foto', { cause: e });
+            if (e.code === 'SQLITE_CONSTRAINT') {
+                throw new FotoYaExiste(foto.#nombre);
+            }
+            throw new ErrorDatosFoto('No se ha insertado la foto: ' + e, { cause: e });
         }
         return foto;
     }
@@ -46,7 +61,9 @@ export class Foto {
         if (result.changes === 0) throw new FotoNoEncontrada(id);
     }
 
-    constructor(id, nombre, descripcion, fecha, puntuacion = 0, estado = 'Visible', id_usuario, id_foro, contenido) {
+    #nombre;
+
+    constructor(id, nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -62,6 +79,16 @@ export class Foto {
         if (this.id === null) return Foto.#insert(this);
         return Foto.#update(this);
     }
+
+    static registrar(nombre, descripcion, imagen, username, id_foro) {
+        
+            const nuevaFoto = new Foto(null, nombre, descripcion, new Date().toISOString(), 0, 'Visible', username, id_foro, imagen);
+            return nuevaFoto.persist();
+    }
+
+    static async actualizarFoto(foto) {
+        return this.#update(foto);
+    }
 }
 
 export class FotoNoEncontrada extends Error {
@@ -71,9 +98,17 @@ export class FotoNoEncontrada extends Error {
     }
 }
 
-export class ErrorDatos extends Error {
+export class ErrorDatosFoto extends Error {
     constructor(message, options) {
         super(message, options);
-        this.name = 'ErrorDatos';
+        this.name = 'Error en los datos: ' + message + "; " + options;
+    }
+}
+
+export class FotoYaExiste extends Error {
+    
+    constructor(nombre, options) {
+        super(`Foto ya existe: ${nombre}`, options);
+        this.name = 'FotoYaExiste';
     }
 }

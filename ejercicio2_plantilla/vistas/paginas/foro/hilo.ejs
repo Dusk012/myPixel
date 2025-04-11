@@ -1,35 +1,30 @@
 <body>
-    <div id="contenedor">
-        <h1><%= forum.titulo %></h1>
-        <p class="foro-descripcion">Descripcion del foro: <%= forum.descripcion %></p>
-        <hr>
+<h1><%= forum.titulo %></h1>
+    <p>Descripcion del foro: <%= forum.descripcion %></p>
+    <hr>
 
-        <% if (replies.length > 0) { %>
-            <h2>Respuestas</h2>
-            <ul class="reply-lista">
-                <% replies.forEach(reply => { %>
-                    <li class="reply-item">
-                        <p><strong><%= reply.userId %></strong>:</p>
-                        <p><%= reply.content %></p>
-                        <span class="reply-fecha">🕒 <%= reply.date %></span>
-                    </li>
-                <% }) %>
-            </ul>
-        <% } else { %>
-            <p>No hay respuestas a este post.</p>
-        <% } %>
+    <% if (replies.length > 0) { %>
+        <h2>Respuestas</h2>
+        <ul>
+            <% replies.forEach(reply => { %>
+                <li>
+                    Escrito por el usuario con id = <strong><%= reply.userId %></strong>: <%= reply.content %>
+                    <p>Publicado el <%= reply.date %></p>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No hay respuestas a este post.</p>
+    <% } %>
 
-        <hr>
+    <hr>
 
-        <h2>Escribe una respuesta:</h2>
-        <form class="reply-form" action="/mensajes/reply/<%= forum.id %>" method="POST">
-            <label for="content">Comentario:</label><br>
-            <textarea name="content" id="content" rows="4" required class="reply-textarea"></textarea><br>
-            <button type="submit" class="btn-enviar-respuesta">Publicar comentario</button>
-        </form>
+    <h2>Escribe una respuesta:</h2>
+    <form action="/mensajes/reply/<%= forum.id %>" method="POST">
+        <label for="content">Comentario:</label><br>
+        <textarea name="content" id="content" rows="4" required></textarea><br>
+        <button type="submit">Publicar comentario</button>
+    </form>
+    
 
-        <div class="volver-foro">
-            <a href="/mensajes/foro" class="btn-volver">← Volver al foro</a>
-        </div>
-    </div>
-</body>
+    <a href="/mensajes/foro">Volver al foro</a>
