@@ -44,13 +44,23 @@ export class ShopProduct {
     static #insert(product) {
         let result = null;
         try {
+            // Asignar valores a las variables desde el producto
             const name = product.#name;
             const description = product.#description;
             const price = product.#price;
             const image = product.#image;
             const status = product.#status;
-            const datos = { name, description, price, image, status };
-
+    
+            // Asegúrate de que los parámetros estén correctamente nombrados
+            const datos = { 
+                nombre: name,          // Nombre en minúsculas como espera la consulta SQL
+                descripcion: description,
+                precio: price,
+                imagen: image,
+                estado: status
+            };
+    
+            // Ejecutar la consulta con los datos proporcionados
             result = this.#insertStmt.run(datos);
             product.#id = result.lastInsertRowid;
         } catch (e) {

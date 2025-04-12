@@ -12,7 +12,7 @@ import pinoHttp  from 'pino-http';
 const pinoMiddleware = pinoHttp(config.logger.http(logger));
 import { flashMessages } from './middleware/flash.js';
 import { errorHandler } from './middleware/error.js';
-
+import path from 'path';
 export const app = express();
 
 app.set('view engine', 'ejs');
@@ -33,7 +33,9 @@ app.get('/', (req, res) => {
     }
     res.render('pagina', params);
 })
-app.use('/uploads', express.static('uploads'));
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+//app.use('/uploads', express.static('uploads'));
 app.use('/usuarios', usuariosRouter);
 app.use('/imagenes', imagenesRouter);
 app.use('/contenido', contenidoRouter);
