@@ -1,7 +1,7 @@
 import express from 'express';
 import { body} from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
-import { viewLogin, doLogin, doLogout, viewSubmit, doSubmit, viewRegister, doRegister, sendComment/*, validateComment*/ } from './controllers.js';
+import { viewLogin, doLogin, doLogout, viewRegister, doRegister, perfilGet, actualizarFotoPerfil, darseDeBaja } from './controllers.js';
 import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
@@ -13,11 +13,6 @@ usuariosRouter.post('/login', autenticado(null, 'paginas/contenido/index'),
     asyncHandler(doLogin));
 usuariosRouter.get('/logout', asyncHandler(doLogout));
 
-usuariosRouter.get('/submit', asyncHandler(viewSubmit));
-usuariosRouter.post('/submit', asyncHandler(doSubmit));
-
-usuariosRouter.post('/comentar'/*, validateComment*/, asyncHandler(sendComment));
-
 usuariosRouter.get('/register', autenticado(null, '/paginas/contenido/index'), asyncHandler(viewRegister));
 usuariosRouter.post('/register', 
     body('username', 'Sólo puede contener números y letras').trim().matches(/^[A-Z0-9]*$/i), 
@@ -26,7 +21,11 @@ usuariosRouter.post('/register',
     body('password', 'La contraseña no tiene entre 6 y 10 caracteres').trim().isLength({ min: 6, max: 10 }), 
     body('confirmPassword', 'La contraseña no coincide').custom((value, { req }) => {
     return value === req.body.password;
-})
-, asyncHandler(doRegister));
+}), asyncHandler(doRegister));
+
+// Ruta para actualizar la foto de perfil
+usuariosRouter.get('/perfil', perfilGet);
+usuariosRouter.post('/perfil', actualizarFotoPerfil);
+usuariosRouter.post('/darseDeBaja', darseDeBaja);
 
 export default usuariosRouter;

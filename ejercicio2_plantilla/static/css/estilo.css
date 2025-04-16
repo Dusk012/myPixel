@@ -29,6 +29,16 @@ header {
     color: white;
 }
 
+.logo {
+    text-align: left;
+    margin-left: 0;
+}
+
+.barra {
+    text-align: right;
+    margin-left: 0;
+}
+
 /* Enlaces del header */
 header a, header a:visited {
     color: white;

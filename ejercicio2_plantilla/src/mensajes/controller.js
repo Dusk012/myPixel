@@ -1,51 +1,41 @@
 import { validationResult, matchedData } from 'express-validator';
-import { Forum, ForumMessage, MessageType } from '../models/mensajeForo.js';
+import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
+const thread = new ForumMessage();
 
 export function viewForum(req, res) {
-    try {
-        const posts = forum.getOriginalPosts();
-        render(req, res, 'paginas/foro/foro', {
-            posts,
+        console.log(render);
+        const foros = forum.dame_foros();
+        return render(req, res, 'paginas/foro/foro', {
+            foros,
             error: null,
             session: req.session
         });
-    } catch (e) {
-        render(req, res, 'paginas/foro/foro', {
-            error: 'Error al cargar el foro',
-            session: req.session
-        });
-    }
 }
 
 export function viewThread(req, res) {
-    try {
-        const messageId = parseInt(req.params.id);
-        const post = forum.getMessage(messageId);
-        
-        if (!post || post.type !== MessageType.ORIGINAL) {
-            throw new Error('Post no encontrado');
+        console.log(render);
+        const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
+        const my_forum = forum.dame_id(forumId);
+        const my_thread = thread.dame_comentarios(forumId);
+        if (!my_forum) {
+            throw new Error('Foro no encontrado');
         }
 
         render(req, res, 'paginas/foro/hilo', {
-            post,
-            replies: post.replies,
+            forum: my_forum,
+            replies: my_thread,
             error: null,
             session: req.session
         });
-    } catch (e) {
-        render(req, res, 'paginas/foro/hilo', {
-            error: e.message,
-            session: req.session
-        });
-    }
 }
 
+
 export function viewCreatePost(req, res) {
-    render(req, res, 'paginas/foro/crearPost', {
+    return render(req, res, 'paginas/foro/crearPost', {
         error: null,
         datos: {},
         errores: {},
@@ -54,7 +44,6 @@ export function viewCreatePost(req, res) {
 }
 
 export function viewStats(req, res) {
-    try {
         const posts = forum.getOriginalPosts();
         const stats = {
             totalPosts: posts.length,
@@ -62,17 +51,11 @@ export function viewStats(req, res) {
             latestPost: posts.length > 0 ? posts[0] : null
         };
 
-        render(req, res, 'paginas/foro/estadisticas', {
+        return render(req, res, 'paginas/foro/estadisticas', {
             stats,
             error: null,
             session: req.session
         });
-    } catch (e) {
-        render(req, res, 'paginas/foro/estadisticas', {
-            error: 'Error al calcular estadísticas',
-            session: req.session
-        });
-    }
 }
 
 export async function createPost(req, res) {
@@ -89,25 +72,19 @@ export async function createPost(req, res) {
     }
 
     try {
-        const { content } = req.body;
-        const userId = req.session.usuarioId; // Asumimos que el usuario está en sesión
-        
-        // Generar ID (en producción usaría la BD)
-        const id = Date.now(); 
-        const date = new Date().toISOString();
-        
-        const post = forum.createPost(
-            id,
-            1, // forumId (podría ser dinámico para múltiples foros)
-            content,
-            date,
-            userId
+        const { title, desc } = req.body;
+                
+        // Crear un nuevo foro y obtener la referencia a ese foro
+        const newForum = forum.createForum(
+            title,
+            desc,
+            'Activo'
         );
 
         res.setFlash('Post creado exitosamente');
-        res.redirect(`/foro/thread/${post.id}`);
+        res.redirect(`/mensajes/thread/${newForum.id}`);
     } catch (e) {
-        render(req, res, 'paginas/foro/crearPost', {
+        return render(req, res, 'paginas/foro/crearPost', {
             error: e.message,
             datos: req.body,
             errores: {},
@@ -124,34 +101,23 @@ export async function createReply(req, res) {
     }
 
     try {
-        const { content } = req.body;
-        const parentId = parseInt(req.params.id);
-        const userId = req.session.usuarioId;
-        
-        // Verificar que el padre existe
-        const parent = forum.getMessage(parentId);
-        if (!parent) {
-            throw new Error('Mensaje padre no encontrado');
-        }
+        const { content } = req.body; //Comentario 
+        const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
+        const userId = req.session.userId;
 
-        // Generar ID y fecha
-        const id = Date.now();
-        const date = new Date().toISOString();
+        // Generar fecha
+        const date = new Date().toISOString(); //Fecha del comentario
         
-        forum.createReply(
-            id,
-            parent.forumId,
+        forum.createPost( //Crea comentario en el foro
+            parentId,
             content,
             date,
-            userId,
-            parentId
+            userId
         );
 
-        res.setFlash('Respuesta publicada exitosamente');
-        res.redirect(`/foro/thread/${parentId}`);
+        res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {
-        res.setFlash(e.message);
-        res.redirect('back');
+        res.redirect(`/mensajes/thread/${parentId}`);
     }
 }
 
@@ -239,7 +205,7 @@ export function sendComment(req, res) {
         res.setFlash('Comentario enviado exitosamente');
         res.redirect('back');
     } catch (e) {
-        render(req, res, 'paginas/foro/foro', {
+        return render(req, res, 'paginas/foro/foro', {
             error: e.message,
             session: req.session
         });
