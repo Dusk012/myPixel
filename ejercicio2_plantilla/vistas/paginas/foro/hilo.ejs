@@ -8,7 +8,7 @@
         <ul>
             <% replies.forEach(reply => { %>
                 <li>
-                    Escrito por el usuario con id = <strong><%= reply.userId %></strong>: <%= reply.content %>
+                    Escrito por <strong><%= reply.username %></strong>: <%= reply.content %>
                     <p>Publicado el <%= reply.date %></p>
                 </li>
             <% }) %>

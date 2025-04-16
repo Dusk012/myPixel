@@ -104,6 +104,7 @@ export async function createReply(req, res) {
         const { content } = req.body; //Comentario 
         const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
         const userId = req.session.userId;
+        const username = req.session.username;
 
         // Generar fecha
         const date = new Date().toISOString(); //Fecha del comentario
@@ -112,7 +113,8 @@ export async function createReply(req, res) {
             parentId,
             content,
             date,
-            userId
+            userId,
+            username
         );
 
         res.redirect(`/mensajes/thread/${parentId}`);

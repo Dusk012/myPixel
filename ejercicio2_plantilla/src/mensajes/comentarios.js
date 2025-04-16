@@ -14,7 +14,7 @@ export class ForumMessage {
     static #getCommentsById = null;
 
     static initStatements(db) {
-        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario) VALUES (@forumId, @content, @date, @userId)');
+        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario, username) VALUES (@forumId, @content, @date, @userId, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
         this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro');   
     }
@@ -26,7 +26,8 @@ export class ForumMessage {
                 const content = comentario.#content;
                 const date = comentario.#date;
                 const userId = comentario.#userId;
-                const datos = {forumId, content, date, userId};
+                const username = comentario.#username;
+                const datos = {forumId, content, date, userId, username};
     
                 result = this.#insertStmt.run(datos);
     
@@ -41,12 +42,11 @@ export class ForumMessage {
         console.log("delete entrado")
         let result = null;
         try {
-            const id = comentario.#id;
             const forumId = comentario.#forumId;
             const content = comentario.#content;
             const date = comentario.#date;
-            const userId = comentario.#userId;
-            const datos = {id, forumId, content, date, userId};
+            const username = comentario.#username;
+            const datos = {forumId, content, date, userId, username};
 
             result = this.#deleteStmt.run(datos);
         } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
@@ -60,11 +60,12 @@ export class ForumMessage {
     #content;
     #date;
     #userId;
+    #username;
     //#type;
     //#replies;
     //#parentId;
 
-    constructor(forumId, content, date, userId, id = null) {
+    constructor(forumId, content, date, userId, username, id = null) {
         if (id !== null) {
             this.#id = id;  // Comentario existente
         } else {
@@ -83,6 +84,7 @@ export class ForumMessage {
         this.#content = content;
         this.#date = date;
         this.#userId = userId;
+        this.#username = username;
         //this.#type = type;
         //this.#parentId = parentId;
         //this.#replies = []; // Array para almacenar respuestas directas
@@ -94,6 +96,7 @@ export class ForumMessage {
     get content() { return this.#content; }
     get date() { return this.#date; }
     get userId() { return this.#userId; }
+    get username() { return this.#username; }
     //get type() { return this.#type; }
     //get parentId() { return this.#parentId; }
     //get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
@@ -183,7 +186,7 @@ export class ForumMessage {
         }
 
         // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.id));
+        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.username, comment.id));
     }
 
     dame_comentarios( id_foro ){
@@ -194,8 +197,8 @@ export class ForumMessage {
 
     // Métodos de fábrica estáticos para creación controlada de mensajes
 
-    static createComment(forumId, content, data, userId){
-        return new ForumMessage(forumId, content, data, userId);
+    static createComment(forumId, content, data, userId, username){
+        return new ForumMessage(forumId, content, data, userId, username);
     }
     
     /**
@@ -319,8 +322,8 @@ export class Forum {
     /**
      * Crea y añade un mensaje original al foro
      */
-    createPost(forumId, content, date, userId) {
-        const post = ForumMessage.createComment(forumId, content, date, userId);
+    createPost(forumId, content, date, userId, username) {
+        const post = ForumMessage.createComment(forumId, content, date, userId, username);
         //this.#messages.set(id, post);
         return post.addReply();
     }
