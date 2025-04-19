@@ -38,22 +38,15 @@ export class ForumMessage {
             return comentario;
     }
 
-    static #delete(comentario) {
-        console.log("delete entrado")
+    static #delete(idComment) {
         let result = null;
         try {
-            const forumId = comentario.#forumId;
-            const content = comentario.#content;
-            const date = comentario.#date;
-            const username = comentario.#username;
-            const datos = {forumId, content, date, userId, username};
-
-            result = this.#deleteStmt.run(datos);
+            const id = idComment;
+            result = this.#deleteStmt.run({ id: idComment });
         } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
             throw new Error('No se ha podido eliminar el comentario', { cause: e });
         }
-        return comentario;
-}
+    }
 
     #id;
     #forumId;
@@ -148,7 +141,6 @@ export class ForumMessage {
         }
         return false;
         */
-       console.log("FUNCION POR REFACTORIZAR");
     }
 
     /**
@@ -194,7 +186,9 @@ export class ForumMessage {
     }
 
     
-
+    static deleteComment(idComment) {
+        ForumMessage.#delete(idComment);
+    }
     // Métodos de fábrica estáticos para creación controlada de mensajes
 
     static createComment(forumId, content, data, userId, username){

@@ -159,36 +159,9 @@ export async function editMessage(req, res) {
     }
 }
 
-export async function deleteMessage(req, res) {
-    try {
-        const messageId = parseInt(req.params.id);
-        const userId = req.session.usuarioId;
-        
-        const message = forum.getMessage(messageId);
-        if (!message) {
-            throw new Error('Mensaje no encontrado');
-        }
-
-        // Verificar permisos (autor o admin)
-        if (message.userId !== userId && req.session.rol !== 'admin') {
-            throw new Error('No tienes permiso para eliminar este mensaje');
-        }
-
-        const isOriginal = message.type === MessageType.ORIGINAL;
-        forum.deleteMessage(messageId);
-
-        res.setFlash('Mensaje eliminado exitosamente');
-        
-        // Redirigir según el tipo de mensaje
-        if (isOriginal) {
-            res.redirect('/foro');
-        } else {
-            res.redirect(`/foro/thread/${message.parentId}`);
-        }
-    } catch (e) {
-        res.setFlash(e.message);
-        res.redirect('back');
-    }
+export function deleteMessage(req, res) {
+    ForumMessage.deleteComment(req.params.id);
+    res.redirect(`/mensajes/thread/${req.query.idForo}`);
 }
 
 export function sendComment(req, res) {

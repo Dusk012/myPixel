@@ -14,7 +14,7 @@ mensajesRouter.get('/stats', viewStats);
 mensajesRouter.post('/post', createPost);
 mensajesRouter.post('/reply/:id', createReply);
 mensajesRouter.get('/message', editMessage);
-mensajesRouter.post('/message', deleteMessage);
+mensajesRouter.post('/message/:id', deleteMessage);
 mensajesRouter.post('/comment', sendComment);
 
 export default mensajesRouter; //router.js

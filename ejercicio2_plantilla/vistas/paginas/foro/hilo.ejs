@@ -10,6 +10,11 @@
                 <li>
                     Escrito por <strong><%= reply.username %></strong>: <%= reply.content %>
                     <p>Publicado el <%= reply.date %></p>
+                    <% if (session.username === reply.username || session.rol === 'A') {%>
+                        <form action="/mensajes/message/<%= reply.id %>?idForo=<%= forum.id %>" method="POST">
+                        <button type="submit">Eliminar comentario</button>
+                        </form>
+                    <% } %>
                 </li>
             <% }) %>
         </ul>
