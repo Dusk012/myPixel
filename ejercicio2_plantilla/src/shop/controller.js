@@ -2,7 +2,7 @@ import { ShopProduct } from './shop.js';
 import { render } from '../utils/render.js';
 import { validationResult, matchedData } from 'express-validator';
 export class ShopController {
-    // Añadir un nuevo producto
+
     static async addProduct(req, res) {
         // Validación de los datos recibidos
         const result = validationResult(req);
@@ -33,9 +33,9 @@ export class ShopController {
     
             // Ruta pública para la imagen cargada
             const imagePath = '/uploads/' + imageFile.filename;
-    
+            const userId = req.session.userId;
             // Creamos una instancia de ShopProduct con los datos del formulario
-            const product = new ShopProduct(null, name, description, parseFloat(price), imagePath, 'P');
+            const product = new ShopProduct(null, name, description, parseFloat(price), imagePath, 'P',userId);
             // Guardamos el producto en la base de datos
             await product.persist();
     
@@ -54,9 +54,9 @@ export class ShopController {
             });
         }
     }
-    
 
-    // Obtener todos los productos de la tienda
+
+    /* Obtener todos los productos de la tienda
     static async getAllProducts(req, res) {
         try {
             const products = await ShopProduct.getAllProducts();
@@ -73,7 +73,36 @@ export class ShopController {
             // En caso de error, también pasamos un array vacío para evitar que la vista falle
             res.render('tienda/shop', { products: [], error: 'No se pudieron cargar los productos.' });
         }
-    }
+    }*/
+
+        static async getAllProducts(req, res) {
+            try {
+                const userId = req.session.userId;
+                const products = await ShopProduct.getAllProducts();
+                const userProducts = userId ? await ShopProduct.getProductsByUserId(userId) : [];
+        
+                
+        
+                return render(req, res, 'paginas/tienda/shop', {
+                    products,
+                    userProducts,
+                    session: req.session
+                });
+        
+            } catch (err) {
+                console.error("Error al obtener los productos:", err);
+        
+                return render(req, res, 'paginas/tienda/shop', {
+                    products: [],
+                    userProducts: [],
+                    session: req.session,
+                    error: 'No se pudieron cargar los productos.'
+                });
+            }
+        }
+        
+    
+
     
     
     // Obtener un producto específico por su ID
@@ -93,38 +122,97 @@ export class ShopController {
     }
 
     // Vender un producto
+
     static async sellProduct(req, res) {
         try {
             const { id } = req.params;
             const product = await ShopProduct.getProductById(id);
-            product.sell();
-
+    
+            // Verifica si el producto existe
+            if (!product) {
+                return render(req, res, 'paginas/tienda/shop', {
+                    error: 'Producto no encontrado.',
+                    session: req.session
+                });
+            }
+    
+            // Intenta vender el producto
+            try {
+                await product.sell();  // Llama a la función sell() para marcar el producto como vendido
+            } catch (err) {
+                // Si el producto ya está vendido, mostramos un error específico
+                return render(req, res, 'paginas/tienda/shop', {
+                    error: 'El producto ya ha sido vendido.',
+                    session: req.session
+                });
+            }
+    
+            // Si el producto se vendió correctamente, obtenemos los productos del usuario y los productos globales
+            const userId = req.session.userId;
+            const userProducts = userId ? await ShopProduct.getProductsByUserId(userId) : [];
+            const products = await ShopProduct.getAllProducts();
+    
+            // Redirige a la tienda con los productos actualizados
             return render(req, res, 'paginas/tienda/shop', {
-                success: 'Producto vendido correctamente',
+                success: 'Producto vendido correctamente.',
+                products,
+                userProducts,  
+                session: req.session
             });
         } catch (err) {
+            console.error('Error al vender el producto:', err);
             return render(req, res, 'paginas/tienda/shop', {
                 error: 'No se pudo vender el producto',
-                details: err.message
+                details: err.message,
+                session: req.session
             });
         }
     }
+    
+
 
     // Eliminar un producto
-    static async deleteProduct(req, res) {
-        try {
-            const { id } = req.params;
-            const product = await ShopProduct.getProductById(id);
-            await product.delete();
+static async deleteProduct(req, res) {
+    try {
+        const { id } = req.params;
+        const product = await ShopProduct.getProductById(id);
 
+        // Asegurarse de que el producto existe antes de eliminarlo
+        if (!product) {
             return render(req, res, 'paginas/tienda/shop', {
-                success: 'Producto eliminado correctamente',
-            });
-        } catch (err) {
-            return render(req, res, 'paginas/tienda/shop', {
-                error: 'No se pudo eliminar el producto',
-                details: err.message
+                error: 'Producto no encontrado.',
+                session: req.session
             });
         }
+
+        // Eliminar el producto
+        await product.delete();
+
+        // Redirigir a la tienda para que la lista de productos se actualice
+        return res.redirect('/contenido/tienda');  // Cambié '/shop' a '/contenido/tienda' para que coincida con tu ruta
+
+    } catch (err) {
+        console.error('Error al eliminar el producto:', err);
+        return render(req, res, 'paginas/tienda/shop', {
+            error: 'No se pudo eliminar el producto',
+            details: err.message,
+            session: req.session
+        });
     }
 }
+
+    
+
+    // Devuelve todos los productos
+static async fetchAllProducts() {
+    return await ShopProduct.getAllProducts();
+}
+
+// Devuelve solo los productos del usuario
+static async fetchUserProducts(userId) {
+    if (!userId) return [];
+    return await ShopProduct.getProductsByUserId(userId);
+}
+
+}
+

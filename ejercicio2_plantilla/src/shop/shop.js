@@ -10,25 +10,29 @@ export class ShopProduct {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #getProductsById = null;
+    static #getProductsByUserId = null;
 
     static initStatements(db) {
         this.#db = db;
-        this.#insertStmt = db.prepare('INSERT INTO Productos(nombre, descripcion, precio, imagen, estado) VALUES (@nombre, @descripcion, @precio, @imagen, @estado)');
+        this.#insertStmt = db.prepare('INSERT INTO Productos(nombre, descripcion, precio, imagen, estado, usuario_id) VALUES (@nombre, @descripcion, @precio, @imagen, @estado, @usuario_id)');
         this.#deleteStmt = db.prepare('DELETE FROM Productos WHERE id = @id');
         this.#getProductsById = db.prepare('SELECT * FROM Productos WHERE id = @id');
+        this.#getProductsByUserId = db.prepare('SELECT * FROM Productos WHERE usuario_id = @usuario_id'); // Método para productos del usuario
     }
 
     static getAllProducts() {
         return new Promise((resolve, reject) => {
             try {
                 // Asegúrate de que 'P' esté entre comillas simples para que sea interpretado correctamente
-                const rows = this.#db.prepare('SELECT * FROM Productos WHERE estado = \'P\'').all();
+                const rows = this.#db.prepare('SELECT * FROM Productos').all();
                 
                 if (!rows || rows.length === 0) {
                     resolve([]);  // Si no hay productos, resolvemos con un array vacío
                 } else {
                     // Mapeamos los resultados a instancias de ShopProduct
-                    const products = rows.map(row => new ShopProduct(row.id, row.nombre, row.descripcion, row.precio, row.imagen, row.estado));
+                    const products = rows.map(row =>
+                        new ShopProduct(row.id, row.nombre, row.descripcion, row.precio, row.imagen, row.estado, row.usuario_id)
+                    );
                     resolve(products);  // Resolvemos con los productos obtenidos
                 }
             } catch (e) {
@@ -40,6 +44,23 @@ export class ShopProduct {
     
     
     
+    static getProductsByUserId(userId) {
+        return new Promise((resolve, reject) => {
+            try {
+                const rows = this.#getProductsByUserId.all({ usuario_id: userId });
+                if (!rows || rows.length === 0) {
+                    resolve([]);
+                } else {
+                    const userProducts = rows.map(row => new ShopProduct(row.id, row.nombre, row.descripcion, row.precio, row.imagen, row.estado, row.usuario_id));
+                    resolve(userProducts);
+                }
+            } catch (e) {
+                console.error("Error al recuperar productos del usuario:", e);
+                reject(e);
+            }
+        });
+    }
+
 
     static #insert(product) {
         let result = null;
@@ -50,6 +71,7 @@ export class ShopProduct {
             const price = product.#price;
             const image = product.#image;
             const status = product.#status;
+            const userId = product.#userId;
     
             // Asegúrate de que los parámetros estén correctamente nombrados
             const datos = { 
@@ -57,7 +79,8 @@ export class ShopProduct {
                 descripcion: description,
                 precio: price,
                 imagen: image,
-                estado: status
+                estado: status,
+                usuario_id: userId
             };
     
             // Ejecutar la consulta con los datos proporcionados
@@ -92,14 +115,16 @@ export class ShopProduct {
     #price;
     #image;
     #status;
+    #userId;
 
-    constructor(id, name, description, price, image, status) {
+    constructor(id, name, description, price, image, status, userId) {
         this.#id = id || null;
         this.#name = name;
         this.#description = description;
         this.#price = price;
         this.#image = image;
         this.#status = status; // 'P' para productos en venta, 'S' para productos vendidos
+        this.#userId = userId;
     }
 
     get id() {
@@ -124,6 +149,9 @@ export class ShopProduct {
 
     get status() {
         return this.#status;
+    }
+    get userId() {
+        return this.#userId; // Obtener el ID del usuario
     }
 
     // Método para cambiar el estado del producto (venderlo, por ejemplo)
