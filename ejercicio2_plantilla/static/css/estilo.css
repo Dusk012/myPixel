@@ -100,5 +100,251 @@ label {
 }
 
 button {
+    margin-left: 100px;
+    background-color: #ffcc00;
+    color: #1e1e2e;
+    padding: 10px 15px;
+    border: 2px solid #ff6b6b;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Press Start 2P', cursive;
+    transition: transform 0.3s ease, background 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #ff6b6b;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* Errores */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+span.error {
+	color: red;
+}
+
+/* Saludo */
+div.saludo {
+    width: 100%;
+    text-align: right;
+}
+
+/* Mensajes de error en el formulario */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}
+
+/* El contenedor principal tenga un fondo oscuro */
+.container {
+    background: #2e2e3e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Campos de entrada */
+.input-container {
+    margin-bottom: 10px;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    background: #444;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+}
+
+/*
+* @author: [Pol]
+*/
+
+.saludo {
+    display: flex;body {
+	background-color: #CDCDCD;
+}
+
+div#contenedor {
+	width: 900px;
+	margin: auto;
+	border: 1px solid black;
+	background-color: #aaaaaa;
+	margin-top: 30px;
+}
+
+header {
+	padding: 30px;
+	height: 100px;
+	background-color: #303030;
+	color: white;
+}
+
+header a, header a:visited {
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+} 
+
+header a:hover {
+	color: red;
+	font-weight: bold;
+	text-decoration: underline;
+} 
+
+
+nav {
+	padding: 10px;
+	float: left;
+	width: 170px;
+	height: 400px;
+	background-color: #dddddd;
+}
+
+nav a, nav a:visited {
+	color: red;
+	font-weight: bold;
+	text-decoration: none;
+} 
+
+nav a:hover {
+	color: red;
+	text-decoration: underline;
+} 
+
+
+aside {
+	padding: 10px;
+	float: right;
+	width: 170px;
+	height: 400px;
+	background-color: #dddddd;
+}
+
+main {
+	padding: 10px;
+	float: left;
+	min-height: 600px;
+	width: 880px;
+	background-color: white;
+}
+
+footer	 {
+	clear: both;
+	padding: 20px;
+	background-color: #303030;
+	color: white;
+	text-align: center;
+}
+
+div.saludo {
+	width: 100%;
+	text-align: right;
+}
+
+fieldset {
+	border: 1px solid black;
+	width: 15em;
+	margin: 0 auto;
+}
+
+legend {
+	color: #fff;
+	background: #303030;
+	border: 1px solid black;
+	padding: 2px 6px;
+} 
+
+label {
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block;
+}
+
+button {
 	margin-left: 100px;
 } 
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ffcc00;
+}
+
+.botonusuario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+}
+
+.usuariofotoperfil{
+    padding: 10px 20px;
+    background-color: #4CAF50;
+     color: white;
+      border: none;
+       border-radius: 5px; 
+       cursor: pointer;
+}
+
+.usuariodarsedebaja{
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+     border: none; 
+     border-radius: 5px;
+      cursor: pointer;
+}
+
+.panelfotopefilusuario{
+    display: flex; 
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.fotoperfilaelegirusuario{
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.botonfotoperfilusuario{
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer
+}
+
+.bordefotoperfilmostradausuario{
+    width: 70px;
+    height: 70px;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.fotoperfilmostradausuario{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.organizacionusuario{
+    text-align: right;
+    margin-top: 1px;
+}
