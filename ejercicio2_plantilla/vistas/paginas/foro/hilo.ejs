@@ -11,9 +11,19 @@
                 <li>
                     Escrito por <strong><%= reply.username %></strong>: <%= reply.content %>
                     <p>Publicado el <%= reply.date %></p>
+            
                     <% if (session.username === reply.username || session.rol === 'A') {%>
                         <form action="/mensajes/message/<%= reply.id %>?idForo=<%= forum.id %>" method="POST">
-                        <button type="submit">Eliminar comentario</button>
+                            <button type="submit">Eliminar comentario</button>
+                        </form>
+                    <% } %>
+            
+                    <% if (session.username === reply.username) { %>
+                        <button onclick="mostrarFormulario(<%= reply.id %>)">Editar comentario</button>            
+                        <form id="formulario-<%= reply.id %>" action="/mensajes/edit/<%= reply.id %>?idForo=<%= forum.id %>" method="POST" style="display: none; margin-top: 10px;">
+                            <label for="content %>">Comentario:</label><br>
+                            <textarea name="content" id="content%>" rows="4" required><%= reply.content %></textarea><br>
+                            <button type="submit">Guardar edición</button>
                         </form>
                     <% } %>
                 </li>
@@ -34,3 +44,10 @@
     
 
     <a href="/mensajes/foro">Volver al foro</a>
+
+    <script>
+        function mostrarFormulario(id) {
+          const formulario = document.getElementById(`formulario-${id}`);
+          formulario.style.display = formulario.style.display === 'none' ? 'block' : 'none';
+        }
+      </script>
