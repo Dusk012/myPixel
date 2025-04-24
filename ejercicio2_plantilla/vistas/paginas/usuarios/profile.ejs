@@ -1,13 +1,13 @@
 <form id="form-foto-perfil" action="/usuarios/perfil" method="POST">
     <% function mostrarSaludo(session) { %>
-        <div class="saludo" style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%;">
+        <div class="saludo">
             <% if (session.login) { %>
                 <!-- Foto de perfil seleccionada -->
-                <div id="foto-perfil-seleccionada" style="width: 70px; height: 70px; border: 2px solid rgb(255, 255, 255); border-radius: 50%; overflow: hidden;">
-                    <img src="../img/Perfil<%= session.foto_perfil %>.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class = bordefotoperfilmostradausuario id="foto-perfil-seleccionada">
+                    <img class = "fotoperfilmostradausuario" src="../img/Perfil<%= session.foto_perfil %>.png" alt="Foto de perfil">
                 </div>
                 <!-- Texto de bienvenida -->
-                <div style="text-align: right;">
+                <div>
                     <h1>Bienvenid@, <%= session.nombre %></h1>
                     <h1>username: <%= session.username %></h1>
                     <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
@@ -22,41 +22,39 @@
         </div>
 
         <% if (session.login) { %>
-            <div style="text-align: right; margin-top: 1px;">
+            <div class = "organizacionusuario">
                 <p>📸 Selecciona tu foto de perfil:</p>
-                <div class="perfil-opciones" style="display: flex; align-items: center; justify-content: flex-end;">
-                    <button type="button" onclick="seleccionarFoto('Perfil1.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                        <img src="../img/Perfil1.png" width="120" alt="Ícono de enlace" style="border: 2px solid rgb(255, 255, 255); border-radius: 50%;">
+                <div class="panelfotopefilusuario">
+                    <button class = botonfotoperfilusuario type="button" onclick="seleccionarFoto('Perfil1.png')">
+                        <img class = fotoperfilaelegirusuario src="../img/Perfil1.png" width="120" alt="Ícono de enlace">
                     </button>
-                    <button type="button" onclick="seleccionarFoto('Perfil2.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                        <img src="../img/Perfil2.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    <button class = botonfotoperfilusuario type="button" onclick="seleccionarFoto('Perfil2.png')">
+                        <img class = fotoperfilaelegirusuario src="../img/Perfil2.png" width="120" alt="Ícono de enlace" >
                     </button>
-                    <button type="button" onclick="seleccionarFoto('Perfil3.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                        <img src="../img/Perfil3.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    <button class = botonfotoperfilusuario type="button" onclick="seleccionarFoto('Perfil3.png')">
+                        <img class = fotoperfilaelegirusuario src="../img/Perfil3.png" width="120" alt="Ícono de enlace" >
                     </button>
-                    <button type="button" onclick="seleccionarFoto('Perfil4.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                        <img src="../img/Perfil4.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    <button class = botonfotoperfilusuario type="button" onclick="seleccionarFoto('Perfil4.png')">
+                        <img class = fotoperfilaelegirusuario src="../img/Perfil4.png" width="120" alt="Ícono de enlace">
                     </button>
-                    <button type="button" onclick="seleccionarFoto('Perfil5.png')" style="border: none; background: none; padding: 0; cursor: pointer;">
-                        <img src="../img/Perfil5.png" width="120" alt="Ícono de enlace" style="border: 2px solid white; border-radius: 50%;">
+                    <button class = botonfotoperfilusuario type="button" onclick="seleccionarFoto('Perfil5.png')">
+                        <img class = fotoperfilaelegirusuario src="../img/Perfil5.png" width="120" alt="Ícono de enlace">
                     </button>
                 </div>
-                <p id="foto-seleccionada" style="margin-top: 10px;"></p>
+                <p id="foto-seleccionada"></p>
             </div>
 
             <!-- Botón para enviar el formulario -->
-            <div style="text-align: right; margin-top: 10px;">
-                <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Guardar cambios en foto de perfil
-                </button>
-            </div>
+        <div class="botonusuario">
+            <button class = "usuariofotoperfil" type="submit">
+                Guardar cambios en foto de perfil
+            </button>
 
             <!-- Botón para darse de baja -->
-            <div style="text-align: right; margin-top: 10px;">
-                <button type="button" onclick="darseDeBaja()" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Darse de baja
-                </button>
-            </div>
+            <button class = "usuariodarsedebaja" type="button" onclick="darseDeBaja()">
+                Darse de baja
+            </button>
+        </div>
         <% } %>
     </form>
 
@@ -100,7 +98,7 @@
         }
     </script>
 <% } %>
-
+    
 <body>
     <!-- Llamada a la función mostrarSaludo -->
     <%= mostrarSaludo(session) %>
