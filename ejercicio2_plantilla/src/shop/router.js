@@ -1,14 +1,40 @@
-// router.js
+import express from 'express'; 
+import asyncHandler from 'express-async-handler';
+import {
+    addProduct,
+    getProductById,
+    sellProduct,
+    deleteProduct,
+    getAllProducts
+} from './controller.js';
 
-import express from 'express';
-import { ShopController } from './controller.js';
 import { upload } from '../shop/upload.js';
-const router = express.Router();
+import { autenticado, tieneRol } from '../middleware/auth.js'; // Importar los middlewares
 
-// Rutas de productos
-router.post('/add', upload.single('image'), ShopController.addProduct);
-router.get('/:id', ShopController.getProductById);  // Obtener un producto por ID
-router.post('/:id/sell', ShopController.sellProduct);  // Marcar un producto como vendido
-router.post('/:id', ShopController.deleteProduct);  // Eliminar un producto
+const shopRouter = express.Router();
 
-export default router;
+// Ver todos los productos (público o privado, según lo que prefieras)
+shopRouter.get('/', asyncHandler(getAllProducts));
+
+// Ver un producto específico (también puede ser público)
+shopRouter.get('/:id', asyncHandler(getProductById));
+
+// Añadir producto – solo usuarios logueados
+shopRouter.post('/add',
+    autenticado(),
+    upload.single('image'),
+    asyncHandler(addProduct)
+);
+
+// Vender producto – solo usuarios logueados
+shopRouter.post('/:id/sell',
+    autenticado(),
+    asyncHandler(sellProduct)
+);
+
+// Eliminar producto – solo usuarios logueados
+shopRouter.post('/:id',
+    autenticado(),
+    asyncHandler(deleteProduct)
+);
+export default shopRouter;

@@ -11,11 +11,13 @@ export class ShopProduct {
     static #deleteStmt = null;
     static #getProductsById = null;
     static #getProductsByUserId = null;
+    static #updateStmt = null;
 
     static initStatements(db) {
         this.#db = db;
         this.#insertStmt = db.prepare('INSERT INTO Productos(nombre, descripcion, precio, imagen, estado, usuario_id) VALUES (@nombre, @descripcion, @precio, @imagen, @estado, @usuario_id)');
         this.#deleteStmt = db.prepare('DELETE FROM Productos WHERE id = @id');
+        this.#updateStmt = db.prepare('UPDATE Productos SET nombre = @nombre, descripcion = @descripcion, precio = @precio, imagen = @imagen, estado = @estado, usuario_id = @usuario_id WHERE id = @id');
         this.#getProductsById = db.prepare('SELECT * FROM Productos WHERE id = @id');
         this.#getProductsByUserId = db.prepare('SELECT * FROM Productos WHERE usuario_id = @usuario_id'); // Método para productos del usuario
     }
@@ -103,11 +105,32 @@ export class ShopProduct {
         return product;
     }
 
+    static #update(product) {
+        const datos = {
+            id: product.#id,
+            nombre: product.#name,
+            descripcion: product.#description,
+            precio: product.#price,
+            imagen: product.#image,
+            estado: product.#status,
+            usuario_id: product.#userId
+        };
+    
+        const result = this.#updateStmt.run(datos);
+        if (result.changes === 0) {
+            throw new Error(`No se pudo actualizar el producto con id ${product.#id}`);
+        }
+    
+        return product;
+    }
+    
+
     static getProductById(id) {
         const row = this.#getProductsById.get({ id });
         if (!row) throw new Error('Producto no encontrado');
-        return new ShopProduct(row.id, row.nombre, row.descripcion, row.precio, row.imagen, row.estado);
+        return new ShopProduct(row.id, row.nombre, row.descripcion, row.precio, row.imagen, row.estado, row.usuario_id);
     }
+    
 
     #id;
     #name;
@@ -165,7 +188,9 @@ export class ShopProduct {
 
     persist() {
         if (this.#id === null) return ShopProduct.#insert(this);
+        return ShopProduct.#update(this);
     }
+    
 
     delete() {
         return ShopProduct.#delete(this);

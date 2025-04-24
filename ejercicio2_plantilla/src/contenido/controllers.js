@@ -5,7 +5,7 @@ import { config } from '../config.js';
 import { Foto } from '../imagenes/imagenes.js';
 import session from 'express-session';
 import { promises as fs } from 'fs';
-import { ShopController } from '../shop/controller.js';
+import { fetchAllProducts, fetchUserProducts } from '../shop/controller.js';
 
 export async function normal(req, res) {
     //let contenido = 'paginas/Usuarios/noRegistrado';
@@ -77,39 +77,7 @@ export function viewDesafios(req, res) {
     });
 }
 
-export async function viewShop(req, res) {
-    try {
-        const userId = req.session.userId;
 
-        // Obtenemos todos los productos (globales)
-        const allProducts = await ShopController.fetchAllProducts();
-
-        // Obtenemos productos del usuario logueado
-        const userProducts = await ShopController.fetchUserProducts(userId);
-
-        // Filtramos los productos globales excluyendo los del usuario
-        const globalProducts = allProducts.filter(p => p.usuario_id !== userId);
-
-        res.render('pagina', {
-            contenido: 'paginas/tienda/shop',
-            products: globalProducts,
-            userProducts: userProducts,
-            error: null,
-            session: req.session
-        });
-
-    } catch (err) {
-        console.error("Error al obtener los productos:", err);
-
-        res.render('pagina', {
-            contenido: 'paginas/tienda/shop',
-            products: [],
-            userProducts: [],
-            error: 'No se pudieron cargar los productos.',
-            session: req.session
-        });
-    }
-}
 
 
 

@@ -1,6 +1,14 @@
 <section class="shop">
     <h1>Bienvenido a la Tienda</h1>
 
+    <!-- Mostrar el mensaje flash si existe -->
+    <% const flashMessage = locals.getAndClearFlash(); %>
+    <% if (flashMessage) { %>
+        <div class="flash-message">
+            <p><%= flashMessage %></p>
+        </div>
+    <% } %>
+
     <!-- Formulario para añadir un nuevo producto -->
     <div class="add-product-form">
         <h2>Añadir un nuevo producto</h2>
@@ -39,8 +47,6 @@
                             <input type="hidden" name="_method" value="DELETE" />
                             <button type="submit">Eliminar</button>
                         </form>
-                        
-
 
                         <!-- Botón para vender -->
                         <% if (product.status === 'P') { %>
