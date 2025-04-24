@@ -72,13 +72,15 @@ export async function createPost(req, res) {
     }
 
     try {
+        const username = req.session.username;
         const { title, desc } = req.body;
                 
         // Crear un nuevo foro y obtener la referencia a ese foro
         const newForum = forum.createForum(
             title,
             desc,
-            'Activo'
+            'Activo',
+            username
         );
 
         res.setFlash('Post creado exitosamente');
@@ -121,6 +123,10 @@ export async function createReply(req, res) {
     } catch (e) {
         res.redirect(`/mensajes/thread/${parentId}`);
     }
+}
+
+export function viewEditMessage(req, res){
+
 }
 
 export async function editMessage(req, res) {

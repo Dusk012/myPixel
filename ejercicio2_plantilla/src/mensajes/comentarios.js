@@ -237,18 +237,13 @@ export class Forum {
         this.#getAllStmt = db.prepare('SELECT * FROM Foros');
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
         this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
+        this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado, username) VALUES (@titulo, @descripcion, @estado, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
 
 
     static getForoByTitulo(titulo) {
-            const forum = this.#getByTituloStmt.get({ titulo });
-            if (forum === undefined) throw new ForoNoEncontrado(titulo);
-    
-            const { id, descripcion, estado } = forum;
-    
-            return new Forum(id, titulo, descripcion, estado);
+            //REFACTORIZAR
     }
     
         static #insert(forum) {
@@ -257,7 +252,8 @@ export class Forum {
                 const titulo = forum.#titulo;
                 const descripcion = forum.#descripcion;
                 const estado = forum.#estado;
-                const datos = {titulo, descripcion, estado};
+                const username = forum.#username;
+                const datos = {titulo, descripcion, estado, username};
     
                 result = this.#insertStmt.run(datos);
     
@@ -289,7 +285,7 @@ export class Forum {
             console.log("Entro en getForumById")
             const forum = this.#getByIdStmt.get({ id });
             if (!forum) throw new Error('Foro no encontrado');
-            return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id);
+            return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id);
         }
 
         static getForums() {
@@ -302,7 +298,7 @@ export class Forum {
             }
     
             // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-            return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id));
+            return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id));
         }
 
         dame_foros(){
@@ -388,7 +384,7 @@ export class Forum {
     }
 
 
-    createForum(titulo, descripcion, estado) {
+    createForum(titulo, descripcion, estado, username) {
         // Validación básica de los parámetros
         if (!titulo || !descripcion || !estado) {
             if(!estado && titulo && descripcion) console.log("Me falta estado, pero todo lo demas esta OK.")
@@ -396,7 +392,7 @@ export class Forum {
         }
 
         // Crear una nueva instancia de Forum
-        const foro = new Forum(titulo, descripcion, estado);
+        const foro = new Forum(titulo, descripcion, estado, username);
 
         // Llamar al método persist() para guardar el foro en la base de datos
         foro.persist();
@@ -443,8 +439,9 @@ export class Forum {
     #titulo;
     #descripcion;
     #estado;
+    #username;
 
-    constructor(titulo, descripcion, estado, id = null) {
+    constructor(titulo, descripcion, estado, username, id = null) {
         if (id !== null) {
             this.#id = id;  // Foro existente
         } else {
@@ -454,6 +451,7 @@ export class Forum {
         this.#titulo = titulo;
         this.#descripcion = descripcion;
         this.#estado = estado;
+        this.#username = username;
     }
 
     get id() {
@@ -470,6 +468,10 @@ export class Forum {
 
     get estado() {
         return this.#estado;
+    }
+
+    get username() {
+        return this.#username;
     }
 
     persist() {

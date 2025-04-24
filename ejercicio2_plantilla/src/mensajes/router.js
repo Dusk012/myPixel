@@ -2,7 +2,7 @@ import express from 'express';
 //import { body } from 'express-validator';
 //import asyncHandler from 'express-async-handler';
 
-import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, editMessage, deleteMessage, sendComment } from './controller.js';
+import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, viewEditMessage, editMessage, deleteMessage, sendComment } from './controller.js';
 
 const mensajesRouter = express.Router(); // Colocamos esto primero
 
@@ -13,7 +13,8 @@ mensajesRouter.get('/stats', viewStats);
 
 mensajesRouter.post('/post', createPost);
 mensajesRouter.post('/reply/:id', createReply);
-mensajesRouter.get('/message', editMessage);
+mensajesRouter.get('/editmessage/:id', viewEditMessage);
+mensajesRouter.get('/editmessage/:id', editMessage);
 mensajesRouter.post('/message/:id', deleteMessage);
 mensajesRouter.post('/comment', sendComment);
 

@@ -42,7 +42,9 @@ CREATE TABLE "Foros" (
 	"titulo"	INTEGER NOT NULL,
 	"descripcion"	INTEGER,
 	"estado"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
+	"username" TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("username") REFERENCES "Usuarios"("username")
 );
 DROP TABLE IF EXISTS "Fotos";
 CREATE TABLE "Fotos" (
