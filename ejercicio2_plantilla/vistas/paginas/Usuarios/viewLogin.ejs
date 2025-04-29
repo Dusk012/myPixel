@@ -1,14 +1,14 @@
 <body>
-    <h2>Acceso al sistema</h2>
+    <h2>Bienvenido de vuelta ...</h2>
     <form action="/usuarios/login" method="POST">
         <fieldset>
             <% if (locals.error) { %>
                 <p><strong><%= locals.error %></strong></p>
             <% } %>
-            <div><label>Username:</label><input type="text" name="username" value="<%=datos.username %>"><%- helpers.error(errores, 'username') %></div>
+            <label>Username:</label><input type="text" name="username" value="<%=datos.username %>"><%- helpers.error(errores, 'username') %>
             <p></p>
-            <div><label>Contraseña:</label><input type="password" name="password"><%- helpers.error(errores, 'password') %></div>
-            <div><button type="submit">Enviar</button></div>
+            <label>Contraseña:</label><input type="password" name="password"><%- helpers.error(errores, 'password') %>
+            <button type="submit">Enviar</button>
         </fieldset>
     </form>
 </body>

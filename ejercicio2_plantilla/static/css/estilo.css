@@ -137,6 +137,7 @@ input[type="text"], input[type="password"] , input[type = "file"], input[type ="
     border-radius: 5px;
     font-family: 'Press Start 2P', cursive;
     font-size: 14px;
+    box-sizing: border-box;
 }
 
 /* Botones */
@@ -158,6 +159,33 @@ button:hover {
     background-color: #ff6b6b;
     color: #fff;
     transform: scale(1.1);
+}
+
+/*imagnes*/
+/* Añadir al CSS existente */
+form {
+    width: 100%;
+    max-width: 40em; /* Ancho máximo equivalente a 640px (40em * 16px) */
+    margin: 0 auto;
+    padding: 1.25em;
+    box-sizing: border-box;
+}
+
+.preview-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0.9375em 0;
+    position: relative;
+}
+
+#preview {
+    width: 100%; /* Ocupa el 100% del contenedor padre */
+    height: auto; /* Altura proporcional */
+    display: block;
+    object-fit: contain; /* Mantiene relación de aspecto */
+    border: 0.1875em solid #efefef;
+    border-radius: 0.5em;
 }
 
 /* Errores */
@@ -205,4 +233,56 @@ div.saludo {
     border-radius: 5px;
     font-family: 'Press Start 2P', cursive;
     font-size: 14px;
+}
+
+/* Contenedor principal */
+.contenedor-imagen {
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* Tabla principal */
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* Celda de la imagen */
+.celda-imagen {
+    max-width: 100%;
+    padding: 0.5em;
+}
+
+/* Imagen responsiva */
+.imagen-responsiva {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+    border: 0.1875em solid #ff6b6b;
+    border-radius: 0.5em;
+}
+
+/* Textos en celdas */
+.titulo, .descripcion {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+/* Tabla de descripción */
+.tabla-descripcion {
+    margin-top: 1em;
+}
+
+/* Diálogo de flash */
+#flashModal {
+    max-width: 90vw;
+    width: 100%;
+    margin: auto;
+    border: none;
+    border-radius: 0.5em;
 }
