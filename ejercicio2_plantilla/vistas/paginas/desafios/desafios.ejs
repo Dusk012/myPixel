@@ -28,12 +28,12 @@
 </head>
 <body>
   <div class="challenge-container">
-    <h1>Desafío: ¡Da 5 Likes!</h1>
+    <h1>Desafío:</h1>
+    <h1>¡Da 5 Likes!</h1>
     <div class="progress-bar">
       <div id="progress" class="progress">0%</div>
     </div>
     <p>Likes: <span id="likes">0</span> / <span id="target">5</span></p>
-    <button id="likeButton">Dar Like</button>
   </div>
 
   <script>
@@ -49,13 +49,14 @@
             .then(response => response.json())
             .then(data => {
                 currentLikes = data.globalLikes;
-                likesText.innerText = currentLikes;
-                const progressPercentage = (currentLikes / targetLikes) * 100;
+                const displayedLikes = Math.min(currentLikes, targetLikes); // Limitar los likes mostrados al máximo objetivo
+                likesText.innerText = displayedLikes;
+                const progressPercentage = (displayedLikes / targetLikes) * 100;
                 progressBar.style.width = progressPercentage + '%';
                 progressBar.innerText = Math.round(progressPercentage) + '%';
 
-                if (currentLikes >= targetLikes) {
-                    alert("¡Felicidades! Has completado el desafío.");
+                if (progressPercentage >= 100) {
+                    progressBar.innerText = '100%';
                 }
             })
             .catch(error => console.error('Error al obtener los likes globales:', error));
