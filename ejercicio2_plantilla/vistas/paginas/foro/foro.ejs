@@ -1,0 +1,21 @@
+<body>
+    <h1>Foro</h1>
+    <% if (foros && foros.length > 0) { %>
+        <ul>
+         <% foros.forEach(foro => { %>
+            <li>
+                <a href="/mensajes/thread/<%= foro.id %>">
+                    <strong><%= foro.titulo %></strong>
+                </a>
+            </li>
+        <% }) %>
+    </ul>
+    <% } else { %>
+       <p>No hay posts disponibles.</p>
+    <% } %>
+
+
+    <a href="/mensajes/post">Crear nuevo post</a>
+
+</body>
+</html>

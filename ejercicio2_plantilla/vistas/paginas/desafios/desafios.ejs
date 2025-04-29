@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Desafíos del Usuario</title>
+  <style>
+    /* body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    } */
+/*     
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #2196F3;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0b7dda;
+    } */
+  </style>
+</head>
+<body>
+  <div class="challenge-container">
+    <h1>Desafío: ¡Da 5 Likes!</h1>
+    <div class="progress-bar">
+      <div id="progress" class="progress">0%</div>
+    </div>
+    <p>Likes: <span id="likes">0</span> / <span id="target">5</span></p>
+    <button id="likeButton">Dar Like</button>
+  </div>
+
+  <script>
+    const targetLikes = 5; // Número de likes requeridos para completar el desafío
+    let currentLikes = 0; // Likes actuales
+
+    const progressBar = document.getElementById('progress');
+    const likesText = document.getElementById('likes');
+
+    // Función para actualizar la barra de progreso
+    function actualizarProgreso() {
+        fetch('/contenido/likes/global')
+            .then(response => response.json())
+            .then(data => {
+                currentLikes = data.globalLikes;
+                likesText.innerText = currentLikes;
+                const progressPercentage = (currentLikes / targetLikes) * 100;
+                progressBar.style.width = progressPercentage + '%';
+                progressBar.innerText = Math.round(progressPercentage) + '%';
+
+                if (currentLikes >= targetLikes) {
+                    alert("¡Felicidades! Has completado el desafío.");
+                }
+            })
+            .catch(error => console.error('Error al obtener los likes globales:', error));
+    }
+
+    // Actualizar la barra de progreso al cargar la página
+    actualizarProgreso();
+
+    // Actualizar la barra de progreso cada 5 segundos
+    setInterval(actualizarProgreso, 5000);
+</script>
+</body>
+</html>

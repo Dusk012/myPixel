@@ -1,17 +1,17 @@
 <h1>Subir archivos</h1>
-<form action="/usuarios/submit" method="POST">
-    <label for="nombreImg">Nombre del archivo:</label>
-    <input type="text" name="Nombre" required>
+<form action="/imagenes/submit" method="POST" enctype="multipart/form-data">
+    <% if (locals.error) { %>
+        <p><strong><%= locals.error %></strong></p>
+    <% } %>
+    <div><label>Nombre del archivo:</label><input type="text" name="nombre" value="<%=datos.nombre %>"><%- helpers.error(errores, 'nombre') %></div>
     <p></p>
-    <label for="descripcionImg">Descripción de la imagen:</label>
-    <input type="text" name="Descripción" required>
+    <div><label>Descripción de la imagen:</label><input type="text" name="descripcion" value="<%=datos.descripcion %>"><%- helpers.error(errores, 'descripcion') %></div>
     <p></p>
-    <label for="imagen">Imagen:</label>
-    <input type="file" name="Imagen" id="imagen" accept="image/*" required>
+    <div><label>Imagen:</label><input type="file" name="foto" id="imagen" accept="image/*" "><%- helpers.error(errores, 'imagen') %></div>
     <p></p>
-    <img id="preview" src="" alt="Vista previa" style="display: none; max-width: 1000px;">
+    <div><img id="preview" src="" alt="Vista previa" style="display: none; max-width: 1000px;"></div>
     <p></p>
-    <button type="submit">Enviar</button>
+    <div><button type="submit">Enviar</button></div>
 </form>
 
 <!--El scrip para mostrar como es la imagen antes de subirla ha sido apoyada en chatgpt -->

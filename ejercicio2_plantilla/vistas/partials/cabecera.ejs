@@ -1,34 +1,32 @@
 <!-- Cabecera de la página web -->
 
 <% function mostrarBarra(session) { %>
-    <div class="saludo">
     <% if (session.login) { %>
+        <div class="logo"><a href="/contenido/normal"><img src="/img/icono.png" width="150" alt="Ícono de enlace"></a></div>
         <div class = "barra"> 
-        <a href="/contenido/perfil" class="enlace">Perfil</a>
+        <a href="/usuarios/perfil" class="enlace">Perfil</a>
         |
-        <a href="/contenido/panel" class="enlace">Panel del creador</a>
+        <a href="/imagenes/submit" class="enlace">Panel del creador</a>
         |
         <a href="/contenido/desafios" class="enlace" >Desafíos</a>
         |
-        <a href="/contenido/foro" class="enlace">Foro</a>
+        <a href="/mensajes/foro" class="enlace">Foro</a>
         |
         <a href="/contenido/tienda" class="enlace">Tienda</a>
         |
         <a href="/usuarios/logout" class="enlace">Logout</a>
     </div>
     <% } else { %>
+        <div class="logo"><a href="/"><img src="/img/icono.png" width="150" alt="Ícono de enlace"></a></div>
         <div class = "barra"> 
             <a href="/usuarios/login" class="enlace">Iniciar Sesión</a>
             |
             <a href="/usuarios/register" class="enlace">Registrarse</a>
         </div>
     <% } %>
-    </div>
 <% } %>
 
 <header>
-    <a href="/">
-        <img src="../img/icono.png" width="150" alt="Ícono de enlace">
-    </a>
+    
     <%= mostrarBarra(session) %>
 </header>
