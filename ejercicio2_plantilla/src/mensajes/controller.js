@@ -125,44 +125,10 @@ export async function createReply(req, res) {
     }
 }
 
-export function viewEditMessage(req, res){
-
-}
-
-export async function editMessage(req, res) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        res.setFlash('Error en el formulario');
-        return res.redirect('back');
-    }
-
-    try {
-        const messageId = parseInt(req.params.id);
-        const { content } = req.body;
-        const userId = req.session.usuarioId;
-        
-        const message = forum.getMessage(messageId);
-        if (!message) {
-            throw new Error('Mensaje no encontrado');
-        }
-
-        // Verificar que el usuario es el autor
-        if (message.userId !== userId) {
-            throw new Error('No tienes permiso para editar este mensaje');
-        }
-
-        message.content = content;
-        res.setFlash('Mensaje actualizado exitosamente');
-
-        // Redirigir al hilo correspondiente
-        const redirectId = message.type === MessageType.ORIGINAL 
-            ? message.id 
-            : message.parentId;
-        res.redirect(`/foro/thread/${redirectId}`);
-    } catch (e) {
-        res.setFlash(e.message);
-        res.redirect('back');
-    }
+export function editMessage(req, res) {
+    const { content } = req.body;
+    ForumMessage.editComment(req.params.id, content);
+    res.redirect(`/mensajes/thread/${req.query.idForo}`);
 }
 
 export function deleteMessage(req, res) {

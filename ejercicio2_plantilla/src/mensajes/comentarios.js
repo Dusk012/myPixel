@@ -12,11 +12,13 @@ export class ForumMessage {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #getCommentsById = null;
+    static #editStmt = null;
 
     static initStatements(db) {
         this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario, username) VALUES (@forumId, @content, @date, @userId, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
-        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro');   
+        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro'); 
+        this.#editStmt = db.prepare('UPDATE Comentarios SET contenido = @comentario WHERE id = @id');
     }
 
     static #insert(comentario) {
@@ -48,12 +50,25 @@ export class ForumMessage {
         }
     }
 
+    static #edit(idComment, comment) {
+        let result = null;
+        try {
+            const id = idComment;
+            const comentario = comment;
+            const datos = {id, comentario};
+            result = this.#editStmt.run(datos);
+        } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
+            throw new Error('No se ha podido editar el comentario', { cause: e });
+        }
+    }
+
     #id;
     #forumId;
     #content;
     #date;
     #userId;
     #username;
+    #editado;
     //#type;
     //#replies;
     //#parentId;
@@ -185,6 +200,10 @@ export class ForumMessage {
         return ForumMessage.getComments( id_foro );
     }
 
+
+    static editComment(idComment, comment) {
+        ForumMessage.#edit(idComment, comment);
+    }
     
     static deleteComment(idComment) {
         ForumMessage.#delete(idComment);
