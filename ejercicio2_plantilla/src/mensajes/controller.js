@@ -7,30 +7,38 @@ const forum = new Forum();
 const thread = new ForumMessage();
 
 export function viewForum(req, res) {
-        console.log(render);
-        const foros = forum.dame_foros();
-        return render(req, res, 'paginas/foro/foro', {
-            foros,
-            error: null,
-            session: req.session
-        });
+    const query = req.query.foro?.trim().toLowerCase();
+    let foros;
+
+    if (query) {
+        foros = forum.dame_foros_por_titulo(query);
+    } else {
+        foros = forum.dame_foros();
+    }
+
+    return render(req, res, 'paginas/foro/foro', {
+        foros,
+        error: null,
+        session: req.session,
+        search: query
+    });
 }
 
 export function viewThread(req, res) {
-        console.log(render);
-        const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
-        const my_forum = forum.dame_id(forumId);
-        const my_thread = thread.dame_comentarios(forumId);
-        if (!my_forum) {
-            throw new Error('Foro no encontrado');
-        }
+    console.log(render);
+    const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
+    const my_forum = forum.dame_id(forumId);
+    const my_thread = thread.dame_comentarios(forumId);
+    if (!my_forum) {
+        throw new Error('Foro no encontrado');
+    }
 
-        render(req, res, 'paginas/foro/hilo', {
-            forum: my_forum,
-            replies: my_thread,
-            error: null,
-            session: req.session
-        });
+    render(req, res, 'paginas/foro/hilo', {
+        forum: my_forum,
+        replies: my_thread,
+        error: null,
+        session: req.session
+    });
 }
 
 

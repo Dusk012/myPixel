@@ -1,5 +1,9 @@
 <body>
     <h1>Foro</h1>
+    <form method="GET" action="/mensajes/foro">
+        <input type="text" name="foro" placeholder="Buscar foros por título..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+        <button type="submit">Buscar</button>
+    </form>
     <% if (foros && foros.length > 0) { %>
         <ul>
          <% foros.forEach(foro => { %>

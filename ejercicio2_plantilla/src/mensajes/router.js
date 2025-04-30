@@ -1,6 +1,4 @@
 import express from 'express';
-//import { body } from 'express-validator';
-//import asyncHandler from 'express-async-handler';
 
 import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, editMessage, deleteMessage, sendComment } from './controller.js';
 

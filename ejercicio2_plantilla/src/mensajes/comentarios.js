@@ -254,15 +254,24 @@ export class Forum {
         if (this.#getByTituloStmt !== null) return;
 
         this.#getAllStmt = db.prepare('SELECT * FROM Foros');
-        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
+        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo LIKE @titulo');
         this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado, username) VALUES (@titulo, @descripcion, @estado, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
 
+    static getForosByTitulo(foro) {
+        // Ejecutamos la consulta que obtiene todos los foros
+        const titulo = foro + '%';
+        const rows = this.#getByTituloStmt.all({titulo});
+            
+        // Si no se encuentran foros, retornamos un arreglo vacío
+        if (!rows || rows.length === 0) {
+            return [];
+        }
 
-    static getForoByTitulo(titulo) {
-            //REFACTORIZAR
+        // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
+        return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id));
     }
     
         static #insert(forum) {
@@ -318,6 +327,10 @@ export class Forum {
     
             // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
             return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id));
+        }
+
+        dame_foros_por_titulo(titulo){
+            return Forum.getForosByTitulo(titulo);
         }
 
         dame_foros(){
