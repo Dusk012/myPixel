@@ -11,6 +11,7 @@ import pinoHttp  from 'pino-http';
 const pinoMiddleware = pinoHttp(config.logger.http(logger));
 import { flashMessages } from './middleware/flash.js';
 import { errorHandler } from './middleware/error.js';
+import apiRouter from './apiRouter.js';
 
 export const app = express();
 
@@ -37,4 +38,5 @@ app.use('/usuarios', usuariosRouter);
 app.use('/imagenes', imagenesRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/mensajes', mensajesRouter);
+app.use('/api', apiRouter);
 app.use(errorHandler);

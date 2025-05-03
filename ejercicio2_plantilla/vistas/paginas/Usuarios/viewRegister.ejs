@@ -15,27 +15,27 @@
 	<% } %>
 
     <h2>Bienvenido a MyPixel, Regístrate</h2>
-    <form action="/usuarios/register" method="POST" enctype="">
+    <form action="/usuarios/register" method="POST" enctype=" "  id="registro">
         
         <fieldset>
             <legend>Datos de Registro</legend>
             <p>
-                <div><label>Nombre:</label></div>
+                <label>Nombre:</label>
                 <input type="text" name="nombre" value="<%= datos.nombre %>" /><%- helpers.error(errores, 'nombre') %>
             </p>
             
             <p>
-                <div><label>Nombre_Usuario:</label></div>
-                <input type="text" name="username" value="<%= datos.username %>" /><%- helpers.error(errores, 'username') %>
+                <label>Username:</label>
+                <input type="text" name="username" value="<%= datos.username %>" /><%- helpers.error(errores, 'username') %> <span class="error"></span><span class="feedback"></span>
             </p>
 
             <p>
-                <div><label >Contraseña:</label></div>
+                <label >Contraseña:</label>
                 <input type="password" name="password"><%- helpers.error(errores, 'password') %>
             </p>
 
             <p>
-                <div><label >Confirmar_Contraseña:</label></div>
+                <label >Confirmar_Contraseña:</label>
                 <input type="password" name="confirmPassword"><%- helpers.error(errores, 'confirmPassword') %>
             </p>
 
@@ -45,3 +45,6 @@
         </fieldset>
     </form>
 </body>
+<script src="/js/fetch.js"></script>
+<script src="/js/04-registro.js"></script>
+

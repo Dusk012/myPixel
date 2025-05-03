@@ -1,16 +1,18 @@
-<h1>Subir archivos</h1>
+<h1>Comparte imagenes!</h1>
 <form action="/imagenes/submit" method="POST" enctype="multipart/form-data">
     <% if (locals.error) { %>
         <p><strong><%= locals.error %></strong></p>
     <% } %>
-    <div><label>Nombre del archivo:</label><input type="text" name="nombre" value="<%=datos.nombre %>"><%- helpers.error(errores, 'nombre') %></div>
+    <div><label>Titulo</label><input type="text" name="nombre" value="<%=datos.nombre %>"><%- helpers.error(errores, 'nombre') %></div>
     <p></p>
-    <div><label>Descripción de la imagen:</label><input type="text" name="descripcion" value="<%=datos.descripcion %>"><%- helpers.error(errores, 'descripcion') %></div>
+    <div><label>Descripción</label><input type="text" name="descripcion" value="<%=datos.descripcion %>"><%- helpers.error(errores, 'descripcion') %></div>
     <p></p>
     <div><label>Imagen:</label><input type="file" name="foto" id="imagen" accept="image/*" "><%- helpers.error(errores, 'imagen') %></div>
     <p></p>
-    <div><img id="preview" src="" alt="Vista previa" style="display: none; max-width: 1000px;"></div>
-    <p></p>
+ 
+    <div class="preview-container">
+    <img id="preview" src="" alt="Vista previa" style="display: none;">
+    </div>
     <div><button type="submit">Enviar</button></div>
 </form>
 

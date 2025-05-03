@@ -1,20 +1,23 @@
 <h1>Imágen destacada</h1>
+<div class="contenedor-imagen">
 <table>
-
     <tr>
-        <td><%= data.nombre %></td>
+        <td class="titulo"><%= data.nombre %></td>
     </tr>
     <tr>
-        <td><img src="/uploads/<%= imagen %>"></td>
+        <td class="celda-imagen">
+            <img src="/uploads/<%= imagen %>" alt="Imagen destacada" class="imagen-responsiva">
+        </td>
     </tr>
-    <table>
+    <table class="tabla-descripcion">
         <tr>
-            <td>Descripción: <%= data.descripcion %></td>
+            <td class="descripcion">Descripción: <%= data.descripcion %></td>
             <td><p></p></td>
             <td><button id="btnPuntuar">❤️ <span id="puntuacion"><%= data.puntuacion %></span></button></td>
         </tr>
     </table>
 </table>
+</div>
 
 <%
 const flashMsg = getAndClearFlash();
@@ -50,4 +53,3 @@ if (flashDialogEl) {
         });
     });
     </script>
-    

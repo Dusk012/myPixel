@@ -11,6 +11,10 @@ export class Usuario {
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
+    static #listUsuarios = null;
+    static #countUsuarios = null;
+    static #checkUsername = null;
+
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
@@ -19,6 +23,9 @@ export class Usuario {
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol, foto_perfil) VALUES (@username, @password, @nombre, @rol, @foto_perfil)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre, foto_perfil = @foto_perfil WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE username = @username');
+        this.#listUsuarios = db.prepare('SELECT * FROM Usuarios ORDER BY id LIMIT @size OFFSET @offset');
+        this.#countUsuarios = db.prepare('SELECT COUNT(*) AS numUsuarios FROM Usuarios').pluck();
+        this.#checkUsername = db.prepare('SELECT 1 FROM Usuarios WHERE username = @username').pluck();
     }
 
     static getUsuarioByUsername(username) {
@@ -123,6 +130,29 @@ export class Usuario {
         if (this.#id === null) return Usuario.#insert(this);
         return Usuario.#update(this);
     }
+
+    static listUsuarios(pagina, size = 6) {
+        const arrayUsuarios = this.#listUsuarios.all({ offset: pagina * size, size });
+        const usuarios = [];
+        for(const rawUsuario of arrayUsuarios) {
+            const { username, password, rol, nombre, apellidos, email, avatar, id } = rawUsuario;
+            const usuario = new Usuario(username, password, nombre, apellidos, email, avatar, rol, id);
+            usuarios.push(usuario);
+        }
+
+        return usuarios;
+    }
+
+    static existeUsername(username) {
+        const usuarioExiste = this.#checkUsername.get({ username });
+        return usuarioExiste === 1;
+    }
+
+    static countUsuarios() {
+        const numUsuarios = this.#countUsuarios.get();
+        return numUsuarios;
+    }
+
 
     static registrar(username, password, confirmPassword, nombre, rol = RolesEnum.USUARIO, foto_perfil = 1) {
         // Validar que las contraseñas coincida
