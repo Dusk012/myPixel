@@ -1,16 +1,11 @@
 import express from 'express'; 
 import asyncHandler from 'express-async-handler';
-import {
-    addProduct,
-    getProductById,
-    sellProduct,
-    deleteProduct,
-    getAllProducts
-} from './controller.js';
-
-import { upload } from '../shop/upload.js';
+import { addProduct, getProductById, sellProduct, deleteProduct, getAllProducts } from './controller.js';
+import { config } from '../config.js';
 import { autenticado, tieneRol } from '../middleware/auth.js'; // Importar los middlewares
+import multer from 'multer';
 
+const upload = multer({ dest: config.uploads });
 const shopRouter = express.Router();
 
 // Ver todos los productos (público o privado, según lo que prefieras)
