@@ -14,15 +14,14 @@ usuariosRouter.post('/login', autenticado(null, 'paginas/contenido/index'),
 usuariosRouter.get('/logout', asyncHandler(doLogout));
 
 usuariosRouter.get('/register', autenticado(null, '/paginas/contenido/index'), asyncHandler(viewRegister));
-usuariosRouter.post('/register'
-    /** 
+usuariosRouter.post('/register',
     body('username', 'Sólo puede contener números y letras').trim().matches(/^[A-Z0-9]*$/i), 
     body('username', 'No puede ser vacío').trim().notEmpty(), 
     body('nombre', 'No puede ser vacío').trim().notEmpty(), 
     body('password', 'La contraseña no tiene entre 6 y 10 caracteres').trim().isLength({ min: 6, max: 10 }), 
     body('confirmPassword', 'La contraseña no coincide').custom((value, { req }) => {
     return value === req.body.password;
-    }) */, asyncHandler(doRegister)); //al tener funciones AJAX ya no es necesario ponerlo aqui
+    }), asyncHandler(doRegister));
 
 // Ruta para actualizar la foto de perfil
 usuariosRouter.get('/perfil', perfilGet);
