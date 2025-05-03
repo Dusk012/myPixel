@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { ErrorDatos } from "../db.js";
+import { getConnection } from "../db.js";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
@@ -31,11 +32,20 @@ export class Usuario {
     }
 
     static eliminarUsuario(username) {
-        const datos = { username };
-        const result = this.#deleteStmt.run(datos); // Ejecuta la consulta con el username
-        //console.log(`Intentando eliminar usuario: ${username}, cambios: ${result.changes}`);
-        if (result.changes === 0) {
-            throw new Error(`No se pudo eliminar el usuario: ${username}`);
+        const db = getConnection();
+        try {
+            // Desactivar restricciones de claves foráneas
+            db.pragma('foreign_keys = OFF');
+
+            // Eliminar el usuario
+            const result = this.#deleteStmt.run({ username });
+            console.log(`Usuario eliminado: ${username}, cambios: ${result.changes}`);
+
+            // Reactivar restricciones de claves foráneas
+            db.pragma('foreign_keys = ON');
+        } catch (error) {
+            console.error('Error al eliminar el usuario:', error);
+            throw error;
         }
     }
     
