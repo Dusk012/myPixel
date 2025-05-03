@@ -1,0 +1,48 @@
+<section class="my-products">
+    <h1>Mis Productos</h1>
+
+    <!-- Mostrar el mensaje flash si existe -->
+    <% const flashMessage = locals.getAndClearFlash(); %>
+    <% if (flashMessage) { %>
+        <div class="flash-message">
+            <p><%= flashMessage %></p>
+        </div>
+    <% } %>
+
+    <!-- Lista de productos del usuario -->
+    <% if (userProducts && userProducts.length > 0) { %>
+        <div class="product-list">
+            <% userProducts.forEach(product => { %>
+                <div class="product-card">
+                    <img src="<%= product.image %>" alt="Imagen de <%= product.name %>" width="200" height="200">
+                    <h3><%= product.name %></h3>
+                    <p><%= product.description %></p>
+                    <p><strong>Precio:</strong> €<%= product.price.toFixed(2) %></p>
+                    <p><strong>Estado:</strong> <%= product.status === 'P' ? 'En venta' : 'Vendido' %></p>
+
+                    <div class="actions">
+                        <!-- Botón para eliminar -->
+                        <form action="/shop/<%= product.id %>" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <button type="submit">Eliminar</button>
+                        </form>
+
+                        <!-- Botón para marcar como vendido -->
+                        <% if (product.status === 'P') { %>
+                            <form action="/shop/<%= product.id %>/sell" method="POST">
+                                <button type="submit">Marcar como vendido</button>
+                            </form>
+                        <% } else { %>
+                            <button disabled>Ya vendido</button>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>No tienes productos publicados.</p>
+    <% } %>
+
+    <!-- Botón para volver a la tienda -->
+    <a href="/shop" class="btn-back-to-shop">Volver a la tienda</a>
+</section>

@@ -1,44 +1,36 @@
 import { ShopProduct } from './shop.js';
 import { render } from '../utils/render.js';
-import { validationResult } from 'express-validator';
+
 
 // Añadir producto
 export async function addProduct(req, res) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        const errores = result.mapped();
-        throw { statusCode: 400, message: 'Datos inválidos', detalles: errores };
-    }
-
     const { name, description, price } = req.body;
     const imageFile = req.file;
     const userId = req.session?.userId;
 
-    if (!userId) throw { statusCode: 401, message: 'No autenticado' };
-
-    if (!name || !description || !price || !imageFile) {
-        throw { statusCode: 400, message: 'Todos los campos son obligatorios' };
-    }
-
     const imagePath = '/uploads/' + imageFile.filename;
+
     const product = new ShopProduct(null, name, description, parseFloat(price), imagePath, 'P', userId);
     await product.persist();
 
-    // Establecer el mensaje flash usando el método de respuesta
     res.setFlash('Producto añadido correctamente.');
 
-    // Obtener productos para mostrarlos después de agregar
     const userProducts = await fetchUserProducts(userId);
-    const products = await fetchAllProducts();
+    const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
 
-    // Renderizar la página de tienda con los productos y el mensaje flash
     return render(req, res, 'paginas/tienda/shop', {
         products,
-        userProducts,
-        session: req.session
-    });
+        userProducts
+    }); 
 }
 
+// Mostrar productos del usuario
+export async function getMyProducts(req, res) {
+    const userId = req.session?.userId;
+    const userProducts = await fetchUserProducts(userId);
+
+    return render(req, res, 'paginas/tienda/my-products', { userProducts });
+}
 
 
 // Obtener productos
@@ -72,63 +64,63 @@ export async function getProductById(req, res) {
 // Vender producto
 export async function sellProduct(req, res) {
     const { id } = req.params;
-    const userId = req.session?.userId;
-
-    if (!userId) throw { statusCode: 401, message: 'No autenticado' };
+    const userId = req.session.userId;
 
     const product = await ShopProduct.getProductById(id);
-    if (!product) throw { statusCode: 404, message: 'Producto no encontrado' };
 
-    if (product.userId !== userId) throw { statusCode: 403, message: 'No autorizado para vender este producto' };
+    if (!product) {
+        throw { statusCode: 404, message: 'Producto no encontrado.' };
+    }
+
+    if (product.userId !== userId) {
+        throw { statusCode: 403, message: 'No estás autorizado para vender este producto.' };
+    }
 
     try {
         await product.sell();
-    } catch (err) {
-        throw { statusCode: 409, message: 'El producto ya ha sido vendido' };
+        res.setFlash('Producto vendido correctamente.');
+    } catch {
+        res.setFlash('Este producto ya fue vendido.');
     }
 
-    // Establecer el mensaje flash de éxito
-    res.setFlash('Producto vendido correctamente.');
-
-    // Obtener productos después de vender
     const userProducts = await fetchUserProducts(userId);
-    const products = await fetchAllProducts();
+    const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
 
     return render(req, res, 'paginas/tienda/shop', {
         products,
-        userProducts,
-        session: req.session
+        userProducts
     });
 }
+
 
 
 // Eliminar producto
 export async function deleteProduct(req, res) {
     const { id } = req.params;
-    const userId = req.session?.userId;
-
-    if (!userId) throw { statusCode: 401, message: 'No autenticado' };
+    const userId = req.session.userId;
 
     const product = await ShopProduct.getProductById(id);
-    if (!product) throw { statusCode: 404, message: 'Producto no encontrado' };
 
-    if (product.userId !== userId) throw { statusCode: 403, message: 'No autorizado para eliminar este producto' };
+    if (!product) {
+        throw { statusCode: 404, message: 'Producto no encontrado.' };
+    }
+
+    if (product.userId !== userId) {
+        throw { statusCode: 403, message: 'No estás autorizado para eliminar este producto.' };
+    }
 
     await product.delete();
-
-    // Establecer el mensaje flash de éxito
     res.setFlash('Producto eliminado correctamente.');
 
-    // Obtener productos después de eliminar
     const userProducts = await fetchUserProducts(userId);
-    const products = await fetchAllProducts();
+    const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
 
     return render(req, res, 'paginas/tienda/shop', {
         products,
-        userProducts,
-        session: req.session
+        userProducts
     });
 }
+
 
 
 // Utilidades
