@@ -4,9 +4,11 @@
             <% if (session.login) { %>
                 <!-- Foto de perfil seleccionada -->
                 <div class = bordefotoperfilmostradausuario id="foto-perfil-seleccionada">
-                    <img class = "fotoperfilmostradausuario" src="../img/Perfil<%= session.foto_perfil%>.png" alt="Foto de perfil">
+                    <img class="fotoperfilmostradausuario" 
+                         src="../img/Perfil<%= session.foto_perfil || 1 %>.png?t=<%= Date.now() %>" 
+                         alt="Foto de perfil">
                 </div>
-                <!-- Texto de bienvenida -->
+                <!-- Texto de bienvenida -->    
                 <div>
                     <h1>Bienvenid@, <%= session.nombre %></h1>
                     <h1>username: <%= session.username %></h1>

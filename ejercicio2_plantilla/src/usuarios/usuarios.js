@@ -33,6 +33,7 @@ export class Usuario {
     static eliminarUsuario(username) {
         const datos = { username };
         const result = this.#deleteStmt.run(datos); // Ejecuta la consulta con el username
+        //console.log(`Intentando eliminar usuario: ${username}, cambios: ${result.changes}`);
         if (result.changes === 0) {
             throw new Error(`No se pudo eliminar el usuario: ${username}`);
         }

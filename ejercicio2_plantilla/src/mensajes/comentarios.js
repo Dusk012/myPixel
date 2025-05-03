@@ -12,11 +12,16 @@ export class ForumMessage {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #getCommentsById = null;
+    static #deleteByUserStmt = null;
 
     static initStatements(db) {
         this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario) VALUES (@forumId, @content, @date, @userId)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
         this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro');   
+        this.#deleteByUserStmt = db.prepare(`
+            DELETE FROM Comentarios
+            WHERE id_usuario = ?
+        `);
     }
 
     static #insert(comentario) {
@@ -210,6 +215,16 @@ export class ForumMessage {
      */
     static createReply(id, forumId, content, date, userId, parentId) {
         return new ForumMessage(id, forumId, content, date, userId, MessageType.REPLY, parentId);
+    }
+
+    static eliminarComentariosPorUsuario(username) {
+        try {
+            const result = this.#deleteByUserStmt.run(username);
+            console.log(`Se eliminaron ${result.changes} comentarios del usuario con username ${username}`);
+        } catch (error) {
+            console.error('Error al eliminar los comentarios del usuario:', error);
+            throw error;
+        }
     }
 }
 

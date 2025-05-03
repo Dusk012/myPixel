@@ -3,6 +3,7 @@ export class Foto {
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
+    static #deleteByUserStmt = null;
 
     static initStatements(db) {
         if (this.#getByIdStmt !== null) return;
@@ -11,6 +12,10 @@ export class Foto {
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
+        this.#deleteByUserStmt = db.prepare(`
+            DELETE FROM Fotos
+            WHERE id_usuario = ?
+        `);
     }
 
     static getFotoById(id) {
@@ -24,6 +29,12 @@ export class Foto {
         let result = null;
         try {
             const { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido } = foto;
+
+            // Asegúrate de que id_usuario sea un string válido (username)
+            if (!id_usuario || typeof id_usuario !== 'string') {
+                throw new ErrorDatos('El id_usuario debe ser un string válido (username)');
+            }
+
             const datos = { nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido };
             result = this.#insertStmt.run(datos);
             foto.id = result.lastInsertRowid;
@@ -44,6 +55,16 @@ export class Foto {
     static delete(id) {
         const result = this.#deleteStmt.run({ id });
         if (result.changes === 0) throw new FotoNoEncontrada(id);
+    }
+
+    static eliminarFotosPorUsuario(username) {
+        try {
+            const result = this.#deleteByUserStmt.run(username);
+            console.log(`Se eliminaron ${result.changes} fotos del usuario con username ${username}`);
+        } catch (error) {
+            console.error('Error al eliminar las fotos del usuario:', error);
+            throw error;
+        }
     }
 
     constructor(id, nombre, descripcion, fecha, puntuacion = 0, estado = 'Visible', id_usuario, id_foro, contenido) {

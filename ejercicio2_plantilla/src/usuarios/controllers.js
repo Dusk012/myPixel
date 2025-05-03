@@ -3,6 +3,8 @@ import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
 import { render } from '../utils/render.js';
 import { Desafio } from '../contenido/desafios.js'; // Importar el modelo de Desafíos
+import { Foto } from '../imagenes/imagenes.js'; // Importar el modelo de Fotos
+import { ForumMessage } from '../mensajes/comentarios.js'; // Importar el modelo de Comentarios
 
 
 export function viewLogin(req, res) {
@@ -63,14 +65,16 @@ export function viewRegister(req, res) {
 export async function doRegister(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(error => error.msg);
+        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
         const datos = matchedData(req);
-        return render(req, res, 'paginas/usuarios/viewRegister', {
-            errors: errorMessages,
-            error: "Por favor corrija los errores.",
+        let contenido = 'paginas/usuarios/viewRegister';
+        render(req, res, contenido, {
+            errors: errorMessages, // Pasar todos los errores como un array
+            error: "Por favor corrija los errores.", // Mensaje general
             errores: {},
             datos
         });
+        return; // Asegúrate de detener la ejecución si hay errores
     }
 
     const { username, password, confirmPassword, nombre } = req.body;
@@ -79,12 +83,14 @@ export async function doRegister(req, res) {
         // Registrar al usuario
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
 
-        // Inicializar la sesión con los valores predeterminados
+        // Crear los desafíos predeterminados para el usuario
+        Desafio.insertDefaultDesafios(usuario.id);
+
+        // Configurar la sesión
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
         req.session.userId = usuario.id;
-        req.session.foto_perfil = usuario.foto_perfil || 1; // Asegúrate de que sea 1 por defecto
 
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
         req.session.login = true;
@@ -176,9 +182,30 @@ export async function darseDeBaja(req, res) {
     }
 
     try {
-        //console.log(`El usuario ${username} ha solicitado darse de baja.`);
-        Usuario.eliminarUsuario(username); // Eliminar al usuario de la base de datos
-        res.redirect('/usuarios/logout'); // Redirigir al logout
+        // Eliminar las fotos asociadas al usuario
+        console.log('Eliminando fotos del usuario con username:', username);
+        Foto.eliminarFotosPorUsuario(username);
+
+        // Eliminar los comentarios asociados al usuario
+        console.log('Eliminando comentarios del usuario con username:', username);
+        ForumMessage.eliminarComentariosPorUsuario(username);
+
+        // Eliminar los desafíos asociados al usuario
+        console.log('Eliminando desafíos del usuario con username:', username);
+        Desafio.eliminarDesafiosPorUsuario(username);
+
+        // Eliminar al usuario de la base de datos
+        console.log('Eliminando usuario con username:', username);
+        Usuario.eliminarUsuario(username);
+
+        // Cerrar la sesión
+        req.session.destroy(err => {
+            if (err) {
+                console.error('Error al destruir la sesión:', err);
+                return res.status(500).json({ success: false, error: 'Error al cerrar sesión.' });
+            }
+            res.redirect('/usuarios/logout'); // Redirigir al logout
+        });
     } catch (e) {
         console.error('Error al dar de baja:', e);
         return res.status(500).render('pagina', {

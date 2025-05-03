@@ -7,6 +7,7 @@ export class Desafio {
     static #deleteByIdStmt = null;
     static #insertDefaultDesafiosStmt = null;
     static #updatePuntosStmt = null;
+    static #deleteByUserStmt = null;
 
     static initStatements(db) {
         this.#insertStmt = db.prepare(
@@ -28,6 +29,10 @@ export class Desafio {
             SET puntos = puntos + 1
             WHERE id_usuario = ? AND tipo = ? AND puntos < puntuacionObjetivo`
         );
+        this.#deleteByUserStmt = db.prepare(`
+            DELETE FROM "Desafío"
+            WHERE id_usuario = ?
+        `);
     }
 
     static #insert(desafio) {
@@ -213,6 +218,16 @@ export class Desafio {
             }
         } catch (error) {
             console.error(`Error al incrementar los puntos del desafío del tipo ${tipo}:`, error);
+            throw error;
+        }
+    }
+
+    static eliminarDesafiosPorUsuario(userId) {
+        try {
+            const result = this.#deleteByUserStmt.run(userId);
+            console.log(`Se eliminaron ${result.changes} desafíos del usuario con ID ${userId}`);
+        } catch (error) {
+            console.error('Error al eliminar los desafíos del usuario:', error);
             throw error;
         }
     }

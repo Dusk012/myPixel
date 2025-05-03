@@ -6,6 +6,7 @@ export class Foto {
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
+    static #deleteByUserStmt = null;
 
     static #globalLikes = 0;
 
@@ -26,6 +27,10 @@ export class Foto {
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
+        this.#deleteByUserStmt = db.prepare(`
+            DELETE FROM Fotos
+            WHERE id_usuario = ?
+        `);
     }
 
     static getFotoById(id) {
@@ -70,6 +75,16 @@ export class Foto {
     static delete(id) {
         const result = this.#deleteStmt.run({ id });
         if (result.changes === 0) throw new FotoNoEncontrada(id);
+    }
+
+    static eliminarFotosPorUsuario(userId) {
+        try {
+            const result = this.#deleteByUserStmt.run(userId);
+            console.log(`Se eliminaron ${result.changes} fotos del usuario con ID ${userId}`);
+        } catch (error) {
+            console.error('Error al eliminar las fotos del usuario:', error);
+            throw error;
+        }
     }
 
     #nombre;
