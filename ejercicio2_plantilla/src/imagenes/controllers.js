@@ -4,6 +4,7 @@ import imagenesRouter from './router.js';
 import { render } from '../utils/render.js';
 import { config } from '../config.js';
 import session from 'express-session';
+import { Desafio } from '../contenido/desafios.js'; // Importar el modelo de Desafíos
 
 export function viewSubmit(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
@@ -32,13 +33,16 @@ export async function doSubmit(req, res) {
     const nombre = req.body.nombre;
     const descripcion = req.body.descripcion;
     const imagen = req.file.filename;
+
     try {
+        // Registrar la foto
         const foto = await Foto.registrar(nombre, descripcion, imagen, req.session.username, null);
 
-        res.setFlash(`Imagen subida con éxito: ${nombre}`);
-        
-        return res.redirect('../contenido/normal');
+        // Incrementar los puntos del desafío de "fotos subidas"
+        Desafio.incrementarPuntos(req.session.userId, 1);
 
+        res.setFlash(`Imagen subida con éxito: ${nombre}`);
+        return res.redirect('../contenido/normal');
     } catch (e) {
         const datos = matchedData(req);
         let error = 'Error al subir la imagen: ' + e;
@@ -51,6 +55,4 @@ export async function doSubmit(req, res) {
             errores: {}
         });
     }
-
-    
 }

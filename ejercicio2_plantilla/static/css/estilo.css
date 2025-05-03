@@ -216,7 +216,7 @@ div.saludo {
     width: 100%;
 }
 
-.usuariofotoperfil{
+.botonusuariofotoperfil{
     padding: 10px 20px;
     background-color: #4CAF50;
      color: white;
@@ -225,7 +225,7 @@ div.saludo {
        cursor: pointer;
 }
 
-.usuariodarsedebaja{
+.botonusuariodarsedebaja{
     padding: 10px 20px;
     background-color: #f44336;
     color: white;
@@ -274,7 +274,6 @@ div.saludo {
     object-fit: cover;
 }
 
-
 .organizacionusuario{
     text-align: right;
     margin-top: 1px;
@@ -289,6 +288,7 @@ div.saludo {
     text-align: center;
     border-radius: 8px;
   }
+
   .progress-bar {
     width: 100%;
     background-color: #e0e0e0;
@@ -297,6 +297,7 @@ div.saludo {
     height: 25px;
     overflow: hidden;
   }
+
   .progress {
     height: 100%;
     background-color: #4CAF50;
@@ -305,4 +306,53 @@ div.saludo {
     line-height: 25px;
     color: white;
     transition: width 0.3s ease;
+  }
+
+  .botonborrardesafio {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%; /* Asegura que el botón ocupe todo el ancho de la caja */
+    transition: background-color 0.3s ease;
+  }
+
+  .botonborrardesafio:hover {
+    background-color: #d32f2f;
+  }
+
+  .mensajeExito{
+    display: none;
+    color: lime;
+    margin-top: 10px;
+  }
+
+  label[for="descripcion"] {
+    display: block; 
+    margin-top: 15px;
+  }
+
+  label[for="tipo"] {
+    display: block; 
+    margin-top: 15px; 
+  }
+
+  .challenge-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Aumentar el ancho mínimo a 350px */
+    gap: 30px; /* Espacio entre las cajas */
+    margin: 20px 0;
   }

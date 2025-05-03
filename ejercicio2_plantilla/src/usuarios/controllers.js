@@ -2,6 +2,8 @@ import { validationResult, matchedData } from 'express-validator';
 import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
 import { render } from '../utils/render.js';
+import { Desafio } from '../contenido/desafios.js'; // Importar el modelo de Desafíos
+
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -13,7 +15,7 @@ export function viewLogin(req, res) {
 
 export async function doLogin(req, res) {
     const result = validationResult(req);
-    if (! result.isEmpty()) {
+    if (!result.isEmpty()) {
         const errores = result.mapped();
         const datos = matchedData(req);
         return render(req, res, 'paginas/Usuarios/viewLogin', {
@@ -70,14 +72,19 @@ export async function doRegister(req, res) {
             errores: {},
             datos
         });
+        return; // Asegúrate de detener la ejecución si hay errores
     }
 
     const { username, password, confirmPassword, nombre } = req.body;
 
     try {
+        // Registrar al usuario
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
 
-        
+        // Crear los desafíos predeterminados para el usuario
+        Desafio.insertDefaultDesafios(usuario.id);
+
+        // Configurar la sesión
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
@@ -86,7 +93,6 @@ export async function doRegister(req, res) {
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
         req.session.login = true;
         return res.redirect('../contenido/normal');
-            
     } catch (e) {
         const datos = matchedData(req);
         let error = 'Error al registrar el usuario';
@@ -174,16 +180,6 @@ export async function darseDeBaja(req, res) {
         //console.log(`El usuario ${username} ha solicitado darse de baja.`);
         Usuario.eliminarUsuario(username); // Eliminar al usuario de la base de datos
         res.redirect('/usuarios/logout'); // Redirigir al logout
-
-        // req.session.destroy(err => {
-        //     if (err) {
-        //         console.error('Error al destruir la sesión:', err);
-        //         return res.status(500).json({ success: false, error: 'Error al cerrar la sesión.' });
-        //     }
-
-        //     //console.log('Sesión destruida correctamente. Redirigiendo a logout...');
-        //     res.redirect('/usuarios/logout'); // Redirigir al logout
-        // });
     } catch (e) {
         console.error('Error al dar de baja:', e);
         return res.status(500).render('pagina', {

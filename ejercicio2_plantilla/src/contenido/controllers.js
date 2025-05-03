@@ -5,6 +5,7 @@ import { config } from '../config.js';
 import { Foto } from '../imagenes/imagenes.js';
 import session from 'express-session';
 import { promises as fs } from 'fs';
+import { Desafio } from '../contenido/desafios.js';
 
 
 export async function normal(req, res) {
@@ -46,6 +47,8 @@ export async function normal(req, res) {
 export async function gestionPuntuacion(req, res) {
     const contenido = req.body.contenido;
     const puntuacion = req.body.puntuacion;
+    const userId = req.session?.userId; // Obtener el ID del usuario desde la sesión
+
     try {
         const foto = await Foto.getFotoByContenido(contenido);
 
@@ -53,25 +56,45 @@ export async function gestionPuntuacion(req, res) {
             foto.puntuacion = puntuacion;
             await Foto.actualizarFoto(foto);
 
-            //incrementar likes globales
+            // Incrementar los puntos del desafío de "likes"
+            if (userId) {
+                Desafio.incrementarPuntos(userId, 0); // Tipo 0 es para "likes"
+            }
+
+            // Incrementar likes globales
             const globalLikes = Foto.incrementarGlobalLikes();
             res.json({ success: true, globalLikes });
+        } else {
+            res.status(404).json({ success: false, error: 'Foto no encontrada' });
         }
     } catch (e) {
+        console.error('Error en gestionPuntuacion:', e);
         res.status(500).json({ success: false, error: e.message });
     }
 }
 
-export function viewDesafios(req, res) {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/desafios/desafios';
+export async function viewDesafios(req, res) {
+    const userId = req.session?.userId; // Obtener el ID del usuario desde la sesión
+    let contenido = 'paginas/desafios/desafios'
+    if (!userId) {
+        return res.status(403).send('No tienes permiso para ver esta página.');
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
+
+    try {
+        // Obtener los desafíos del usuario desde la base de datos
+        const desafios = await Desafio.getByUserId(userId);
+
+        // Renderizar la vista con los desafíos
+        res.render('pagina', {
+            contenido,
+            desafios,
+            session: req.session,
+            error: null
+        });
+    } catch (error) {
+        console.error('Error al obtener los desafíos:', error);
+        res.status(500).send('Error al cargar los desafíos.');
+    }
 }
 
 export function viewShop(req, res) {
@@ -119,4 +142,24 @@ export function viewCoordinador(req, res) {
         contenido,
         session: req.session
     });
+}
+
+export async function crearDesafio(req, res) {
+    const { puntuacionObjetivo, descripcion, tipo } = req.body;
+
+    try {
+        // Crear el desafío en la base de datos
+        await Desafio.create({
+            puntuacionObjetivo: parseInt(puntuacionObjetivo, 10),
+            descripcion,
+            tipo: parseInt(tipo, 10),
+            fecha: new Date().toISOString(),
+            id_usuario: null, // Desafío base, no asociado a un usuario específico
+        });
+
+        res.redirect('/contenido/desafios'); // Redirigir a la página de desafíos
+    } catch (error) {
+        console.error('Error al crear el desafío:', error);
+        res.status(500).send('Error al crear el desafío');
+    }
 }

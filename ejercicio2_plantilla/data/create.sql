@@ -49,11 +49,13 @@ CREATE TABLE "Encargos" (
 )
 
 CREATE TABLE "Desafío" (
-	"puntos"	INTEGER NOT NULL,
+	"puntos"	INTEGER NOT NULL DEFAULT (0),
+	"puntuacionObjetivo"	INTEGER NOT NULL DEFAULT (0),
 	"id"	INTEGER NOT NULL,
 	"descripcion"	TEXT,
 	"fecha"	TEXT NOT NULL,
 	"id_usuario"	INTEGER,
+	"tipo" INTEGER NOT NULL DEFAULT (0),
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
 )

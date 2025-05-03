@@ -1,72 +1,133 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Desafíos del Usuario</title>
-  <style>
-    /* body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    } */
-/*     
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      background-color: #2196F3;
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #0b7dda;
-    } */
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafíos</title>
 </head>
 <body>
-  <div class="challenge-container">
-    <h1>Desafío:</h1>
-    <h1>¡Da 5 Likes!</h1>
-    <div class="progress-bar">
-      <div id="progress" class="progress">0%</div>
+  <h1>Desafíos:</h1>
+
+  <% if (desafios.length > 0) { %>
+    <div class="challenge-grid">
+      <% desafios.forEach(desafio => { %>
+        <div class="challenge-container">
+          <h2><%= desafio.descripcion %></h2>
+          <div class="progress-bar">
+            <div id="progress-<%= desafio.id %>" class="progress">
+              <%= Math.min((desafio.puntos / desafio.puntuacionObjetivo) * 100, 100).toFixed(0) %>%
+            </div>
+          </div>
+          <p>
+            <% if (desafio.tipo === 0) { %>
+              Likes: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } else if (desafio.tipo === 1) { %>
+              Fotos: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } else if (desafio.tipo === 2) { %>
+              Comentarios: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } %>
+          </p>
+          <% if (session.rol === 'A') { %>
+            <button class="botonborrardesafio" data-id="<%= desafio.id %>">Borrar</button>
+          <% } %>
+        </div>
+      <% }) %>
     </div>
-    <p>Likes: <span id="likes">0</span> / <span id="target">5</span></p>
-  </div>
+  <% } else { %>
+    <p>No tienes desafíos asignados.</p>
+  <% } %>
+
+  <% if (session.rol === 'A') { %>
+    <div class="admin-panel">
+      <h2>Crear un nuevo desafío</h2>
+      <form id="crearDesafioForm" action="/contenido/desafios/crear" method="POST">
+        <label for="puntuacionObjetivo">Puntuación Objetivo:</label>
+        <input type="number" id="puntuacionObjetivo" name="puntuacionObjetivo" required>
+        
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required>
+          <option value="0">Likes</option>
+          <option value="1">Fotos Subidas</option>
+          <option value="2">Comentarios</option>
+        </select>
+
+        <button type="submit">Crear Desafío</button>
+      </form>
+    </div>
+  <% } %>
 
   <script>
-    const targetLikes = 5; // Número de likes requeridos para completar el desafío
-    let currentLikes = 0; // Likes actuales
+    // Actualizar las barras de progreso dinámicamente
+    const desafios = JSON.parse('<%- JSON.stringify(desafios) %>');
 
-    const progressBar = document.getElementById('progress');
-    const likesText = document.getElementById('likes');
+    desafios.forEach(desafio => {
+      const progressBar = document.getElementById(`progress-${desafio.id}`);
+      const progressPercentage = Math.min((desafio.puntos / desafio.puntuacionObjetivo) * 100, 100);
+      progressBar.style.width = progressPercentage + '%';
+      progressBar.innerText = Math.round(progressPercentage) + '%';
+    });
 
-    // Función para actualizar la barra de progreso
-    function actualizarProgreso() {
-        fetch('/contenido/likes/global')
-            .then(response => response.json())
-            .then(data => {
-                currentLikes = data.globalLikes;
-                const displayedLikes = Math.min(currentLikes, targetLikes); // Limitar los likes mostrados al máximo objetivo
-                likesText.innerText = displayedLikes;
-                const progressPercentage = (displayedLikes / targetLikes) * 100;
-                progressBar.style.width = progressPercentage + '%';
-                progressBar.innerText = Math.round(progressPercentage) + '%';
+    // Manejar el envío del formulario
+    const form = document.getElementById('crearDesafioForm');
 
-                if (progressPercentage >= 100) {
-                    progressBar.innerText = '100%';
-                }
-            })
-            .catch(error => console.error('Error al obtener los likes globales:', error));
-    }
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); // Evitar el envío normal del formulario
 
-    // Actualizar la barra de progreso al cargar la página
-    actualizarProgreso();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-    // Actualizar la barra de progreso cada 5 segundos
-    setInterval(actualizarProgreso, 5000);
-</script>
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          alert('¡Desafío creado con éxito!'); // Mostrar el popup de éxito
+          location.reload(); // Recargar la página
+        } else {
+          alert('Hubo un error al crear el desafío.'); // Mostrar un popup de error
+          console.error('Error al crear el desafío');
+        }
+      } catch (error) {
+        alert('Error al enviar el formulario.'); // Mostrar un popup de error
+        console.error('Error al enviar el formulario:', error);
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const botonesBorrar = document.querySelectorAll('.botonborrardesafio');
+
+      botonesBorrar.forEach(boton => {
+        boton.addEventListener('click', async (event) => {
+          const desafioId = boton.getAttribute('data-id');
+
+          if (confirm('¿Estás segur@ de que deseas borrar este desafío?')) {
+            try {
+              const response = await fetch(`/contenido/desafios/${desafioId}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                alert('¡Desafío borrado con éxito!');
+                location.reload(); // Recargar la página para actualizar la lista
+              } else {
+                alert('Hubo un error al borrar el desafío.');
+              }
+            } catch (error) {
+              console.error('Error al borrar el desafío:', error);
+              alert('Error al borrar el desafío.');
+            }
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

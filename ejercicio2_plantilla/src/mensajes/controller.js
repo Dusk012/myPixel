@@ -1,6 +1,7 @@
 import { validationResult, matchedData } from 'express-validator';
 import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
+import { Desafio } from '../contenido/desafios.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
@@ -101,22 +102,23 @@ export async function createReply(req, res) {
     }
 
     try {
-        const { content } = req.body; //Comentario 
-        const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
+        const { content } = req.body;
+        const parentId = parseInt(req.params.id);
         const userId = req.session.userId;
 
-        // Generar fecha
-        const date = new Date().toISOString(); //Fecha del comentario
-        
-        forum.createPost( //Crea comentario en el foro
-            parentId,
-            content,
-            date,
-            userId
-        );
+        const date = new Date().toISOString();
+
+        forum.createPost(parentId, content, date, userId);
+
+        // Incrementar los puntos del desafío de "comentarios"
+        if (userId) {
+            await Desafio.incrementarPuntos(userId, 2);
+        }
 
         res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {
+        console.error('Error al crear el comentario:', e);
+        res.setFlash('Error al crear el comentario');
         res.redirect(`/mensajes/thread/${parentId}`);
     }
 }
@@ -189,7 +191,7 @@ export async function deleteMessage(req, res) {
     }
 }
 
-export function sendComment(req, res) {
+export async function sendComment(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorMessages = errors.array().map(error => error.msg);
@@ -201,10 +203,21 @@ export function sendComment(req, res) {
     }
 
     try {
-        // Implementación similar a createReply pero para comentarios rápidos
+        const { content } = req.body; // Comentario rápido
+        const userId = req.session.userId;
+
+        // Crear el comentario rápido
+        forum.createQuickComment(content, userId);
+
+        // Incrementar los puntos del desafío de "comentarios"
+        if (userId) {
+            await Desafio.incrementarPuntos(userId, 3); // Tipo 3 es para "comentarios"
+        }
+
         res.setFlash('Comentario enviado exitosamente');
         res.redirect('back');
     } catch (e) {
+        console.error('Error al enviar el comentario rápido:', e);
         return render(req, res, 'paginas/foro/foro', {
             error: e.message,
             session: req.session
