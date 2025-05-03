@@ -63,16 +63,14 @@ export function viewRegister(req, res) {
 export async function doRegister(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(error => error.msg); // Crear un array con todos los mensajes de error
+        const errorMessages = errors.array().map(error => error.msg);
         const datos = matchedData(req);
-        let contenido = 'paginas/usuarios/viewRegister';
-        render(req, res, contenido, {
-            errors: errorMessages, // Pasar todos los errores como un array
-            error: "Por favor corrija los errores.", // Mensaje general
+        return render(req, res, 'paginas/usuarios/viewRegister', {
+            errors: errorMessages,
+            error: "Por favor corrija los errores.",
             errores: {},
             datos
         });
-        return; // Asegúrate de detener la ejecución si hay errores
     }
 
     const { username, password, confirmPassword, nombre } = req.body;
@@ -81,14 +79,12 @@ export async function doRegister(req, res) {
         // Registrar al usuario
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
 
-        // Crear los desafíos predeterminados para el usuario
-        Desafio.insertDefaultDesafios(usuario.id);
-
-        // Configurar la sesión
+        // Inicializar la sesión con los valores predeterminados
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
         req.session.userId = usuario.id;
+        req.session.foto_perfil = usuario.foto_perfil || 1; // Asegúrate de que sea 1 por defecto
 
         res.setFlash(`Bienvenido a MyPixel, ${usuario.nombre}`);
         req.session.login = true;
@@ -137,7 +133,7 @@ export function perfilGet(req, res) {
 
 export async function actualizarFotoPerfil(req, res) {
     const result = validationResult(req);
-    if(!result.isEmpty()) {
+    if (!result.isEmpty()) {
         const errores = result.mapped();
         const datos = matchedData(req);
         return render(req, res, 'paginas/Usuarios/profile', {
@@ -148,15 +144,18 @@ export async function actualizarFotoPerfil(req, res) {
 
     const foto_perfil = req.body.foto_perfil; // Recibimos el número de la foto (1-5)
     const username = req.session.username; // Obtenemos el username del usuario desde la sesión
-    
+
     try {
         // Obtenemos el usuario actual desde la base de datos
         const usuario = Usuario.getUsuarioByUsername(username);
+
         // Actualizamos la foto de perfil
         usuario.foto_perfil = foto_perfil;
         usuario.persist(); // Guardamos los cambios en la base de datos
+
         // Actualizamos la sesión para reflejar el cambio en tiempo real
         req.session.foto_perfil = usuario.foto_perfil;
+
         return res.redirect('/usuarios/perfil');
     } catch (e) {
         console.error('Error al actualizar la foto de perfil:', e);

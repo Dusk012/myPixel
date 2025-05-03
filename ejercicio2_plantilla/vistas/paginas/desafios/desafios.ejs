@@ -6,6 +6,25 @@
   <title>Desafíos</title>
 </head>
 <body>
+  <div class="saludo">
+    <% if (session.login) { %>
+        <!-- Foto de perfil seleccionada -->
+        <div class="bordefotoperfilmostradausuario" id="foto-perfil-seleccionada">
+            <img class="fotoperfilmostradausuario" 
+                 src="../img/Perfil<%= session.foto_perfil || 1 %>.png" 
+                 alt="Foto de perfil">
+        </div>
+        <!-- Texto de bienvenida -->
+        <div>
+            <h1>Bienvenid@, <%= session.nombre %></h1>
+            <h1>username: <%= session.username %></h1>
+            <p><strong>Rol:</strong> <%= session.rol === 'A' ? 'Administrador' : 'Usuario' %></p>
+        </div>
+    <% } else { %>
+        <p>Usuario desconocido. <a href='/usuarios/login'>Login</a></p>
+    <% } %>
+  </div>
+
   <h1>Desafíos:</h1>
 
   <% if (desafios.length > 0) { %>
