@@ -13,7 +13,7 @@ function createConnection() {
     const options = {
         verbose: console.log // Opcional y sólo recomendable durante desarrollo.
     };
-    const db = new Database(join(dirname(import.meta.dirname), 'data', 'p.db'), options);
+    const db = new Database(join(dirname(import.meta.dirname), 'data', 'aaa.db'), options);
     db.pragma('journal_mode = WAL'); // Necesario para mejorar la durabilidad y el rendimiento
     return db;
 }
