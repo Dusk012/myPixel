@@ -8,3 +8,9 @@ Cosas que faltan por hacer
 - Mejorar Foro
 - Los enlaces (a) te killea la session (de momento error y normal)
 - Fallo no subir foto
+- Cambiar los scripts de las ejs a la static
+- mirar que el boton de los likes tenga type = "button"
+- paginacion (ir enseñando solo las fotos necesarias por pantalla)
+- AjAX
+- Separación de los scrips de los ejs
+- pasar por el validator
