@@ -227,6 +227,13 @@ export class ForumMessage {
     static createReply(id, forumId, content, date, userId, parentId) {
         return new ForumMessage(id, forumId, content, date, userId, MessageType.REPLY, parentId);
     }
+
+    static deleteCommentsByForumId(forumId) {
+        const comentarios = this.getComments(forumId);
+        for (const comentario of comentarios) {
+            this.#delete(comentario.id);
+        }
+    }
 }
 
 
@@ -440,13 +447,11 @@ export class Forum {
     * Elimina un foro y todos sus mensajes (originales y respuestas)
     */
     deleteForum() {
-        // Elimina todos los mensajes asociados al foro
-        for (const message of this.#messages.values()) {
-            this.deleteMessage(message.id);  // Eliminar el mensaje y sus respuestas
-        }
-
-        // Eliminar el foro de la base de datos
-        Forum.#delete(this);
+        // Elimina todos los comentarios asociados al foro
+        ForumMessage.deleteCommentsByForumId(this.#id);
+    
+        // Elimina el foro de la base de datos
+        Forum.#deleteStmt.run({id: this.#id});
         return true;
     }   
 

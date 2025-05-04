@@ -103,6 +103,12 @@ export async function createPost(req, res) {
     }
 }
 
+export function deleteForum(req, res) {
+    const foro = Forum.getForumById(parseInt(req.params.id));
+    foro.deleteForum(); // Esto elimina el foro y sus comentarios
+    res.redirect('/mensajes/foro');
+}
+
 export async function createReply(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
