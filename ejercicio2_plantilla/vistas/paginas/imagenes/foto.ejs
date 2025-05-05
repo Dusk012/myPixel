@@ -40,6 +40,7 @@
     
     <form action="/imagenes/foto/delete" method="POST">
       <input type="hidden" name="id" value="<%= foto.id %>">
+      <input type="hidden" name="contenido" value="<%= foto.contenido %>">
       <button type="submit" class="btn eliminar-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta imagen?')">Eliminar Imagen</button>
     </form>
     

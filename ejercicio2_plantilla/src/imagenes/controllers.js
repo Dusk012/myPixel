@@ -2,8 +2,8 @@ import { validationResult, matchedData } from 'express-validator';
 import { Foto } from './imagenes.js';
 import imagenesRouter from './router.js';
 import { render } from '../utils/render.js';
-import { config } from '../config.js';
-import session from 'express-session';
+import fs from 'fs-extra';
+import path from 'path';
 
 export function viewSubmit(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
@@ -126,12 +126,16 @@ export async function updateFoto(req, res) {
 
 export async function deleteFoto(req, res) {
     try {
-        const { id } = req.body;
+        const { id, contenido } = req.body;
+        console.log(req.body);
         Foto.delete(id);
+        const filePath = path.join(process.cwd(), 'uploads', contenido);
+        await fs.remove(filePath);
         return res.redirect('/usuarios/perfil');
     } catch (e) {
         console.error(e);
-        let error = 'Error al eliminar la imagen: ' + e.message || e;
+        let error = 'Error al eliminar la imagen: ' + e.message;
+        console.log(error);
         return render(req, res, 'paginas/imagenes/foto', {
             error,
             foto: req.body, 

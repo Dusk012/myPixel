@@ -15,4 +15,3 @@ Cosas que faltan por hacer
 - Separación de los scrips de los ejs
 - pasar por el validator
 - likes no funcionan
-- delete de fotos no funciona
