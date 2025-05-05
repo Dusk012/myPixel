@@ -96,7 +96,7 @@ fieldset {
     border: 1px solid black;
     width: 15em;
     margin: 0 auto;
-    background: #3e3e5e;
+    background: #bcbcc7;
     border-radius: 10px;
 }
 
@@ -213,7 +213,7 @@ div.saludo {
 
 /* El contenedor principal tenga un fondo oscuro */
 .container {
-    background: #2e2e3e;
+    background: #cbcbd7;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
