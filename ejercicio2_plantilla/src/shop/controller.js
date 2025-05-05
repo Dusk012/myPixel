@@ -7,6 +7,7 @@ export async function addProduct(req, res) {
     const { name, description, price } = req.body;
     const imageFile = req.file;
     const userId = req.session?.userId;
+    
 
     const imagePath = '/uploads/' + imageFile.filename;
 
@@ -86,6 +87,37 @@ export async function sellProduct(req, res) {
     const userProducts = await fetchUserProducts(userId);
     const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
 
+    return render(req, res, 'paginas/tienda/my-products', {
+        products,
+        userProducts
+    });
+}
+
+
+export async function buyProduct(req, res) {
+    const { id } = req.params;
+    const userId = req.session.userId;
+
+    const product = await ShopProduct.getProductById(id);
+
+    if (!product) {
+        throw { statusCode: 404, message: 'Producto no encontrado.' };
+    }
+
+    if (product.userId !== userId) {
+        throw { statusCode: 403, message: 'No estás autorizado para comprar este producto.' };
+    }
+
+    try {
+        await product.sell();
+        res.setFlash('Producto comprado correctamente.');
+    } catch {
+        res.setFlash('Este producto ya fue comprado.');
+    }
+
+    const userProducts = await fetchUserProducts(userId);
+    const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
+
     return render(req, res, 'paginas/tienda/shop', {
         products,
         userProducts
@@ -98,6 +130,8 @@ export async function sellProduct(req, res) {
 export async function deleteProduct(req, res) {
     const { id } = req.params;
     const userId = req.session.userId;
+    
+    const isAdmin = req.session.rol === 'A';
 
     const product = await ShopProduct.getProductById(id);
 
@@ -105,7 +139,7 @@ export async function deleteProduct(req, res) {
         throw { statusCode: 404, message: 'Producto no encontrado.' };
     }
 
-    if (product.userId !== userId) {
+    if (product.userId !== userId && !isAdmin ) {
         throw { statusCode: 403, message: 'No estás autorizado para eliminar este producto.' };
     }
 
@@ -114,10 +148,11 @@ export async function deleteProduct(req, res) {
 
     const userProducts = await fetchUserProducts(userId);
     const products = (await fetchAllProducts()).filter(p => p.usuario_id !== userId);
-
+    
     return render(req, res, 'paginas/tienda/shop', {
         products,
-        userProducts
+        userProducts,
+        role: req.session.rol
     });
 }
 
