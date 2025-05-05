@@ -31,25 +31,4 @@ if( flashMsg ) {
 </dialog>
 <% } %>
 
-<script>
-const flashDialogEl = document.getElementById("flashModal");
-if (flashDialogEl) {
-    flashDialogEl.showModal();
-}
-
-</script>
-
-<script>
-    document.getElementById('btnPuntuar').addEventListener('click', async function () {
-        const puntuacionElement = document.getElementById('puntuacion');
-        let puntuacion = parseInt(puntuacionElement.textContent, 10);
-        puntuacion++;
-        puntuacionElement.textContent = puntuacion;
-    
-        fetch('/contenido/normal', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contenido: '<%= imagen %>', puntuacion })
-        });
-    });
-    </script>
+<script src="/js/normal.js"></script>
