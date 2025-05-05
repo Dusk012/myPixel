@@ -1,5 +1,13 @@
+<% function back(session) { %>
+    <% if (session.login) { %>
+        <a href="/contenido/normal">Volver al inicio</a>
+    <% } else { %>
+        <a href="/">Volver al inicio</a>
+    <% } %>
+<% } %>
+
 <body>
     <h1>¡Algo salió mal! :(</h1>
     <p class="error-box"><%= message %></p>
-    <a href="/">Volver al inicio</a>
+    <% back(session); %>
 </body>
