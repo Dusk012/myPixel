@@ -8,12 +8,11 @@ import { promises as fs } from 'fs';
 
 
 export async function normal(req, res) {
-    //let contenido = 'paginas/Usuarios/noRegistrado';
-    let contenido = 'paginas/Usuarios/normal';
+    let contenido = 'paginas/Usuarios/noRegistrado';
     let data = {};
     let imagen = null;
-    //if (req.session.login) {
-        //contenido = 'paginas/Usuarios/normal';
+    if (req.session.login) {
+        contenido = 'paginas/Usuarios/normal';
 
             //Para elegir la imagen aleatoriamente usamos ChatGpt
         try {
@@ -40,7 +39,12 @@ export async function normal(req, res) {
                 imagen: null
             });
         }
-    //}
+    }
+    render(req, res, contenido, {
+        error,
+        data: {},
+        imagen: null
+    });
 }
 
 export async function gestionPuntuacion(req, res){

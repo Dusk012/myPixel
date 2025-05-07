@@ -1,4 +1,5 @@
 import { validationResult, matchedData } from 'express-validator';
+import { Foto } from '../imagenes/imagenes.js';
 import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
 import { render } from '../utils/render.js';
@@ -119,11 +120,14 @@ export function doLogout(req, res, next) {
 
 export function perfilGet(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
+    let fotos = [];
     if (req.session.login) {
         contenido = 'paginas/Usuarios/profile';
+        fotos = Foto.getFotosByCreador(req.session.username);
     }
     const usuario = matchedData(req);
     render(req, res, contenido, {
+        fotos,
         usuario,
         error: null
     });
