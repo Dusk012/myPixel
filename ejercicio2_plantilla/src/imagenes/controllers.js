@@ -54,6 +54,10 @@ export async function doSubmit(req, res) {
 }
 
 export async function viewFoto(req, res) {
+    let contenido = 'paginas/Usuarios/noRegistrado';
+    if (req.session.login) {
+        contenido = 'paginas/imagenes/foto';
+    }
     const id = req.body.id;
     try {
         const foto = await Foto.getFotoById(id);
@@ -62,7 +66,7 @@ export async function viewFoto(req, res) {
             error = 'No existe la foto a enseñar';
         }
 
-        render(req, res, 'paginas/imagenes/foto', {
+        render(req, res, contenido, {
             error,
             foto: foto,
             errores: {}
@@ -74,7 +78,7 @@ export async function viewFoto(req, res) {
         if (e.name === '') {
             error = 'No se encuentra la imagen';
         }
-        render(req, res, 'paginas/imagenes/foto', {
+        render(req, res, contenido, {
             error,
             datos,
             errores: {}

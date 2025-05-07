@@ -8,7 +8,6 @@ function init() {
     }
 }
 
-// Función para mostrar el modal de flash si existe
 function mostrarFlashDialog() {
     const flashDialogEl = document.getElementById("flashModal");
     if (flashDialogEl) {
@@ -16,9 +15,9 @@ function mostrarFlashDialog() {
     }
 }
 
-// Función para manejar el evento de puntuación
 function manejarPuntuar() {
     const puntuacionElement = document.getElementById('puntuacion');
+    const contenido = document.getElementById('contenido').textContent;
     let puntuacion = parseInt(puntuacionElement.textContent, 10);
     puntuacion++;
     puntuacionElement.textContent = puntuacion;
@@ -26,7 +25,7 @@ function manejarPuntuar() {
     fetch('/contenido/normal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contenido: '<%= imagen %>', puntuacion })
+        body: JSON.stringify({ contenido, puntuacion })
     });
 }
 
