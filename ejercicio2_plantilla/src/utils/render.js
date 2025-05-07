@@ -9,9 +9,11 @@ export function render(req, res, contenido, params) {
     // Check if the requested content requires authentication
     const notRequiresAuth = !publicPaths.includes(contenido);
     
-    if (notRequiresAuth && !req.session) {
+    if (notRequiresAuth && (!req.session || !req.session.login)) {
         contenido = 'paginas/Usuarios/noRegistrado';
+        params = {};
     }
+
     res.render('pagina', {
         contenido,
         session: req.session,
