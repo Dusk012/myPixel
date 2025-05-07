@@ -96,7 +96,7 @@ fieldset {
     border: 1px solid black;
     width: 15em;
     margin: 0 auto;
-    background: #3e3e5e;
+    background: #bcbcc7;
     border-radius: 10px;
 }
 
@@ -162,10 +162,9 @@ button:hover {
 }
 
 /*imagnes*/
-/* Añadir al CSS existente */
 form {
     width: 100%;
-    max-width: 40em; /* Ancho máximo equivalente a 640px (40em * 16px) */
+    max-width: 40em;
     margin: 0 auto;
     padding: 1.25em;
     box-sizing: border-box;
@@ -180,105 +179,57 @@ form {
 }
 
 #preview {
-    width: 100%; /* Ocupa el 100% del contenedor padre */
-    height: auto; /* Altura proporcional */
+    width: 100%;
+    height: auto;
     display: block;
-    object-fit: contain; /* Mantiene relación de aspecto */
+    object-fit: contain;
     border: 0.1875em solid #efefef;
     border-radius: 0.5em;
 }
 
-/* Errores */
+/* Conversión de unidades absolutas a relativas */
 .error-message {
     color: red;
     font-size: 0.9em;
-    margin-top: 5px;
+    margin-top: 0.3125rem; /* 5px → 0.3125rem */
 }
 
-span.error {
-	color: red;
-}
-
-/* Saludo */
-div.saludo {
-    width: 100%;
-    text-align: right;
-}
-
-/* Mensajes de error en el formulario */
-.error-message {
-    color: red;
-    font-size: 0.9em;
-}
-
-/* El contenedor principal tenga un fondo oscuro */
 .container {
-    background: #2e2e3e;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
-}
-
-/* Campos de entrada */
-.input-container {
-    margin-bottom: 10px;
+    background: #cbcbd7;
+    padding: 1.25rem; /* 20px → 1.25rem */
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1.25rem rgba(255, 255, 255, 0.2); /* 20px → 1.25rem */
 }
 
 .input-container input {
     width: 100%;
-    padding: 10px;
+    padding: 0.625rem; /* 10px → 0.625rem */
     background: #444;
     color: white;
-    border: 1px solid #555;
-    border-radius: 5px;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 14px;
+    border: 0.0625rem solid #555; /* 1px → 0.0625rem */
+    border-radius: 0.3125rem; /* 5px → 0.3125rem */
+    font-size: 0.875rem; /* 14px → 0.875rem */
 }
 
-/* Contenedor principal */
+/* Reglas que ya eran responsivas */
 .contenedor-imagen {
     max-width: 100%;
     overflow: hidden;
     margin: 0 auto;
 }
 
-/* Tabla principal */
-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-
-/* Celda de la imagen */
-.celda-imagen {
-    max-width: 100%;
-    padding: 0.5em;
-}
-
-/* Imagen responsiva */
 .imagen-responsiva {
     max-width: 100%;
     height: auto;
-    display: block;
-    margin: 0 auto;
-    object-fit: contain;
     border: 0.1875em solid #ff6b6b;
     border-radius: 0.5em;
 }
 
-/* Textos en celdas */
-.titulo, .descripcion {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-}
-
-/* Tabla de descripción */
+/* Ajustes finales para consistencia */
 .tabla-descripcion {
     margin-top: 1em;
 }
 
-/* Diálogo de flash */
 #flashModal {
     max-width: 90vw;
     width: 100%;

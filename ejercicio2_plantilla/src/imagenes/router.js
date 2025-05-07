@@ -1,6 +1,6 @@
 import express from 'express';
 import { config } from '../config.js';
-import { body} from 'express-validator';
+import { body } from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
 import { viewSubmit, doSubmit, viewFoto, updateFoto, deleteFoto } from './controllers.js';
 import asyncHandler from 'express-async-handler';

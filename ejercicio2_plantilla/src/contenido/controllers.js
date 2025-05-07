@@ -8,14 +8,15 @@ import { promises as fs } from 'fs';
 
 
 export async function normal(req, res) {
-    let contenido = 'paginas/Usuarios/noRegistrado';
+
+    let contenido = 'paginas/Usuarios/normal';
+    //let contenido = 'paginas/Usuarios/normal';
     let data = {};
     let imagen = null;
-    if (req.session.login) {
+    
+   
         contenido = 'paginas/Usuarios/normal';
 
-            //Para elegir la imagen aleatoriamente usamos ChatGpt
-        try {
             const archivos = await fs.readdir(config.uploads);
 
             if (archivos.length > 0) {
@@ -26,24 +27,12 @@ export async function normal(req, res) {
                 data.descripcion = foto.descripcion;
                 data.puntuacion = foto.puntuacion;
             }
-            render(req, res, contenido, {
-                data,
-                imagen,
-                error: null
-            });
-        } catch (e) {
-            let error = 'Error con las imágenes: ' + e.message;
-            render(req, res, contenido, {
-                error,
-                data: {},
-                imagen: null
-            });
-        }
-    }
+    
+   
     render(req, res, contenido, {
-        error,
-        data: {},
-        imagen: null
+        data,
+        error: null,
+        imagen
     });
 }
 
