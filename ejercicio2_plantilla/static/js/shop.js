@@ -6,17 +6,20 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 // Mostrar el modal cuando el botón sea presionado
 addProductBtn.addEventListener('click', function() {
     modal.style.display = 'block';
+    document.body.classList.add('modal-open');
 });
 
 // Cerrar el modal cuando el usuario haga clic en el botón de cerrar
 closeModalBtn.addEventListener('click', function() {
     modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
 });
 
 // Cerrar el modal si el usuario hace clic fuera del contenido del modal
 window.addEventListener('click', function(event) {
     if (event.target === modal) {
         modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
     }
 
     });
@@ -54,3 +57,47 @@ window.addEventListener('click', function(event) {
             preview.style.display = 'none';
         }
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Abrir modal "Añadir producto"
+        const addBtn = document.getElementById('addProductBtn');
+        const addModal = document.getElementById('addProductModal');
+        const closeAddModal = document.getElementById('closeModalBtn');
+        
+        addBtn.onclick = () => addModal.style.display = 'block';
+        closeAddModal.onclick = () => addModal.style.display = 'none';
+    
+        // Abrir modal de detalles
+        const productModal = document.getElementById('productDetailModal');
+        const closeDetail = document.querySelector('.close-detail-modal');
+        
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const { id, name, description, price, status, image } = item.dataset;
+                document.getElementById('detailName').innerText = name;
+                document.getElementById('detailDescription').innerText = description;
+                document.getElementById('detailPrice').innerText = price;
+                document.getElementById('detailImage').src = image;
+    
+                const buyForm = document.getElementById('buyForm');
+                buyForm.action = `/shop/${id}/buy`;
+    
+                if (status === 'P') {
+                    buyForm.style.display = 'block';
+                    document.getElementById('soldOutBtn').style.display = 'none';
+                } else {
+                    buyForm.style.display = 'none';
+                    document.getElementById('soldOutBtn').style.display = 'block';
+                }
+    
+                productModal.style.display = 'block';
+                document.body.classList.add('modal-open'); 
+            });
+        });
+    
+        closeDetail.onclick = () => {
+            productModal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        };
+    });
+    

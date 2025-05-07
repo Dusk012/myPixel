@@ -15,10 +15,7 @@ const shopRouter = express.Router();
 shopRouter.get('/my-products', asyncHandler(getMyProducts));
 
 
-shopRouter.get('/', asyncHandler(getAllProducts));
 
-// Ver un producto específico (también puede ser público)
-shopRouter.get('/:id', asyncHandler(getProductById));
 
 // Añadir producto – solo usuarios logueados
 shopRouter.post(
@@ -45,4 +42,10 @@ shopRouter.post('/:id',
     autenticado(),
     asyncHandler(deleteProduct)
 );
+
+shopRouter.get('/', asyncHandler(getAllProducts));
+
+// Ver un producto específico (también puede ser público)
+shopRouter.get('/:id', asyncHandler(getProductById));
+
 export default shopRouter;

@@ -22,6 +22,7 @@ export async function addProduct(req, res) {
     return render(req, res, 'paginas/tienda/shop', {
         products,
         userProducts
+       
     }); 
 }
 
@@ -121,6 +122,7 @@ export async function buyProduct(req, res) {
     return render(req, res, 'paginas/tienda/shop', {
         products,
         userProducts
+        
     });
 }
 
