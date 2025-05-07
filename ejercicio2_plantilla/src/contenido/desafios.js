@@ -231,4 +231,15 @@ export class Desafio {
             throw error;
         }
     }
+
+    static modificarDesafio(id, puntuacionObjetivo, descripcion, tipo) {
+        try {
+            const datos = { id, puntuacionObjetivo, descripcion, tipo };
+            this.#updateStmt.run(datos);
+            console.log(`Desafío con ID ${id} modificado correctamente.`);
+        } catch (error) {
+            console.error('Error al modificar el desafío:', error);
+            throw error;
+        }
+    }
 }

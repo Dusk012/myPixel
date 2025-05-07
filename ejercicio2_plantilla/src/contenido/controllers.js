@@ -148,18 +148,52 @@ export async function crearDesafio(req, res) {
     const { puntuacionObjetivo, descripcion, tipo } = req.body;
 
     try {
-        // Crear el desafío en la base de datos
-        await Desafio.create({
-            puntuacionObjetivo: parseInt(puntuacionObjetivo, 10),
-            descripcion,
-            tipo: parseInt(tipo, 10),
-            fecha: new Date().toISOString(),
-            id_usuario: null, // Desafío base, no asociado a un usuario específico
-        });
+        // Obtener el ID del usuario desde la sesión
+        const id_usuario = req.session?.userId;
 
-        res.redirect('/contenido/desafios'); // Redirigir a la página de desafíos
+        if (!id_usuario) {
+            return res.status(400).json({ success: false, error: 'ID de usuario no encontrado en la sesión' });
+        }
+
+        // Crear el nuevo desafío
+        const nuevoDesafio = new Desafio(
+            puntuacionObjetivo,
+            descripcion,
+            tipo,
+            new Date().toISOString(),
+            id_usuario // Asociar el desafío al usuario de la sesión
+        );
+        nuevoDesafio.persist();
+
+        // Redirigir con un mensaje de éxito
+        res.redirect('/contenido/desafios?mensaje=Desafío creado con éxito');
     } catch (error) {
         console.error('Error al crear el desafío:', error);
-        res.status(500).send('Error al crear el desafío');
+        res.status(500).json({ success: false, error: 'Error al crear el desafío' });
+    }
+}
+
+export async function modificarDesafio(req, res) {
+    const { id, puntuacionObjetivo, descripcion, tipo } = req.body;
+
+    try {
+        Desafio.modificarDesafio(parseInt(id), parseInt(puntuacionObjetivo), descripcion, parseInt(tipo));
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error al modificar el desafío:', error);
+        res.status(500).json({ success: false, error: 'Error al modificar el desafío' });
+    }
+}
+
+export async function eliminarDesafio(req, res) {
+    const { id } = req.params;
+
+    try {
+        // Llama al método para eliminar el desafío de la base de datos
+        await Desafio.deleteById(id);
+        res.status(200).json({ success: true, message: 'Desafío eliminado' });
+    } catch (error) {
+        console.error('Error al borrar el desafío:', error);
+        res.status(500).json({ success: false, error: 'Error al borrar el desafío' });
     }
 }
