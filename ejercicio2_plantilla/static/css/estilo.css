@@ -162,8 +162,6 @@ button:hover {
 }
 
 /*imagnes*/
-/* Añadir al CSS existente */
-/* Mantenemos las reglas existentes que ya usan unidades relativas */
 form {
     width: 100%;
     max-width: 40em;
