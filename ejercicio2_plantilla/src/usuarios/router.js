@@ -21,7 +21,7 @@ usuariosRouter.post('/register',
     body('password', 'La contraseña no tiene entre 6 y 10 caracteres').trim().isLength({ min: 6, max: 10 }), 
     body('confirmPassword', 'La contraseña no coincide').custom((value, { req }) => {
     return value === req.body.password;
-    }), asyncHandler(doRegister)); 
+    }), asyncHandler(doRegister));
 
 // Ruta para actualizar la foto de perfil
 usuariosRouter.get('/perfil', perfilGet);

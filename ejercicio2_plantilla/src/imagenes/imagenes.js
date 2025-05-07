@@ -3,6 +3,7 @@ import { ErrorDatos } from "../db.js";
 export class Foto {
     static #getByIdStmt = null;
     static #getByContenidoStmt = null;
+    static #getByCreadorStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
@@ -12,6 +13,7 @@ export class Foto {
 
         this.#getByIdStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
         this.#getByContenidoStmt = db.prepare('SELECT * FROM Fotos WHERE contenido = @contenido');
+        this.#getByCreadorStmt = db.prepare("SELECT * FROM fotos WHERE id_usuario = @id_usuario");
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
@@ -28,6 +30,14 @@ export class Foto {
         const foto = this.#getByContenidoStmt.get({ contenido });
         if (!foto) throw new FotoNoEncontrada(contenido);
         return new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido);
+    }
+
+    static getFotosByCreador(id_usuario) {
+        console.log("1");
+        const fotos = this.#getByCreadorStmt.all({ id_usuario });
+        console.log(fotos);
+        if (!fotos || fotos.length === 0) throw new FotoNoEncontrada(id_usuario);
+        return fotos.map(foto => new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido));
     }
 
     static #insert(foto) {

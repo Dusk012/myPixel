@@ -8,6 +8,7 @@ import { promises as fs } from 'fs';
 
 
 export async function normal(req, res) {
+
     let contenido = 'paginas/Usuarios/normal';
     //let contenido = 'paginas/Usuarios/normal';
     let data = {};
@@ -15,7 +16,7 @@ export async function normal(req, res) {
     
    
         contenido = 'paginas/Usuarios/normal';
-   
+
             const archivos = await fs.readdir(config.uploads);
 
             if (archivos.length > 0) {
