@@ -17,9 +17,10 @@ export function viewSubmit(req, res) {
 }
 
 export async function doSubmit(req, res) {
+
     const result = validationResult(req);
     const errores = result.array();
-    if (!result.isEmpty() && !errores.some(err => err.path === 'foto')) {
+    if (!result.isEmpty() || !errores.some(err => err.path === 'foto')) {
         const errores = result.mapped();
         const datos = matchedData(req);
         return render(req, res, 'paginas/imagenes/submit', {
