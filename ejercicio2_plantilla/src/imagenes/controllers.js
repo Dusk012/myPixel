@@ -66,6 +66,8 @@ export async function doSubmit(req, res) {
             errores: {}
         });
     }
+
+}
 export async function viewFoto(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {
@@ -159,3 +161,4 @@ export async function deleteFoto(req, res) {
             errores: {}
         });
     }
+}
