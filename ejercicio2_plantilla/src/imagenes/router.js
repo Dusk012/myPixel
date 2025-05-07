@@ -13,8 +13,7 @@ const imagenesRouter = express.Router();
 imagenesRouter.get('/submit', autenticado(null), asyncHandler(viewSubmit));
 imagenesRouter.post('/submit', upload.single("foto"), autenticado(null),
     body('nombre', 'No puede ser vacío').trim().notEmpty(), 
-    body('descripcion', 'No puede ser vacío').trim().notEmpty(), 
-    body('foto', 'No puede ser vacío').trim().notEmpty(), 
+    body('descripcion', 'No puede ser vacío').trim().notEmpty(),
     asyncHandler(doSubmit));
 
 imagenesRouter.post('/foto', autenticado(null), asyncHandler(viewFoto));
@@ -23,6 +22,5 @@ imagenesRouter.post('/foto/update', autenticado(null),
     body('descripcion', 'No puede ser vacío').trim().notEmpty(), 
     asyncHandler(updateFoto));
 imagenesRouter.post('/foto/delete', autenticado(null), asyncHandler(deleteFoto));
-
 
 export default imagenesRouter;

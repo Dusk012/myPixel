@@ -20,12 +20,28 @@ export async function doSubmit(req, res) {
 
     const result = validationResult(req);
     const errores = result.array();
-    if (!result.isEmpty() || !errores.some(err => err.path === 'foto')) {
-        const errores = result.mapped();
+
+    
+    // Verificar si no hay archivo subido
+    if (!req.file) {
+        errores.push({
+            path: 'foto',
+            msg: 'Debes seleccionar una imagen'
+        });
+    }
+
+    if (!result.isEmpty() || errores.length > 0) {
+        const erroresMapped = errores.reduce((acc, err) => {
+            acc[err.path] = err;
+            return acc;
+        }, {});
+        
+
+   
         const datos = matchedData(req);
         return render(req, res, 'paginas/imagenes/submit', {
             error: {},
-            errores,
+            errores: erroresMapped,
             datos
         });
     }
@@ -33,13 +49,11 @@ export async function doSubmit(req, res) {
     const nombre = req.body.nombre;
     const descripcion = req.body.descripcion;
     const imagen = req.file.filename;
+    
     try {
         const foto = await Foto.registrar(nombre, descripcion, imagen, req.session.username, null);
-
         res.setFlash(`Imagen subida con éxito: ${nombre}`);
-        
         return res.redirect('../contenido/normal');
-
     } catch (e) {
         const datos = matchedData(req);
         let error = 'Error al subir la imagen: ' + e;
@@ -52,8 +66,6 @@ export async function doSubmit(req, res) {
             errores: {}
         });
     }
-}
-
 export async function viewFoto(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {
@@ -147,4 +159,3 @@ export async function deleteFoto(req, res) {
             errores: {}
         });
     }
-}
