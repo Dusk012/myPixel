@@ -5,7 +5,7 @@
         <button type="submit">Buscar</button>
     </form>
     <% if (foros && foros.length > 0) { %>
-        <ul>
+        <ul class="foro-lista">
          <% foros.forEach(foro => { %>
             <li>
                 <a href="/mensajes/thread/<%= foro.id %>">

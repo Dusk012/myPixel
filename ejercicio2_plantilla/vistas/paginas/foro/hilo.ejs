@@ -1,15 +1,16 @@
 <body>
-<h1><%= forum.titulo %></h1>
-    <p>Descripcion del foro: <%= forum.descripcion %></p>
-    <p>Creador del foro: <%= forum.username %></p>
-    <hr>
+    <section class="foro-intro">
+        <h1><%= forum.titulo %></h1>
+        <p class="descripcion-foro"><%= forum.descripcion %></p>
+        <p class="autor-foro">Foro creado por <strong><%= forum.username %></strong></p>
+    </section>
 
     <% if (replies.length > 0) { %>
-        <h2>Respuestas</h2>
-        <ul>
+        <ul class="respuestas">
+            <h2>Comentarios</h2>
             <% replies.forEach(reply => { %>
                 <li>
-                    Escrito por <strong><%= reply.username %></strong>: <%= reply.content %>
+                    <strong class ="user-title-forum"><%= reply.username %></strong> <em class="content-comment"><%= reply.content %></em>
                     <p>Publicado el <%= reply.date %></p>
             
                     <% if (session.username === reply.username || session.rol === 'A') {%>
