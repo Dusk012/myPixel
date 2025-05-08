@@ -18,14 +18,16 @@ export async function normal(req, res) {
         contenido = 'paginas/Usuarios/normal';
 
             const archivos = await fs.readdir(config.uploads);
-
+            let foto = null;
             if (archivos.length > 0) {
-                const randomIndex = Math.floor(Math.random() * archivos.length);
-                imagen = archivos[randomIndex];
-                const foto = await Foto.getFotoByContenido(imagen);
-                data.nombre = foto.nombre;
-                data.descripcion = foto.descripcion;
-                data.puntuacion = foto.puntuacion;
+                do {
+                    const randomIndex = Math.floor(Math.random() * archivos.length);
+                    imagen = archivos[randomIndex];
+                    foto = await Foto.getFotoByContenido(imagen);
+                    data.nombre = foto.nombre;
+                    data.descripcion = foto.descripcion;
+                    data.puntuacion = foto.puntuacion;
+                } while (foto.estado !== 'Visible');
             }
     
    

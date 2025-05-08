@@ -41,7 +41,6 @@ export async function doSubmit(req, res) {
    
         const datos = matchedData(req);
         return render(req, res, 'paginas/imagenes/submit', {
-            error: {},
             errores: erroresMapped,
             datos
         });
@@ -69,6 +68,7 @@ export async function doSubmit(req, res) {
     }
 
 }
+
 export async function viewFoto(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
     if (req.session.login) {

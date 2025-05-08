@@ -33,10 +33,9 @@ export class Foto {
     }
 
     static getFotosByCreador(id_usuario) {
-        console.log("1");
         const fotos = this.#getByCreadorStmt.all({ id_usuario });
         console.log(fotos);
-        if (!fotos || fotos.length === 0) throw new FotoNoEncontrada(id_usuario);
+        if (!fotos || fotos.length === 0) return [];
         return fotos.map(foto => new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido));
     }
 
