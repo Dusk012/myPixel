@@ -12,11 +12,13 @@ export class ForumMessage {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #getCommentsById = null;
+    static #editStmt = null;
 
     static initStatements(db) {
-        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario) VALUES (@forumId, @content, @date, @userId)');
+        this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario, username) VALUES (@forumId, @content, @date, @userId, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
-        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro');   
+        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro'); 
+        this.#editStmt = db.prepare('UPDATE Comentarios SET contenido = @comentario WHERE id = @id');
     }
 
     static #insert(comentario) {
@@ -26,7 +28,8 @@ export class ForumMessage {
                 const content = comentario.#content;
                 const date = comentario.#date;
                 const userId = comentario.#userId;
-                const datos = {forumId, content, date, userId};
+                const username = comentario.#username;
+                const datos = {forumId, content, date, userId, username};
     
                 result = this.#insertStmt.run(datos);
     
@@ -37,34 +40,40 @@ export class ForumMessage {
             return comentario;
     }
 
-    static #delete(comentario) {
-        console.log("delete entrado")
+    static #delete(idComment) {
         let result = null;
         try {
-            const id = comentario.#id;
-            const forumId = comentario.#forumId;
-            const content = comentario.#content;
-            const date = comentario.#date;
-            const userId = comentario.#userId;
-            const datos = {id, forumId, content, date, userId};
-
-            result = this.#deleteStmt.run(datos);
+            const id = idComment;
+            result = this.#deleteStmt.run({ id: idComment });
         } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
             throw new Error('No se ha podido eliminar el comentario', { cause: e });
         }
-        return comentario;
-}
+    }
+
+    static #edit(idComment, comment) {
+        let result = null;
+        try {
+            const id = idComment;
+            const comentario = comment;
+            const datos = {id, comentario};
+            result = this.#editStmt.run(datos);
+        } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
+            throw new Error('No se ha podido editar el comentario', { cause: e });
+        }
+    }
 
     #id;
     #forumId;
     #content;
     #date;
     #userId;
+    #username;
+    #editado;
     //#type;
     //#replies;
     //#parentId;
 
-    constructor(forumId, content, date, userId, id = null) {
+    constructor(forumId, content, date, userId, username, id = null) {
         if (id !== null) {
             this.#id = id;  // Comentario existente
         } else {
@@ -83,6 +92,7 @@ export class ForumMessage {
         this.#content = content;
         this.#date = date;
         this.#userId = userId;
+        this.#username = username;
         //this.#type = type;
         //this.#parentId = parentId;
         //this.#replies = []; // Array para almacenar respuestas directas
@@ -94,6 +104,7 @@ export class ForumMessage {
     get content() { return this.#content; }
     get date() { return this.#date; }
     get userId() { return this.#userId; }
+    get username() { return this.#username; }
     //get type() { return this.#type; }
     //get parentId() { return this.#parentId; }
     //get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
@@ -145,7 +156,6 @@ export class ForumMessage {
         }
         return false;
         */
-       console.log("FUNCION POR REFACTORIZAR");
     }
 
     /**
@@ -183,19 +193,25 @@ export class ForumMessage {
         }
 
         // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.id));
+        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.username, comment.id));
     }
 
     dame_comentarios( id_foro ){
         return ForumMessage.getComments( id_foro );
     }
 
-    
 
+    static editComment(idComment, comment) {
+        ForumMessage.#edit(idComment, comment);
+    }
+    
+    static deleteComment(idComment) {
+        ForumMessage.#delete(idComment);
+    }
     // Métodos de fábrica estáticos para creación controlada de mensajes
 
-    static createComment(forumId, content, data, userId){
-        return new ForumMessage(forumId, content, data, userId);
+    static createComment(forumId, content, data, userId, username){
+        return new ForumMessage(forumId, content, data, userId, username);
     }
     
     /**
@@ -210,6 +226,13 @@ export class ForumMessage {
      */
     static createReply(id, forumId, content, date, userId, parentId) {
         return new ForumMessage(id, forumId, content, date, userId, MessageType.REPLY, parentId);
+    }
+
+    static deleteCommentsByForumId(forumId) {
+        const comentarios = this.getComments(forumId);
+        for (const comentario of comentarios) {
+            this.#delete(comentario.id);
+        }
     }
 }
 
@@ -238,20 +261,24 @@ export class Forum {
         if (this.#getByTituloStmt !== null) return;
 
         this.#getAllStmt = db.prepare('SELECT * FROM Foros');
-        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo = @titulo');
+        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo LIKE @titulo');
         this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado) VALUES (@titulo, @descripcion, @estado)');
+        this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado, username) VALUES (@titulo, @descripcion, @estado, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
 
+    static getForosByTitulo(foro) {
+        // Ejecutamos la consulta que obtiene todos los foros
+        const titulo = foro + '%';
+        const rows = this.#getByTituloStmt.all({titulo});
+            
+        // Si no se encuentran foros, retornamos un arreglo vacío
+        if (!rows || rows.length === 0) {
+            return [];
+        }
 
-    static getForoByTitulo(titulo) {
-            const forum = this.#getByTituloStmt.get({ titulo });
-            if (forum === undefined) throw new ForoNoEncontrado(titulo);
-    
-            const { id, descripcion, estado } = forum;
-    
-            return new Forum(id, titulo, descripcion, estado);
+        // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
+        return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id));
     }
     
         static #insert(forum) {
@@ -260,7 +287,8 @@ export class Forum {
                 const titulo = forum.#titulo;
                 const descripcion = forum.#descripcion;
                 const estado = forum.#estado;
-                const datos = {titulo, descripcion, estado};
+                const username = forum.#username;
+                const datos = {titulo, descripcion, estado, username};
     
                 result = this.#insertStmt.run(datos);
     
@@ -292,7 +320,7 @@ export class Forum {
             console.log("Entro en getForumById")
             const forum = this.#getByIdStmt.get({ id });
             if (!forum) throw new Error('Foro no encontrado');
-            return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id);
+            return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id);
         }
 
         static getForums() {
@@ -305,7 +333,11 @@ export class Forum {
             }
     
             // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-            return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.id));
+            return rows.map(forum => new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id));
+        }
+
+        dame_foros_por_titulo(titulo){
+            return Forum.getForosByTitulo(titulo);
         }
 
         dame_foros(){
@@ -319,8 +351,8 @@ export class Forum {
     /**
      * Crea y añade un mensaje original al foro
      */
-    createPost(forumId, content, date, userId) {
-        const post = ForumMessage.createComment(forumId, content, date, userId);
+    createPost(forumId, content, date, userId, username) {
+        const post = ForumMessage.createComment(forumId, content, date, userId, username);
         //this.#messages.set(id, post);
         return post.addReply();
     }
@@ -391,7 +423,7 @@ export class Forum {
     }
 
 
-    createForum(titulo, descripcion, estado) {
+    createForum(titulo, descripcion, estado, username) {
         // Validación básica de los parámetros
         if (!titulo || !descripcion || !estado) {
             if(!estado && titulo && descripcion) console.log("Me falta estado, pero todo lo demas esta OK.")
@@ -399,7 +431,7 @@ export class Forum {
         }
 
         // Crear una nueva instancia de Forum
-        const foro = new Forum(titulo, descripcion, estado);
+        const foro = new Forum(titulo, descripcion, estado, username);
 
         // Llamar al método persist() para guardar el foro en la base de datos
         foro.persist();
@@ -415,13 +447,11 @@ export class Forum {
     * Elimina un foro y todos sus mensajes (originales y respuestas)
     */
     deleteForum() {
-        // Elimina todos los mensajes asociados al foro
-        for (const message of this.#messages.values()) {
-            this.deleteMessage(message.id);  // Eliminar el mensaje y sus respuestas
-        }
-
-        // Eliminar el foro de la base de datos
-        Forum.#delete(this);
+        // Elimina todos los comentarios asociados al foro
+        ForumMessage.deleteCommentsByForumId(this.#id);
+    
+        // Elimina el foro de la base de datos
+        Forum.#deleteStmt.run({id: this.#id});
         return true;
     }   
 
@@ -446,8 +476,9 @@ export class Forum {
     #titulo;
     #descripcion;
     #estado;
+    #username;
 
-    constructor(titulo, descripcion, estado, id = null) {
+    constructor(titulo, descripcion, estado, username, id = null) {
         if (id !== null) {
             this.#id = id;  // Foro existente
         } else {
@@ -457,6 +488,7 @@ export class Forum {
         this.#titulo = titulo;
         this.#descripcion = descripcion;
         this.#estado = estado;
+        this.#username = username;
     }
 
     get id() {
@@ -473,6 +505,10 @@ export class Forum {
 
     get estado() {
         return this.#estado;
+    }
+
+    get username() {
+        return this.#username;
     }
 
     persist() {

@@ -7,30 +7,38 @@ const forum = new Forum();
 const thread = new ForumMessage();
 
 export function viewForum(req, res) {
-        console.log(render);
-        const foros = forum.dame_foros();
-        return render(req, res, 'paginas/foro/foro', {
-            foros,
-            error: null,
-            session: req.session
-        });
+    const query = req.query.foro?.trim().toLowerCase();
+    let foros;
+
+    if (query) {
+        foros = forum.dame_foros_por_titulo(query);
+    } else {
+        foros = forum.dame_foros();
+    }
+
+    return render(req, res, 'paginas/foro/foro', {
+        foros,
+        error: null,
+        session: req.session,
+        search: query
+    });
 }
 
 export function viewThread(req, res) {
-        console.log(render);
-        const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
-        const my_forum = forum.dame_id(forumId);
-        const my_thread = thread.dame_comentarios(forumId);
-        if (!my_forum) {
-            throw new Error('Foro no encontrado');
-        }
+    console.log(render);
+    const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
+    const my_forum = forum.dame_id(forumId);
+    const my_thread = thread.dame_comentarios(forumId);
+    if (!my_forum) {
+        throw new Error('Foro no encontrado');
+    }
 
-        render(req, res, 'paginas/foro/hilo', {
-            forum: my_forum,
-            replies: my_thread,
-            error: null,
-            session: req.session
-        });
+    render(req, res, 'paginas/foro/hilo', {
+        forum: my_forum,
+        replies: my_thread,
+        error: null,
+        session: req.session
+    });
 }
 
 
@@ -72,13 +80,15 @@ export async function createPost(req, res) {
     }
 
     try {
+        const username = req.session.username;
         const { title, desc } = req.body;
                 
         // Crear un nuevo foro y obtener la referencia a ese foro
         const newForum = forum.createForum(
             title,
             desc,
-            'Activo'
+            'Activo',
+            username
         );
 
         res.setFlash('Post creado exitosamente');
@@ -93,6 +103,12 @@ export async function createPost(req, res) {
     }
 }
 
+export function deleteForum(req, res) {
+    const foro = Forum.getForumById(parseInt(req.params.id));
+    foro.deleteForum(); // Esto elimina el foro y sus comentarios
+    res.redirect('/mensajes/foro');
+}
+
 export async function createReply(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -104,6 +120,7 @@ export async function createReply(req, res) {
         const { content } = req.body; //Comentario 
         const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
         const userId = req.session.userId;
+        const username = req.session.username;
 
         // Generar fecha
         const date = new Date().toISOString(); //Fecha del comentario
@@ -112,7 +129,8 @@ export async function createReply(req, res) {
             parentId,
             content,
             date,
-            userId
+            userId,
+            username
         );
 
         res.redirect(`/mensajes/thread/${parentId}`);
@@ -121,72 +139,15 @@ export async function createReply(req, res) {
     }
 }
 
-export async function editMessage(req, res) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        res.setFlash('Error en el formulario');
-        return res.redirect('back');
-    }
-
-    try {
-        const messageId = parseInt(req.params.id);
-        const { content } = req.body;
-        const userId = req.session.usuarioId;
-        
-        const message = forum.getMessage(messageId);
-        if (!message) {
-            throw new Error('Mensaje no encontrado');
-        }
-
-        // Verificar que el usuario es el autor
-        if (message.userId !== userId) {
-            throw new Error('No tienes permiso para editar este mensaje');
-        }
-
-        message.content = content;
-        res.setFlash('Mensaje actualizado exitosamente');
-
-        // Redirigir al hilo correspondiente
-        const redirectId = message.type === MessageType.ORIGINAL 
-            ? message.id 
-            : message.parentId;
-        res.redirect(`/foro/thread/${redirectId}`);
-    } catch (e) {
-        res.setFlash(e.message);
-        res.redirect('back');
-    }
+export function editMessage(req, res) {
+    const { content } = req.body;
+    ForumMessage.editComment(req.params.id, content);
+    res.redirect(`/mensajes/thread/${req.query.idForo}`);
 }
 
-export async function deleteMessage(req, res) {
-    try {
-        const messageId = parseInt(req.params.id);
-        const userId = req.session.usuarioId;
-        
-        const message = forum.getMessage(messageId);
-        if (!message) {
-            throw new Error('Mensaje no encontrado');
-        }
-
-        // Verificar permisos (autor o admin)
-        if (message.userId !== userId && req.session.rol !== 'admin') {
-            throw new Error('No tienes permiso para eliminar este mensaje');
-        }
-
-        const isOriginal = message.type === MessageType.ORIGINAL;
-        forum.deleteMessage(messageId);
-
-        res.setFlash('Mensaje eliminado exitosamente');
-        
-        // Redirigir según el tipo de mensaje
-        if (isOriginal) {
-            res.redirect('/foro');
-        } else {
-            res.redirect(`/foro/thread/${message.parentId}`);
-        }
-    } catch (e) {
-        res.setFlash(e.message);
-        res.redirect('back');
-    }
+export function deleteMessage(req, res) {
+    ForumMessage.deleteComment(req.params.id);
+    res.redirect(`/mensajes/thread/${req.query.idForo}`);
 }
 
 export function sendComment(req, res) {
