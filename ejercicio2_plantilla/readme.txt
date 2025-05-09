@@ -10,3 +10,5 @@ Cosas que faltan por hacer
 - Separación de los scrips de los ejs
 - buscador de imagenes
 - pasar por el validator
+- mejorar vision foto
+- añadir get para fotos

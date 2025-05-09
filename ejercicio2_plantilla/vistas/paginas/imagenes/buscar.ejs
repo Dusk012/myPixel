@@ -1,0 +1,33 @@
+<div class="encabezado-buscador">
+    <p class="titulo-buscador">Búsqueda de <%= busq %></h1>
+    <form action="/imagenes/buscar" method="POST" class="form-buscador">
+        <button type="button" class="boton-buscador"><input type="text" name="busq" class="input-buscador" placeholder="Buscar imagen...">🔍</button>
+    </form>
+</div>
+
+
+<div class="foto-grid">
+    <% if (fotos.length === 0) { %>
+        <p>No hay fotos disponibles con <%= busq %>.</p>
+    <% } else { %>
+        <table>
+            <tr>
+                <% fotos.forEach((foto, index) => { %>
+                    <% if (index % 3 === 0 && index !== 0) { %></tr><tr><% } %>
+                    <td class="foto-cell">
+                        <form action="/imagenes/foto" method="POST">
+                            <input type="hidden" name="id" value="<%= foto.id %>">
+                            <button type="submit" class="foto-card">
+                                <h3><%= foto.nombre %></h3>
+                                <img src="/uploads/<%= foto.contenido %>" alt="<%= foto.nombre %>" class="foto-image">
+                                <p><%= foto.descripcion %></p>
+                                <p><strong>Puntuación:</strong> <%= foto.puntuacion %></p>
+                            </button>
+                        </form>
+                    </td>
+                <% }) %>
+            </tr>
+        </table>
+    <% } %>
+    
+<script src="/js/busqueda.js" defer></script>

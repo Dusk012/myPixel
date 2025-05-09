@@ -1,4 +1,10 @@
-<h1>Imágen destacada</h1>
+<div class="encabezado-buscador">
+    <h1>Imágen destacada</h1>
+    <form action="/imagenes/buscar" method="POST" class="form-buscador">
+        <button type="button" class="boton-buscador"><input type="text" name="busq" class="input-buscador" placeholder="Buscar imagen...">🔍</button>
+    </form>
+</div>
+
 <div class="contenedor-imagen">
 <table>
     <tr>
@@ -33,3 +39,5 @@ if( flashMsg ) {
 <% } %>
 
 <script src="/js/normal.js"></script>
+
+<script src="/js/buscar.js" defer></script>

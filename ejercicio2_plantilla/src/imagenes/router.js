@@ -2,7 +2,7 @@ import express from 'express';
 import { config } from '../config.js';
 import { body } from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
-import { viewSubmit, doSubmit, viewFoto, updateFoto, deleteFoto } from './controllers.js';
+import { viewSubmit, doSubmit, viewFoto, updateFoto, deleteFoto, viewBusqueda } from './controllers.js';
 import asyncHandler from 'express-async-handler';
 import multer from 'multer';
 
@@ -22,5 +22,7 @@ imagenesRouter.post('/foto/update', autenticado(null),
     body('descripcion', 'No puede ser vacío').trim().notEmpty(), 
     asyncHandler(updateFoto));
 imagenesRouter.post('/foto/delete', autenticado(null), asyncHandler(deleteFoto));
+
+imagenesRouter.post('/buscar', autenticado(null), asyncHandler(viewBusqueda));
 
 export default imagenesRouter;

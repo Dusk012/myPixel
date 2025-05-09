@@ -71,6 +71,7 @@ export async function doSubmit(req, res) {
 
 export async function viewFoto(req, res) {
     let contenido = 'paginas/Usuarios/noRegistrado';
+    let userFoto = false;
     if (req.session.login) {
         contenido = 'paginas/imagenes/foto';
     }
@@ -81,8 +82,10 @@ export async function viewFoto(req, res) {
         if (!foto) {
             error = 'No existe la foto a enseñar';
         }
-
+        if (foto.id_usuario == req.session.username)
+            userFoto = true;
         render(req, res, contenido, {
+            userFoto,
             error,
             foto: foto,
             errores: {}
@@ -163,3 +166,22 @@ export async function deleteFoto(req, res) {
         });
     }
 }
+
+export async function viewBusqueda(req, res) {
+    let contenido = 'paginas/Usuarios/noRegistrado';
+    let fotos = [];
+    const busq = req.body.busq;
+    let id = req.body.id;
+    if (req.session.login) {
+        contenido = 'paginas/imagenes/buscar';
+        fotos = Foto.getFotosByTitle(busq, id);
+    }
+    const usuario = matchedData(req);
+    render(req, res, contenido, {
+        busq,
+        fotos,
+        usuario,
+        error: null
+    });
+}
+

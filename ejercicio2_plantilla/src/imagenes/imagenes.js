@@ -4,6 +4,8 @@ export class Foto {
     static #getByIdStmt = null;
     static #getByContenidoStmt = null;
     static #getByCreadorStmt = null;
+    static #getByTitleStmt = null;
+    static #getByTitleAndCreatorStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
@@ -14,6 +16,8 @@ export class Foto {
         this.#getByIdStmt = db.prepare('SELECT * FROM Fotos WHERE id = @id');
         this.#getByContenidoStmt = db.prepare('SELECT * FROM Fotos WHERE contenido = @contenido');
         this.#getByCreadorStmt = db.prepare("SELECT * FROM fotos WHERE id_usuario = @id_usuario");
+        this.#getByTitleStmt = db.prepare("SELECT * FROM fotos WHERE nombre LIKE ?");
+        this.#getByTitleAndCreatorStmt = db.prepare("SELECT * FROM fotos WHERE nombre LIKE ? AND id_usuario = @id_usuario");
         this.#insertStmt = db.prepare('INSERT INTO Fotos(nombre, descripcion, fecha, puntuacion, estado, id_usuario, id_foro, contenido) VALUES (@nombre, @descripcion, @fecha, @puntuacion, @estado, @id_usuario, @id_foro, @contenido)');
         this.#updateStmt = db.prepare('UPDATE Fotos SET nombre = @nombre, descripcion = @descripcion, puntuacion = @puntuacion, estado = @estado, contenido = @contenido WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Fotos WHERE id = @id');
@@ -34,6 +38,20 @@ export class Foto {
 
     static getFotosByCreador(id_usuario) {
         const fotos = this.#getByCreadorStmt.all({ id_usuario });
+        console.log(fotos);
+        if (!fotos || fotos.length === 0) return [];
+        return fotos.map(foto => new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido));
+    }
+
+    static getFotosByTitle(fotoPart) {
+        const fotos = this.#getByTitleStmt.all([`%${fotoPart}%`]);
+        console.log(fotos);
+        if (!fotos || fotos.length === 0) return [];
+        return fotos.map(foto => new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido));
+    }
+
+    static getFotosByTitleAndCreator(fotoPart, id_usuario) {
+        const fotos = this.#getByTitleAndCreatorStmt.all([`%${fotoPart}%`, id_usuario]);
         console.log(fotos);
         if (!fotos || fotos.length === 0) return [];
         return fotos.map(foto => new Foto(foto.id, foto.nombre, foto.descripcion, foto.fecha, foto.puntuacion, foto.estado, foto.id_usuario, foto.id_foro, foto.contenido));

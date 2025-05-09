@@ -4,8 +4,13 @@
         
       <input type="hidden" name="id" value="<%= foto.id %>">
       <div class="campo">
-        <label for="nombre">Nombre de la foto:</label>
-        <input type="text" id="nombre" name="nombre" value="<%= foto.nombre %>">
+        
+        <% if (userFoto) { %>
+          <label for="nombre">Nombre de la foto:</label>
+          <input type="text" id="nombre" name="nombre" value="<%= foto.nombre %>">
+        <% } else { %>
+          <label><%= foto.nombre %></label>
+        <% } %>
       </div>
     
       <p></p>
@@ -13,38 +18,42 @@
       <p></p>
 
       <div class="campo">
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion"><%= foto.descripcion %></textarea>
-    </div>
-    
-    <p></p>
+        <% if (userFoto) { %>
+          <label for="descripcion">Descripción:</label>
+          <textarea id="descripcion" name="descripcion"><%= foto.descripcion %></textarea>
+        <% } else { %>
+          <label class="salto-linea">Descripción: <%= foto.descripcion %></label>
+        <% } %>
+      </div>
 
-    <!-- Lo de la fecha lo ha hecho chatGPT-->
-    <div class="campo">
-        <label for="fecha">Fecha:</label>
-        <input type="text" id="fecha" name="fecha" value="<%= new Date(foto.fecha).toLocaleString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>" disabled>
-    </div>
+      <!-- Lo de la fecha lo ha hecho chatGPT-->
+      <div class="campo">
+          <label for="fecha">Fecha de creación:</label>
+          <input type="text" id="fecha" name="fecha" value="<%= new Date(foto.fecha).toLocaleString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>" disabled>
+      </div>
+        
+      <p></p>
       
-    <p></p>
+      <% if (userFoto) { %>
+        <div class="campo">
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado">
+                <option value="Visible" <%= foto.estado === 'Visible' ? 'selected' : '' %>>Visible</option>
+                <option value="Oculto" <%= foto.estado === 'Oculto' ? 'selected' : '' %>>Oculto</option>
+            </select>
+        </div>
 
-    <div class="campo">
-        <label for="estado">Estado:</label>
-        <select id="estado" name="estado">
-            <option value="Visible" <%= foto.estado === 'Visible' ? 'selected' : '' %>>Visible</option>
-            <option value="Oculto" <%= foto.estado === 'Oculto' ? 'selected' : '' %>>Oculto</option>
-        </select>
-    </div>
-
-      <button type="submit" class="btn guardar-btn">Guardar cambios</button>
+        <button type="submit" class="btn guardar-btn">Guardar cambios</button>
+        
+      <% } %>
     </form>
     
-    <form action="/imagenes/foto/delete" method="POST">
-      <input type="hidden" name="id" value="<%= foto.id %>">
-      <input type="hidden" name="contenido" value="<%= foto.contenido %>">
-      <button type="submit" class="btn eliminar-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta imagen?')">Eliminar Imagen</button>
-    </form>
-    
-    <button type="button" class="btn volver-btn" onclick="window.location.href='/usuarios/perfil';">Volver</button>
-
+    <% if (userFoto) { %>
+      <form action="/imagenes/foto/delete" method="POST">
+        <input type="hidden" name="id" value="<%= foto.id %>">
+        <input type="hidden" name="contenido" value="<%= foto.contenido %>">
+        <button type="submit" class="btn eliminar-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta imagen?')">Eliminar Imagen</button>
+      </form>
+    <% } %>
   </div>
   

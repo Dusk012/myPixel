@@ -331,3 +331,30 @@ form {
 .volver-btn:hover {
     background-color: #1976D2;
 }
+
+
+/*Buscador*/
+.encabezado-buscador {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.boton-buscador {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+    font-size: 26px;
+    max-width: 60%;
+}
+
+.titulo-buscador{
+    font-size: 20px;
+}
+
+.salto-linea {
+  margin-bottom: 30px;
+}
