@@ -43,18 +43,20 @@
   <div class="product-gallery">
     <% products.forEach(product => { %>
       <!-- Imagen de galería (thumbnail) -->
-      <div class="gallery-item" onclick="document.getElementById('productModal-<%= product.id %>').style.display = 'flex'">
-        <img src="<%= product.image %>" alt="Imagen de <%= product.name %>" class="thumbnail">
+      <div class="gallery-item" data-modal-id="productModal-<%= product.id %>">
+        <img src="/uploadsTienda/<%= product.image %>" alt="Imagen de <%= product.name %>" class="thumbnail">
       </div>
+      
 
       <!-- Modal de detalle del producto -->
       <div id="productModal-<%= product.id %>" class="modal">
         <div class="modal-content">
-          <span class="close" onclick="document.getElementById('productModal-<%= product.id %>').style.display = 'none'">&times;</span>
+          <span class="close" data-close-modal="productModal-<%= product.id %>">&times;</span>
+        
           
           <div class="product-detail-content">
 
-            <img src="<%= product.image %>" alt="Imagen de <%= product.name %>" class="product-detail-image">
+            <img src="/uploadsTienda/<%= product.image %>" alt="Imagen de <%= product.name %>" class="product-detail-image">
             <h3 class="product-detail-title"><%= product.name %></h3>
             <p class ="product-detail-description"><%= product.description %></p>
             <p class = "product-detail-price"><strong>Precio:</strong> €<%= product.price.toFixed(2) %></p>
@@ -73,7 +75,7 @@
                 <button disabled>Ya vendido</button>
               <% } %>
               <% if (session.rol === 'A') { %>
-              <form action="/shop/<%= product.id %>" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+              <form action="/shop/<%= product.id %>" method="POST" class = "delete-product-form">
                 <input type="hidden" name="_method" value="DELETE" />
                 <button type="submit">Eliminar</button>
             </form>
@@ -89,6 +91,6 @@
   <p>No hay productos de otros usuarios en este momento.</p>
 <% } %>
 
-</section>
-
 <script src="/js/shop.js"></script>
+
+</section>

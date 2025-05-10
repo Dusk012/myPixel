@@ -1,4 +1,3 @@
-// middleware/validar.js
 import { validationResult, matchedData } from 'express-validator';
 
 export function validar(redireccion = 'back') {
@@ -23,3 +22,19 @@ export function validar(redireccion = 'back') {
         next();
     };
 }
+
+
+export function validarIdParametro(req, res, next) {
+    const { id } = req.params;
+  
+    // Validar que sea un número entero positivo
+    if (!/^\d+$/.test(id)) {
+      return res.status(400).send('ID de producto inválido');
+    }
+  
+    // Convertir a número por seguridad si lo necesitas
+    req.params.id = parseInt(id, 10);
+  
+    next();
+  }
+  

@@ -158,35 +158,69 @@ export class ShopProduct {
         return this.#name;
     }
 
+    set name(value) {
+        this.#name = value;
+    }
+
     get description() {
         return this.#description;
+    }
+
+    set description(value) {
+        this.#description = value;
     }
 
     get price() {
         return this.#price;
     }
 
+    set price(value) {
+        this.#price = value;
+    }
+
     get image() {
         return this.#image;
+    }
+
+    set image(value) {
+        this.#image = value;
     }
 
     get status() {
         return this.#status;
     }
-    get userId() {
-        return this.#userId; // Obtener el ID del usuario
+
+    set status(value) {
+        this.#status = value;
     }
 
+    get userId() {
+        return this.#userId;
+    }
+
+    set userId(value) {
+        this.#userId = value;
+    }
+
+
     // Método para cambiar el estado del producto (venderlo, por ejemplo)
-    sell() {
+    async sell() {
         if (this.#status === ProductType.SOLD) {
             throw new Error("El producto ya ha sido vendido");
         }
         this.#status = ProductType.SOLD;
-        this.persist();
+        await this.persist();
+    }
+     
+    async undo_sell() {
+        if (this.#status === ProductType.PRODUCT) {
+            throw new Error("El producto no ha sido vendido");
+        }
+        this.#status = ProductType.PRODUCT;
+        await this.persist();
     }
 
-    persist() {
+    async persist() {
         if (this.#id === null) return ShopProduct.#insert(this);
         return ShopProduct.#update(this);
     }
