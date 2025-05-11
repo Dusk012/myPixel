@@ -6,9 +6,11 @@ CREATE TABLE "Comentarios" (
 	"contenido"	TEXT,
 	"fecha"	TEXT,
 	"id_usuario"	INTEGER NOT NULL,
+	"username" TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
+	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id"),
+	FOREIGN KEY("username") REFERENCES "Usuarios"("username")
 );
 DROP TABLE IF EXISTS "Desafío";
 CREATE TABLE "Desafío" (
@@ -40,7 +42,9 @@ CREATE TABLE "Foros" (
 	"titulo"	INTEGER NOT NULL,
 	"descripcion"	INTEGER,
 	"estado"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
+	"username" TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("username") REFERENCES "Usuarios"("username")
 );
 DROP TABLE IF EXISTS "Fotos";
 CREATE TABLE "Fotos" (

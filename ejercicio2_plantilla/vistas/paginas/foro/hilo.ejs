@@ -1,15 +1,33 @@
 <body>
-<h1><%= forum.titulo %></h1>
-    <p>Descripcion del foro: <%= forum.descripcion %></p>
-    <hr>
+    <section class="foro">
+    <section class="foro-intro">
+        <h1><%= forum.titulo %></h1>
+        <p class="descripcion-foro"><%= forum.descripcion %></p>
+        <p class="autor-foro">Foro creado por <strong><%= forum.username %></strong></p>
+    </section>
 
     <% if (replies.length > 0) { %>
-        <h2>Respuestas</h2>
-        <ul>
+        <ul class="respuestas">
+            <h2>Comentarios</h2>
             <% replies.forEach(reply => { %>
                 <li>
-                    Escrito por el usuario con id = <strong><%= reply.userId %></strong>: <%= reply.content %>
-                    <p>Publicado el <%= reply.date %></p>
+                    <strong class ="user-title-forum"><%= reply.username %></strong> <em class="content-comment"><%= reply.content %></em>
+                    <p class="comentario-fecha">Publicado el <%= reply.date %></p>
+            
+                    <% if (session.username === reply.username || session.rol === 'A') {%>
+                        <form action="/mensajes/message/<%= reply.id %>?idForo=<%= forum.id %>" method="POST">
+                            <button class="btn-del-foro" type="submit">Eliminar comentario</button>
+                        </form>
+                    <% } %>
+            
+                    <% if (session.username === reply.username) { %>
+                        <button class="btn-edit-foro" onclick="mostrarFormulario(<%= reply.id %>)">Editar comentario</button>            
+                        <form id="formulario-<%= reply.id %>" action="/mensajes/edit/<%= reply.id %>?idForo=<%= forum.id %>" method="POST" style="display: none; margin-top: 10px;">
+                            <label for="content %>">Comentario:</label><br>
+                            <textarea name="content" id="content%>" rows="4" required><%= reply.content %></textarea><br>
+                            <button type="submit">Guardar edición</button>
+                        </form>
+                    <% } %>
                 </li>
             <% }) %>
         </ul>
@@ -28,3 +46,12 @@
     
 
     <a href="/mensajes/foro">Volver al foro</a>
+
+    </section>
+
+    <script>
+        function mostrarFormulario(id) {
+          const formulario = document.getElementById(`formulario-${id}`);
+          formulario.style.display = formulario.style.display === 'none' ? 'block' : 'none';
+        }
+      </script>

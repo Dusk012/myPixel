@@ -1,12 +1,27 @@
 <body>
+    <section class="foro">
     <h1>Foro</h1>
+    <form class="busqueda-foro" method="GET" action="/mensajes/foro">
+        <input type="text" name="foro" placeholder="Buscar foros por título..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <p class="texto-centrado">Crea un nuevo post <a href="/mensajes/post"><strong>aquí</strong></a></p>
+
     <% if (foros && foros.length > 0) { %>
-        <ul>
+        <ul class="foro-lista">
          <% foros.forEach(foro => { %>
             <li>
                 <a href="/mensajes/thread/<%= foro.id %>">
                     <strong><%= foro.titulo %></strong>
+                    <p>Creado por: <%= foro.username %></p>
                 </a>
+
+                <% if (session.username === foro.username || session.rol === 'A') {%>
+                    <form action="/mensajes/forum/<%= foro.id %>" method="POST" onsubmit="return confirmarEliminacion()">
+                        <button class="btn-del-foro" type="submit">Eliminar foro</button>
+                    </form>
+                <% } %>
             </li>
         <% }) %>
     </ul>
@@ -14,8 +29,13 @@
        <p>No hay posts disponibles.</p>
     <% } %>
 
-
-    <a href="/mensajes/post">Crear nuevo post</a>
+    </section>
 
 </body>
 </html>
+
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que quieres eliminar este foro? Esta accion NO se puede deshacer.");
+    }
+</script>
