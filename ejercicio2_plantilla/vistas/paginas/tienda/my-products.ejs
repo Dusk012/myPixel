@@ -1,0 +1,99 @@
+<section class="my-products">
+    <h1>Mis Productos</h1>
+
+    <!-- Mostrar el mensaje flash si existe -->
+    <% const flashMessage = locals.getAndClearFlash(); %>
+    <% if (flashMessage) { %>
+        <div class="flash-message">
+            <p><%= flashMessage %></p>
+        </div>
+    <% } %>
+
+    <!-- Lista de productos del usuario -->
+    <% if (userProducts && userProducts.length > 0) { %>
+        <div class="product-list">
+            <% userProducts.forEach(product => { %>
+                <div class="product-card">
+                    <img src="/uploadsTienda/<%= product.image %>" alt="Imagen de <%= product.name %>" width="200" height="200">
+                    <h3><%= product.name %></h3>
+                    <p><%= product.description %></p>
+                    <p><strong>Precio:</strong></p>
+                    <p><%= product.price.toFixed(2) %>€</p>
+                    <p class="product-detail-status <%= product.status === 'P' ? 'status-available' : 'status-sold' %>">
+                <span class="status-led"></span>
+                <strong>Estado:</strong>
+              </p>
+              <p> <%= product.status === 'P' ? ' Disponible' : ' Vendido' %></p>
+
+                    <div class="actions">
+                        <!-- Botón de editar producto -->
+                        <button type="button"
+                            class="edit-product-btn"
+                            data-id="<%= product.id %>"
+                            data-name="<%= product.name %>"
+                            data-description="<%= product.description %>"
+                            data-price="<%= product.price %>"
+                            data-image="/uploadsTienda/<%= product.image %>">Editar</button>  
+                        
+                        <!-- Modal: Editar producto -->
+                        <div id="editProductModal" class="modal">
+                            <div class="modal-content">
+                                <span id="closeEditModalBtn" class="close">&times;</span>
+                                <h2>Editar Producto</h2>
+                                <form id="editProductForm" method="POST" action="/shop/<%= product.id %>" enctype="multipart/form-data">
+                                    <!-- Método PUT para simular la actualización -->
+                                    <input type="hidden" name="_method" value="PUT" />
+                                  
+                                    <label for="editName">Nombre del producto:</label>
+                                    <input type="text" id="editName" name="name" value="<%= product.name %>" required>
+                                
+                                    <label for="editDescription">Descripción:</label>
+                                    <textarea id="editDescription" name="description" required><%= product.description %></textarea>
+                                
+                                    <label for="editPrice">Precio:</label>
+                                    <input type="number" id="editPrice" name="price" step="0.01" value="<%= product.price %>" required>
+                                
+                                    <label for="editImage">Imagen:</label>
+                                    <input type="file" id="editImage" name="image" accept="image/*">
+                                
+                                    <div id="editImagePreviewContainer">
+                                        <img id="editImagePreview" src="/uploadsTienda/<%= product.image %>" alt="Vista previa" style="display: block;" />
+                                    </div>
+                                
+                                    <button type="submit">Actualizar Producto</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Botón para marcar como vendido -->
+                        <% if (product.status === 'P') { %>
+                            <form action="/shop/<%= product.id %>/sell" method="POST">
+                                <button type="submit">Marcar como vendido</button>
+                            </form>
+                        <% } else { %>
+                            <% if (product.status === 'S') { %>
+                                <form action="/shop/<%= product.id %>/undo-sell" method="POST">
+                                    <button type="submit">Deshacer venta</button>
+                                </form>
+                            <% } %>
+                        <% } %>
+
+                         <!-- Botón para eliminar producto (fuera del modal) -->
+                        <form action="/shop/<%= product.id %>" method="POST" class="delete-product-form">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <button type="submit" class="btn-delete">Eliminar</button>
+                        </form>
+
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>No tienes productos publicados.</p>
+    <% } %>
+
+    <!-- Botón para volver a la tienda -->
+    <a href="/shop" class="btn-back-to-shop">Volver a la tienda</a>
+
+</section>
+
+<script src="/js/shop.js"></script>

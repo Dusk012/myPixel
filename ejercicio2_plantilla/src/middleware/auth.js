@@ -4,7 +4,9 @@ export function autenticado(urlNoAutenticado = '/usuarios/viewLogin', urlAutenti
             if (urlAutenticado != undefined) return res.redirect(urlAutenticado);
             return next();
         }
+        
         if (urlNoAutenticado != undefined) {
+            res.setFlash('Accion no disponible para usuarios no registrados')
             return res.redirect(urlNoAutenticado);
         }
         next();

@@ -1,0 +1,96 @@
+<section class="shop">
+    <h1>Bienvenido a la Tienda</h1>
+
+    <% const flashMessage = locals.getAndClearFlash(); %>
+    <% if (flashMessage) { %>
+        <div class="flash-message">
+            <p><%= flashMessage %></p>
+        </div>
+    <% } %>
+
+    <button id="addProductBtn">Añadir Producto</button>
+
+    <!-- Modal: Añadir producto -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModalBtn" class="close">&times;</span>
+            <h2>Añadir un nuevo producto</h2>
+            <form action="/shop/add" method="POST" enctype="multipart/form-data">
+                <label for="name">Nombre del producto:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Descripción:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="price">Precio:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <label for="image">Imagen:</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+
+                <div id="imagePreviewContainer">
+                    <img id="imagePreview" src="#" alt="Vista previa" style="display: none;" />
+                </div>
+                <button type="submit">Añadir Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <button id="viewMyProductsBtn">Ver Mis Productos</button>
+
+    <h2>Productos Globales</h2>
+<% if (products && products.length > 0) { %>
+  <div class="product-gallery">
+    <% products.forEach(product => { %>
+      <!-- Imagen de galería (thumbnail) -->
+      <div class="gallery-item" data-modal-id="productModal-<%= product.id %>">
+        <img src="/uploadsTienda/<%= product.image %>" alt="Imagen de <%= product.name %>" class="thumbnail">
+      </div>
+      
+
+      <!-- Modal de detalle del producto -->
+      <div id="productModal-<%= product.id %>" class="modal">
+        <div class="modal-content">
+          <span class="close" data-close-modal="productModal-<%= product.id %>">&times;</span>
+        
+          
+          <div class="product-detail-content">
+
+            <img src="/uploadsTienda/<%= product.image %>" alt="Imagen de <%= product.name %>" class="product-detail-image">
+            <h3 class="product-detail-title"><%= product.name %></h3>
+            <p class ="product-detail-description"><%= product.description %></p>
+            <p class = "product-detail-price"><strong>Precio:</strong> €<%= product.price.toFixed(2) %></p>
+            <p class="product-detail-status <%= product.status === 'P' ? 'status-available' : 'status-sold' %>">
+                <span class="status-led"></span>
+                <strong>Estado:</strong> <%= product.status === 'P' ? ' Disponible' : ' Vendido' %>
+              </p>
+              
+
+            <div class="actions">
+              <% if (product.status === 'P') { %>
+                <form action="/shop/<%= product.id %>/buy" method="POST">
+                  <button type="submit">Comprar</button>
+                </form>
+              <% } else { %>
+                <button disabled>Ya vendido</button>
+              <% } %>
+              <% if (session.rol === 'A') { %>
+              <form action="/shop/<%= product.id %>" method="POST" class = "delete-product-form">
+                <input type="hidden" name="_method" value="DELETE" />
+                <button type="submit">Eliminar</button>
+            </form>
+            <% } %>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } else { %>
+  <p>No hay productos de otros usuarios en este momento.</p>
+<% } %>
+
+<script src="/js/shop.js"></script>
+
+</section>

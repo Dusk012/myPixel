@@ -14,6 +14,7 @@ export const config = {
     recursos: join(dirname(import.meta.dirname), 'static'),
     vistas: join(dirname(import.meta.dirname), 'vistas'),
     uploads: join(dirname(import.meta.dirname), 'uploads'),
+    uploadsTienda: join(dirname(import.meta.dirname), 'uploadsTienda'),
     session: {
         resave: false,
         saveUninitialized: true,

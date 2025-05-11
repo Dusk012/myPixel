@@ -5,6 +5,7 @@ import usuariosRouter from './usuarios/router.js';
 import imagenesRouter from './imagenes/router.js';
 import contenidoRouter from './contenido/router.js';
 import mensajesRouter from './mensajes/router.js';
+import shopRouter from './shop/router.js';
 import bodyParser from 'body-parser';
 import { logger } from './logger.js';
 import pinoHttp  from 'pino-http';
@@ -34,9 +35,11 @@ app.get('/', (req, res) => {
     res.render('pagina', params);
 })
 app.use('/uploads', express.static('uploads'));
+app.use('/uploadsTienda', express.static('uploadsTienda'));
 app.use('/usuarios', usuariosRouter);
 app.use('/imagenes', imagenesRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/mensajes', mensajesRouter);
 app.use('/api', apiRouter);
+app.use('/shop', shopRouter);
 app.use(errorHandler);
