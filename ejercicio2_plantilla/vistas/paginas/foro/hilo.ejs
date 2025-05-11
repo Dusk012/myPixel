@@ -13,6 +13,11 @@
                 <li>
                     <strong class ="user-title-forum"><%= reply.username %></strong> <em class="content-comment"><%= reply.content %></em>
                     <p class="comentario-fecha">Publicado el <%= reply.date %></p>
+                    <%= console.log(reply.editado) %>
+                    <%= console.log(reply.username) %>
+                        <% if (reply.editado === 'S') {%>
+                            <p class="comentario-fecha">Editado</p>
+                        <% } %>
             
                     <% if (session.username === reply.username || session.rol === 'A') {%>
                         <form action="/mensajes/message/<%= reply.id %>?idForo=<%= forum.id %>" method="POST">

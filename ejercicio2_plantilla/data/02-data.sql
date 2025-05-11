@@ -1,5 +1,5 @@
 BEGIN TRANSACTION;
-INSERT INTO "Comentarios" ("id","id_foro","contenido","fecha","id_usuario") VALUES (1,2,'Hola','2025-04-07T20:50:21.202Z',1);
+INSERT INTO "Comentarios" ("id","id_foro","contenido","fecha","id_usuario") VALUES (1,2,'Hola','2025-04-07T20:50:21.202Z',1, 'admin');
 INSERT INTO "Foros" ("id","titulo","descripcion","estado") VALUES (1,'Público','Es un foro para hablar de cosas.','Activo', 'admin');
 INSERT INTO "Foros" ("id","titulo","descripcion","estado") VALUES (2,'Principal','Este es el foro de la materia principal.','Activo', 'admin');
 INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","id_usuario","id_foro","contenido") VALUES (3,'Imagen 1','primera imagen','2025-04-07T21:44:27.678Z',0,'Visible','user',NULL,'8a0ce773f13a0752cf6c358af97c8188');

@@ -18,7 +18,7 @@ export class ForumMessage {
         this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario, username) VALUES (@forumId, @content, @date, @userId, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
         this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro'); 
-        this.#editStmt = db.prepare('UPDATE Comentarios SET contenido = @comentario WHERE id = @id');
+        this.#editStmt = db.prepare('UPDATE Comentarios SET contenido = @comentario, editado = \'S\' WHERE id = @id');
     }
 
     static #insert(comentario) {
@@ -73,7 +73,7 @@ export class ForumMessage {
     //#replies;
     //#parentId;
 
-    constructor(forumId, content, date, userId, username, id = null) {
+    constructor(forumId, content, date, userId, username, id = null, editado = 'N') {
         if (id !== null) {
             this.#id = id;  // Comentario existente
         } else {
@@ -93,6 +93,7 @@ export class ForumMessage {
         this.#date = date;
         this.#userId = userId;
         this.#username = username;
+        this.#editado = editado;
         //this.#type = type;
         //this.#parentId = parentId;
         //this.#replies = []; // Array para almacenar respuestas directas
@@ -105,6 +106,7 @@ export class ForumMessage {
     get date() { return this.#date; }
     get userId() { return this.#userId; }
     get username() { return this.#username; }
+    get editado() { return this.#editado; }
     //get type() { return this.#type; }
     //get parentId() { return this.#parentId; }
     //get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
@@ -193,7 +195,7 @@ export class ForumMessage {
         }
 
         // Mapeamos las filas obtenidas de la base de datos y las convertimos en instancias de Forum
-        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.username, comment.id));
+        return rows.map(comment => new ForumMessage(comment.id_foro, comment.contenido, comment.fecha, comment.id_usuario, comment.username, comment.id, comment.editado));
     }
 
     dame_comentarios( id_foro ){
@@ -260,7 +262,7 @@ export class Forum {
     static initStatements(db) {
         if (this.#getByTituloStmt !== null) return;
 
-        this.#getAllStmt = db.prepare('SELECT * FROM Foros');
+        this.#getAllStmt = db.prepare('SELECT * FROM Foros ORDER BY id DESC');
         this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo LIKE @titulo ORDER BY id DESC');
         this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id ORDER BY id DESC');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado, username) VALUES (@titulo, @descripcion, @estado, @username)');
