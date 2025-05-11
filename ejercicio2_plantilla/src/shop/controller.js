@@ -128,7 +128,7 @@ export async function buyProduct(req, res) {
         throw { statusCode: 404, message: 'Producto no encontrado.' };
     }
 
-    if (product.userId !== userId) {
+    if (product.userId === userId) {
         throw { statusCode: 403, message: 'No estás autorizado para comprar este producto.' };
     }
 

@@ -22,19 +22,17 @@ CREATE TABLE "Desafío" (
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
 );
-DROP TABLE IF EXISTS "Encargos";
-CREATE TABLE "Encargos" (
-	"id"	INTEGER NOT NULL,
-	"precio"	REAL,
-	"estado"	TEXT,
-	"fecha"	TEXT NOT NULL,
-	"id_artista"	INTEGER,
-	"id_usuario"	INTEGER NOT NULL,
-	"id_foro"	INTEGER NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("id_artista") REFERENCES "Usuarios"("id"),
-	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
-	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
+DROP TABLE IF EXISTS "Productos";
+CREATE TABLE IF NOT EXISTS "Productos" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    descripcion TEXT,
+    precio REAL NOT NULL,
+    imagen TEXT,
+    estado TEXT NOT NULL,
+    usuario_id INTEGER NOT NULL,
+    fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
 );
 DROP TABLE IF EXISTS "Foros";
 CREATE TABLE "Foros" (
