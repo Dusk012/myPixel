@@ -4,7 +4,12 @@
             <% if (session.login) { %>
                 <!-- Foto de perfil seleccionada -->
                 <div id="foto-perfil-seleccionada" style="width: 70px; height: 70px; border: 2px solid rgb(255, 255, 255); border-radius: 50%; overflow: hidden;">
-                    <img src="../img/Perfil<%= session.foto_perfil %>.png" alt="Foto de perfil" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img 
+                        src="../img/Perfil<%= session.foto_perfil %>.png" 
+                        alt="Foto de perfil" 
+                        style="width: 100%; height: 100%; object-fit: cover;" 
+                        onerror="this.onerror=null; this.src='../img/Perfil1.png';"
+                    >
                 </div>
                 <!-- Texto de bienvenida -->
                 <div style="text-align: right;">
@@ -59,46 +64,9 @@
             </div>
         <% } %>
     </form>
-
-    <script>
-        function darseDeBaja() {
-            // Confirmar la acción
-            if (confirm('¿Estás seguro de que deseas darte de baja? Esta acción no se puede deshacer.')) {
-                // Enviar una solicitud POST al backend
-                fetch('/usuarios/darseDeBaja', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username: '<%= session.username %>' }) // Enviar el username si es necesario
-                })
-                .then(response => {
-                    console.log(response.stringify());
-                    if (response.ok) {
-                        alert('Tu cuenta ha sido eliminada.');
-                        window.location.href = '/usuarios/logout'; // Redirigir al logout
-                    } else {
-                        alert('Hubo un problema al intentar darte de baja.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-    </script>
-
-    <script>
-        function seleccionarFoto(foto) {
-           
-            // Extraer el número de la foto del nombre del archivo ("Perfil1.png" -> "1")
-            const numeroPerfil = foto.match(/\d+/)[0];
-
-            // Actualizar el campo oculto con el número de la foto seleccionada
-            document.getElementById('foto-perfil-input').value = numeroPerfil;
-
-            // Mostrar un mensaje indicando la selección
-            document.getElementById('foto-seleccionada').innerText = `Has seleccionado Perfil ${numeroPerfil}`;
-        }
-    </script>
+    <%= console.log("Foto de perfil seleccionada: " + session.foto_perfil); %>
+    <script src="/js/mostrarAvataresUsuario.js"></script>
+    <input type="hidden" id="username-input" value="<%= session.username %>">
 <% } %>
     
 <body>

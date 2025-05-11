@@ -3,6 +3,8 @@ import { Foto } from '../imagenes/imagenes.js';
 import { Usuario, RolesEnum } from './usuarios.js';
 import usuariosRouter from './router.js';
 import { render } from '../utils/render.js';
+import { Desafio } from '../contenido/desafios.js';
+import { ForumMessage } from '../mensajes/comentarios.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/Usuarios/viewLogin';
@@ -78,7 +80,9 @@ export async function doRegister(req, res) {
     try {
         const usuario = Usuario.registrar(username, password, confirmPassword, nombre);
 
-        
+        // Crear los desafíos predeterminados para el usuario
+        Desafio.insertDefaultDesafios(usuario.id);
+
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
         req.session.username = usuario.username;
@@ -123,7 +127,11 @@ export function perfilGet(req, res) {
     let fotos = [];
     if (req.session.login) {
         contenido = 'paginas/Usuarios/profile';
-        fotos = Foto.getFotosByCreador(req.session.username);
+        fotos = Foto.getFotosByCreador(req.session.username) || [];
+
+        // Obtener la foto de perfil desde la base de datos
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        req.session.foto_perfil = usuario.foto_perfil; // Actualizar la sesión
     }
     const usuario = matchedData(req);
     render(req, res, contenido, {
@@ -175,8 +183,17 @@ export async function darseDeBaja(req, res) {
     }
 
     try {
-        //console.log(`El usuario ${username} ha solicitado darse de baja.`);
-        Usuario.eliminarUsuario(username); // Eliminar al usuario de la base de datos
+       // Eliminar las fotos asociadas al usuario
+       Foto.eliminarFotosPorUsuario(username);
+
+       // Eliminar los desafíos asociados al usuario
+       Desafio.eliminarDesafiosPorUsuario(req.session.userId);
+
+       // Eliminar los comentarios asociados al usuario
+       //Comentario.eliminarComentariosPorUsuario(username);
+
+       // Eliminar al usuario de la base de datos
+       Usuario.eliminarUsuario(username);
         res.redirect('/usuarios/logout'); // Redirigir al logout
 
         // req.session.destroy(err => {

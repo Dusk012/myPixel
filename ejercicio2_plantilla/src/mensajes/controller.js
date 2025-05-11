@@ -1,6 +1,7 @@
 import { validationResult, matchedData } from 'express-validator';
 import { Forum, ForumMessage, MessageType } from './comentarios.js';
 import { render } from '../utils/render.js';
+import { Desafio } from '../contenido/desafios.js';
 
 // Instancia única del foro (podría ser una conexión a BD en producción)
 const forum = new Forum();
@@ -132,6 +133,11 @@ export async function createReply(req, res) {
             userId,
             username
         );
+
+                // Incrementar los puntos del desafío de "comentarios"
+                if (userId) {
+                    await Desafio.incrementarPuntos(userId, 2);
+                }
 
         res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {

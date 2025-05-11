@@ -1008,6 +1008,7 @@ a:hover {
     border: 1px solid #ccc;
     border-radius: 8px;
     object-fit: contain;
+    display: none;
 }
 
 
@@ -1020,5 +1021,156 @@ a:hover {
   background-color: #c0392b;
 }
 
+/*
+ * Autor: @Pol
+ * Descripción: Estilos para el perfil de usuario y el de Desafíos.
+ */
 
+ .botonusuario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+}
 
+.botonusuariofotoperfil{
+    padding: 10px 20px;
+    background-color: #4CAF50;
+     color: white;
+      border: none;
+       border-radius: 5px; 
+       cursor: pointer;
+}
+
+.botonusuariodarsedebaja{
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+     border: none; 
+     border-radius: 5px;
+      cursor: pointer;
+}
+
+.panelfotopefilusuario{
+    display: flex; 
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.fotoperfilaelegirusuario{
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.botonfotoperfilusuario{
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer
+}
+
+.contenedor-bienvenida {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* espacio entre imagen y texto */
+    margin-top: 20px; /* opcional: separarlo un poco de arriba */
+}
+
+.bordefotoperfilmostradausuario {
+    width: 70px;
+    height: 70px;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0; /* para que no se deforme */
+}
+
+.fotoperfilmostradausuario {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.organizacionusuario{
+    text-align: right;
+    margin-top: 1px;
+}
+
+.challenge-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin: 20px 0;
+    height: 25px;
+    overflow: hidden;
+  }
+
+  .progress {
+    height: 100%;
+    background-color: #4CAF50;
+    width: 0%;
+    text-align: center;
+    line-height: 25px;
+    color: white;
+    transition: width 0.3s ease;
+  }
+
+  .botonborrardesafio {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%; /* Asegura que el botón ocupe todo el ancho de la caja */
+    transition: background-color 0.3s ease;
+  }
+
+  .botonborrardesafio:hover {
+    background-color: #d32f2f;
+  }
+
+  .mensajeExito{
+    display: none;
+    color: lime;
+    margin-top: 10px;
+  }
+
+  label[for="descripcion"] {
+    display: block; 
+    margin-top: 15px;
+  }
+
+  label[for="tipo"] {
+    display: block; 
+    margin-top: 15px; 
+  }
+
+  .challenge-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Aumentar el ancho mínimo a 350px */
+    gap: 30px; /* Espacio entre las cajas */
+    margin: 20px 0;
+  }

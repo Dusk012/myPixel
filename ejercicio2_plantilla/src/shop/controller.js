@@ -65,7 +65,7 @@ export async function getAllProducts(req, res) {
         const globalProducts = await fetchAllProducts();
         const userProducts = await fetchUserProducts(userId);
 
-        const products = globalProducts.filter(p => p.usuario_id !== userId);
+        const products = globalProducts.filter(p => p.usuario_id !== userId && p.status === 'P');
 
         return render(req, res, 'paginas/tienda/shop', {
             products,

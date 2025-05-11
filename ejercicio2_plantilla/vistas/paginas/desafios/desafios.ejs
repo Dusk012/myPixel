@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafíos</title>
+</head>
+<body>
+  <h1>Desafíos:</h1>
+
+  <% if (desafios.length > 0) { %>
+    <div class="challenge-grid">
+      <% desafios.forEach(desafio => { %>
+        <div class="challenge-container">
+          <h2><%= desafio.descripcion %></h2>
+          <div class="progress-bar">
+            <div id="progress-<%= desafio.id %>" class="progress">
+              <%= Math.min((desafio.puntos / desafio.puntuacionObjetivo) * 100, 100).toFixed(0) %>%
+            </div>
+          </div>
+          <p>
+            <% if (desafio.tipo === 0) { %>
+              Likes: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } else if (desafio.tipo === 1) { %>
+              Fotos: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } else if (desafio.tipo === 2) { %>
+              Comentarios: <%= desafio.puntos %> / <%= desafio.puntuacionObjetivo %>
+            <% } %>
+          </p>
+          <% if (session.rol === 'A') { %>
+            <button class="botonborrardesafio" data-id="<%= desafio.id %>">Borrar</button>
+            <button class="botonmodificardesafio" data-id="<%= desafio.id %>" 
+                    data-descripcion="<%= desafio.descripcion %>" 
+                    data-puntuacion="<%= desafio.puntuacionObjetivo %>" 
+                    data-tipo="<%= desafio.tipo %>">Modificar</button>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>No tienes desafíos asignados.</p>
+  <% } %>
+
+  <% if (session.rol === 'A') { %>
+    <div class="admin-panel">
+      <h2>Crear un nuevo desafío</h2>
+      <form id="crearDesafioForm" action="/contenido/desafios/crear" method="POST">
+        <label for="puntuacionObjetivo">Puntuación Objetivo:</label>
+        <input type="number" id="puntuacionObjetivo" name="puntuacionObjetivo" required>
+        
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" name="tipo" required>
+          <option value="0">Likes</option>
+          <option value="1">Fotos Subidas</option>
+          <option value="2">Comentarios</option>
+        </select>
+
+        <button type="submit">Crear Desafío</button>
+      </form>
+    </div>
+  <% } %>
+
+  <!-- Popup para modificar desafío -->
+  <div id="popupModificar" class="popup" style="display: none;">
+    <form id="formModificarDesafio">
+      <h2>Modificar Desafío</h2>
+      <input type="hidden" id="modificarDesafioId" name="id">
+      <label for="modificarDescripcion">Descripción:</label>
+      <textarea id="modificarDescripcion" name="descripcion" rows="3" required></textarea>
+      <label for="modificarPuntuacionObjetivo">Puntuación Objetivo:</label>
+      <input type="number" id="modificarPuntuacionObjetivo" name="puntuacionObjetivo" required>
+      <label for="modificarTipo">Tipo:</label>
+      <select id="modificarTipo" name="tipo" required>
+        <option value="0">Likes</option>
+        <option value="1">Fotos Subidas</option>
+        <option value="2">Comentarios</option>
+      </select>
+      <button type="submit">Guardar Cambios</button>
+      <button type="button" id="cerrarPopup">Cancelar</button>
+    </form>
+  </div>
+
+  <!-- Pasar los datos de los desafíos al script -->
+  <script id="desafios-data" type="application/json"><%- JSON.stringify(desafios) %></script>
+  <script src="/js/mostrarDesafios.js"></script>
+</body>
+</html>
