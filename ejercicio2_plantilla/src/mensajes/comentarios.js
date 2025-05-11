@@ -261,8 +261,8 @@ export class Forum {
         if (this.#getByTituloStmt !== null) return;
 
         this.#getAllStmt = db.prepare('SELECT * FROM Foros');
-        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo LIKE @titulo');
-        this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id');
+        this.#getByTituloStmt = db.prepare('SELECT * FROM Foros WHERE titulo LIKE @titulo ORDER BY id DESC');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Foros F WHERE id = @id ORDER BY id DESC');
         this.#insertStmt = db.prepare('INSERT INTO Foros(titulo, descripcion, estado, username) VALUES (@titulo, @descripcion, @estado, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Foros WHERE id = @id');
     }
