@@ -1,6 +1,14 @@
+--
+-- SQLiteStudio v3.4.17 ���ɵ��ļ������� 5�� 11 15:21:08 2025
+--
+-- ���õ��ı����룺System
+--
+PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
-DROP TABLE IF EXISTS "Comentarios";
-CREATE TABLE "Comentarios" (
+
+-- ����Comentarios
+DROP TABLE IF EXISTS Comentarios;
+CREATE TABLE IF NOT EXISTS "Comentarios" (
 	"id"	INTEGER NOT NULL,
 	"id_foro"	INTEGER NOT NULL,
 	"contenido"	TEXT,
@@ -12,8 +20,10 @@ CREATE TABLE "Comentarios" (
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id"),
 	FOREIGN KEY("username") REFERENCES "Usuarios"("username")
 );
-DROP TABLE IF EXISTS "Desafío";
-CREATE TABLE "Desafío" (
+
+-- ����Desafio
+DROP TABLE IF EXISTS Desafio;
+CREATE TABLE IF NOT EXISTS "Desafio" (
 	"puntos"	INTEGER NOT NULL DEFAULT (0),
 	"puntuacionObjetivo"	INTEGER NOT NULL DEFAULT (0),
 	"id"	INTEGER NOT NULL,
@@ -24,20 +34,10 @@ CREATE TABLE "Desafío" (
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id")
 );
-DROP TABLE IF EXISTS "Productos";
-CREATE TABLE IF NOT EXISTS "Productos" (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    descripcion TEXT,
-    precio REAL NOT NULL,
-    imagen TEXT,
-    estado TEXT NOT NULL,
-    usuario_id INTEGER NOT NULL,
-    fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
-);
-DROP TABLE IF EXISTS "Foros";
-CREATE TABLE "Foros" (
+
+-- ����Foros
+DROP TABLE IF EXISTS Foros;
+CREATE TABLE IF NOT EXISTS "Foros" (
 	"id"	INTEGER NOT NULL,
 	"titulo"	INTEGER NOT NULL,
 	"descripcion"	INTEGER,
@@ -46,8 +46,10 @@ CREATE TABLE "Foros" (
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("username") REFERENCES "Usuarios"("username")
 );
-DROP TABLE IF EXISTS "Fotos";
-CREATE TABLE "Fotos" (
+
+-- ����Fotos
+DROP TABLE IF EXISTS Fotos;
+CREATE TABLE IF NOT EXISTS "Fotos" (
 	"id"	INTEGER NOT NULL,
 	"nombre"	TEXT NOT NULL,
 	"descripcion"	TEXT,
@@ -61,8 +63,24 @@ CREATE TABLE "Fotos" (
 	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("username")
 );
-DROP TABLE IF EXISTS "Usuarios";
-CREATE TABLE "Usuarios" (
+
+-- ����Productos
+DROP TABLE IF EXISTS Productos;
+CREATE TABLE IF NOT EXISTS "Productos" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    descripcion TEXT,
+    precio REAL NOT NULL,
+    imagen TEXT,
+    estado TEXT NOT NULL,
+    usuario_id INTEGER NOT NULL,
+    fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(id)
+);
+
+-- ����Usuarios
+DROP TABLE IF EXISTS Usuarios;
+CREATE TABLE IF NOT EXISTS "Usuarios" (
 	"id"	INTEGER NOT NULL,
 	"username"	TEXT NOT NULL UNIQUE,
 	"password"	TEXT NOT NULL,
@@ -75,4 +93,6 @@ CREATE TABLE "Usuarios" (
 	"foto_perfil"	INTEGER NOT NULL DEFAULT (1),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
-COMMIT;
+
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;

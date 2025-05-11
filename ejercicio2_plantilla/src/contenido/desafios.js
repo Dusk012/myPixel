@@ -11,26 +11,26 @@ export class Desafio {
 
     static initStatements(db) {
         this.#insertStmt = db.prepare(
-            'INSERT INTO Desafío (puntuacionObjetivo, descripcion, tipo, fecha, id_usuario) VALUES (@puntuacionObjetivo, @descripcion, @tipo, @fecha, @id_usuario)'
+            'INSERT INTO Desafio (puntuacionObjetivo, descripcion, tipo, fecha, id_usuario) VALUES (@puntuacionObjetivo, @descripcion, @tipo, @fecha, @id_usuario)'
         );
-        this.#deleteStmt = db.prepare('DELETE FROM Desafío WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM Desafio WHERE id = @id');
         this.#updateStmt = db.prepare(
-            'UPDATE Desafío SET puntuacionObjetivo = @puntuacionObjetivo, descripcion = @descripcion, tipo = @tipo WHERE id = @id'
+            'UPDATE Desafio SET puntuacionObjetivo = @puntuacionObjetivo, descripcion = @descripcion, tipo = @tipo WHERE id = @id'
         );
-        this.#getByIdStmt = db.prepare('SELECT * FROM Desafío WHERE id = @id');
-        this.#getAllStmt = db.prepare('SELECT * FROM Desafío');
-        this.#deleteByIdStmt = db.prepare('DELETE FROM Desafío WHERE id = ?');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Desafio WHERE id = @id');
+        this.#getAllStmt = db.prepare('SELECT * FROM Desafio');
+        this.#deleteByIdStmt = db.prepare('DELETE FROM Desafio WHERE id = ?');
         this.#insertDefaultDesafiosStmt = db.prepare(`
-            INSERT INTO "Desafío" ("puntos", "puntuacionObjetivo", "id_usuario", "descripcion", "tipo", "fecha")
+            INSERT INTO "Desafio" ("puntos", "puntuacionObjetivo", "id_usuario", "descripcion", "tipo", "fecha")
             VALUES (?, ?, ?, ?, ?, ?)`
         );
         this.#updatePuntosStmt = db.prepare(`
-            UPDATE "Desafío"
+            UPDATE "Desafio"
             SET puntos = puntos + 1
             WHERE id_usuario = ? AND tipo = ? AND puntos < puntuacionObjetivo`
         );
         this.#deleteByUserStmt = db.prepare(`
-            DELETE FROM "Desafío"
+            DELETE FROM "Desafio"
             WHERE id_usuario = ?
         `);
     }
@@ -79,7 +79,7 @@ export class Desafio {
 
     static getById(id) {
         const row = this.#getByIdStmt.get({ id });
-        if (!row) throw new Error('Desafío no encontrado');
+        if (!row) throw new Error('Desafio no encontrado');
         return new Desafio(row.puntuacionObjetivo, row.descripcion, row.tipo, row.fecha, row.id_usuario, row.id);
     }
 
@@ -236,7 +236,7 @@ export class Desafio {
         try {
             const datos = { id, puntuacionObjetivo, descripcion, tipo };
             this.#updateStmt.run(datos);
-            console.log(`Desafío con ID ${id} modificado correctamente.`);
+            console.log(`Desafio con ID ${id} modificado correctamente.`);
         } catch (error) {
             console.error('Error al modificar el desafío:', error);
             throw error;
