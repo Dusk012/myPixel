@@ -1,5 +1,5 @@
-import { validationResult, matchedData } from 'express-validator';
-import { Forum, ForumMessage, MessageType } from './comentarios.js';
+//import { validationResult } from 'express-validator';
+import { Forum, ForumMessage } from './comentarios.js';
 import { render } from '../utils/render.js';
 import { Desafio } from '../contenido/desafios.js';
 
@@ -26,7 +26,6 @@ export function viewForum(req, res) {
 }
 
 export function viewThread(req, res) {
-    console.log(render);
     const forumId = parseInt(req.params.id);  // Obtiene el ID del foro desde la URL
     const my_forum = forum.dame_id(forumId);
     const my_thread = thread.dame_comentarios(forumId);
@@ -67,41 +66,19 @@ export function viewStats(req, res) {
         });
 }
 
-export async function createPost(req, res) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        const errores = result.mapped();
-        const datos = matchedData(req);
-        return render(req, res, 'paginas/foro/crearPost', {
-            errores,
-            datos,
-            error: 'Por favor corrija los errores',
-            session: req.session
-        });
-    }
-
-    try {
-        const username = req.session.username;
-        const { title, desc } = req.body;
+export function createPost(req, res) {
+    const username = req.session.username;
+    const { title, desc } = req.body;
                 
-        // Crear un nuevo foro y obtener la referencia a ese foro
-        const newForum = forum.createForum(
-            title,
-            desc,
-            'Activo',
-            username
-        );
+    // Crear un nuevo foro y obtener la referencia a ese foro
+    const newForum = forum.createForum(
+        title,
+        desc,
+        'Activo',
+        username
+    );
 
-        res.setFlash('Post creado exitosamente');
-        res.redirect(`/mensajes/thread/${newForum.id}`);
-    } catch (e) {
-        return render(req, res, 'paginas/foro/crearPost', {
-            error: e.message,
-            datos: req.body,
-            errores: {},
-            session: req.session
-        });
-    }
+    res.redirect(`/mensajes/thread/${newForum.id}`);
 }
 
 export function deleteForum(req, res) {
@@ -111,33 +88,27 @@ export function deleteForum(req, res) {
 }
 
 export async function createReply(req, res) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        res.setFlash('Error en el formulario');
-        return res.redirect('back');
-    }
+    const { content } = req.body; //Comentario 
+    const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
+    const userId = req.session.userId;
+    const username = req.session.username;
 
-    try {
-        const { content } = req.body; //Comentario 
-        const parentId = parseInt(req.params.id); //ID del foro donde estamos comentando
-        const userId = req.session.userId;
-        const username = req.session.username;
-
-        // Generar fecha
-        const date = new Date().toISOString(); //Fecha del comentario
+    // Generar fecha
+    const date = new Date().toISOString(); //Fecha del comentario
         
-        forum.createPost( //Crea comentario en el foro
-            parentId,
-            content,
-            date,
-            userId,
-            username
-        );
+    forum.createPost( //Crea comentario en el foro
+        parentId,
+        content,
+        date,
+        userId,
+        username
+    );
+    try{
 
-                // Incrementar los puntos del desafío de "comentarios"
-                if (userId) {
-                    await Desafio.incrementarPuntos(userId, 2);
-                }
+        // Incrementar los puntos del desafío de "comentarios"
+        if (userId) {
+            await Desafio.incrementarPuntos(userId, 2);
+        }
 
         res.redirect(`/mensajes/thread/${parentId}`);
     } catch (e) {
@@ -154,27 +125,4 @@ export function editMessage(req, res) {
 export function deleteMessage(req, res) {
     ForumMessage.deleteComment(req.params.id);
     res.redirect(`/mensajes/thread/${req.query.idForo}`);
-}
-
-export function sendComment(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(error => error.msg);
-        return render(req, res, 'paginas/foro/foro', {
-            errors: errorMessages,
-            error: "Por favor, corrija los errores.",
-            session: req.session
-        });
-    }
-
-    try {
-        // Implementación similar a createReply pero para comentarios rápidos
-        res.setFlash('Comentario enviado exitosamente');
-        res.redirect('back');
-    } catch (e) {
-        return render(req, res, 'paginas/foro/foro', {
-            error: e.message,
-            session: req.session
-        });
-    }
 }

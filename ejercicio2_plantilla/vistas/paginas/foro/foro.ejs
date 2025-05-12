@@ -12,16 +12,18 @@
         <ul class="foro-lista">
          <% foros.forEach(foro => { %>
             <li>
+                <article>
                 <a href="/mensajes/thread/<%= foro.id %>">
                     <strong><%= foro.titulo %></strong>
                     <p>Creado por: <%= foro.username %></p>
                 </a>
 
                 <% if (session.username === foro.username || session.rol === 'A') {%>
-                    <form action="/mensajes/forum/<%= foro.id %>" method="POST" onsubmit="return confirmarEliminacion()">
-                        <button class="btn-del-foro" type="submit">Eliminar foro</button>
+                    <form action="/mensajes/forum/<%= foro.id %>" method="POST" class="form-eliminar-foro">
+                    <button class="btn-del-foro" onclick="return confirm('¿Estás seguro de que quieres eliminar este foro? Esta acción NO se podrá deshacer.')" type="submit">Eliminar foro</button>
                     </form>
                 <% } %>
+                </article>
             </li>
         <% }) %>
     </ul>
@@ -30,12 +32,4 @@
     <% } %>
 
     </section>
-
 </body>
-</html>
-
-<script>
-    function confirmarEliminacion() {
-        return confirm("¿Estás seguro de que quieres eliminar este foro? Esta accion NO se puede deshacer.");
-    }
-</script>

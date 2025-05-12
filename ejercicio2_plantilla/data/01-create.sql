@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS "Comentarios" (
 	"fecha"	TEXT,
 	"id_usuario"	INTEGER NOT NULL,
 	"username" TEXT,
+	"editado" TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_foro") REFERENCES "Foros"("id"),
 	FOREIGN KEY("id_usuario") REFERENCES "Usuarios"("id"),
