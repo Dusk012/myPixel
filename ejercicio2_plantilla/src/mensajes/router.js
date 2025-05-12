@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, editMessage, deleteMessage, deleteForum, sendComment } from './controller.js';
+import { viewForum, viewThread, viewCreatePost, viewStats, createPost, createReply, editMessage, deleteMessage, deleteForum } from './controller.js';
 
 const mensajesRouter = express.Router(); // Colocamos esto primero
 
@@ -14,6 +14,5 @@ mensajesRouter.post('/forum/:id', deleteForum);
 mensajesRouter.post('/reply/:id', createReply);
 mensajesRouter.post('/edit/:id', editMessage);
 mensajesRouter.post('/message/:id', deleteMessage);
-mensajesRouter.post('/comment', sendComment);
 
 export default mensajesRouter; //router.js

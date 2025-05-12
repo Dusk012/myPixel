@@ -1,13 +1,3 @@
-// Definición de tipos de mensaje
-export const MessageType = Object.freeze({
-    ORIGINAL: 'O', // Mensaje original (post principal)
-    REPLY: 'R'     // Respuesta a otro mensaje
-});
-
-/**
- * Clase que representa un mensaje en el foro (puede ser original o respuesta)
- * Usa campos privados (#) para encapsulamiento
- */
 export class ForumMessage {
     static #insertStmt = null;
     static #deleteStmt = null;
@@ -17,7 +7,7 @@ export class ForumMessage {
     static initStatements(db) {
         this.#insertStmt = db.prepare('INSERT INTO Comentarios(id_foro, contenido, fecha, id_usuario, username) VALUES (@forumId, @content, @date, @userId, @username)');
         this.#deleteStmt = db.prepare('DELETE FROM Comentarios WHERE id = @id');
-        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro'); 
+        this.#getCommentsById = db.prepare('SELECT * FROM Comentarios WHERE id_foro = @id_foro ORDER BY id DESC'); 
         this.#editStmt = db.prepare('UPDATE Comentarios SET contenido = @comentario, editado = \'S\' WHERE id = @id');
     }
 
@@ -69,9 +59,6 @@ export class ForumMessage {
     #userId;
     #username;
     #editado;
-    //#type;
-    //#replies;
-    //#parentId;
 
     constructor(forumId, content, date, userId, username, id = null, editado = 'N') {
         if (id !== null) {
@@ -79,24 +66,12 @@ export class ForumMessage {
         } else {
             this.#id = null;  // Comentario nuevo
         }
-        /*
-        if (!Object.values(MessageType).includes(type)) {
-            throw new Error(`Tipo de mensaje inválido: ${type}`);
-        }
-        
-        if (type === MessageType.REPLY && !parentId) {
-            throw new Error("Los mensajes de respuesta deben tener un parentId");
-        }
-        */
         this.#forumId = forumId;
         this.#content = content;
         this.#date = date;
         this.#userId = userId;
         this.#username = username;
         this.#editado = editado;
-        //this.#type = type;
-        //this.#parentId = parentId;
-        //this.#replies = []; // Array para almacenar respuestas directas
     }
 
     // Getters (solo lectura)
@@ -107,78 +82,14 @@ export class ForumMessage {
     get userId() { return this.#userId; }
     get username() { return this.#username; }
     get editado() { return this.#editado; }
-    //get type() { return this.#type; }
-    //get parentId() { return this.#parentId; }
-    //get replies() { return [...this.#replies]; } // Devuelve copia para evitar modificaciones externas
-    //get replyCount() { return this.#replies.length; }
-
-    // Setters con validación
-    set content(newContent) { 
-        if (typeof newContent === 'string' && newContent.trim().length > 0) {
-            this.#content = newContent.trim(); 
-        } else {
-            throw new Error("El contenido no puede estar vacío");
-        }
-    }
 
     /**
      * Añade una respuesta a este mensaje
-     * @param {ForumMessage} reply - La respuesta a añadir
-     * @returns {ForumMessage} - Retorna this para encadenamiento
+     * @returns {ForumMessage} - Retorna this para persistir los datos
      */
+
     addReply() {
-        /*
-        if (!(reply instanceof ForumMessage)) {
-            throw new Error("Solo se pueden agregar instancias de ForumMessage como respuestas");
-        }
-        if (reply.type !== MessageType.REPLY) {
-            throw new Error("Solo se pueden agregar mensajes de tipo RESPUESTA");
-        }
-        if (reply.parentId !== this.id) {
-            throw new Error("La respuesta debe referenciar a este mensaje como padre");
-        }
-        */
-        
-        //this.#replies.push(reply);
         return this.persist();
-    }
-
-    /**
-     * Elimina una respuesta por su ID
-     * @param {number} replyId - ID de la respuesta a eliminar
-     * @returns {boolean} - True si se eliminó, false si no se encontró
-     */
-    removeReply(replyId) {
-        /*
-        const reply = this.#replies.find(reply => reply.id === replyId);
-        if (reply) {
-            this.#replies = this.#replies.filter(r => r.id !== replyId);
-            ForumMessage.#delete(reply); // Eliminar de la base de datos
-            return true;
-        }
-        return false;
-        */
-    }
-
-    /**
-     * Busca una respuesta específica por ID
-     * @param {number} replyId - ID de la respuesta a buscar
-     * @returns {ForumMessage|null} - La respuesta encontrada o null
-     */
-    findReply(replyId) {
-        //return this.#replies.find(reply => reply.id === replyId) || null;
-        console.log("FUNCION POR REFACTORIZAR");
-
-    }
-
-    /**
-     * Verifica si el mensaje tiene respuestas
-     * @returns {boolean}
-     */
-    hasReplies() {
-        //return this.#replies.length > 0;
-        console.log("FUNCION POR REFACTORIZAR"); //Refactorizar usando la funcion de getCommentsById
-        return false;
     }
 
     persist() {
@@ -215,20 +126,6 @@ export class ForumMessage {
     static createComment(forumId, content, data, userId, username){
         return new ForumMessage(forumId, content, data, userId, username);
     }
-    
-    /**
-     * Crea un mensaje original (post principal)
-     */
-    static createOriginal(id, forumId, content, date, userId) {
-        return new ForumMessage(id, forumId, content, date, userId, MessageType.ORIGINAL);
-    }
-
-    /**
-     * Crea una respuesta a otro mensaje
-     */
-    static createReply(id, forumId, content, date, userId, parentId) {
-        return new ForumMessage(id, forumId, content, date, userId, MessageType.REPLY, parentId);
-    }
 
     static deleteCommentsByForumId(forumId) {
         const comentarios = this.getComments(forumId);
@@ -237,13 +134,6 @@ export class ForumMessage {
         }
     }
 }
-
-
-
-
-
-
-
 
 /**
  * Clase que maneja la colección completa de mensajes en un foro
@@ -256,7 +146,6 @@ export class Forum {
     static #getByIdStmt = null;
     static #insertStmt = null;
     static #deleteStmt = null;
-    #messages = new Map(); // Almacena todos los mensajes por ID
 
 
     static initStatements(db) {
@@ -296,30 +185,23 @@ export class Forum {
     
                 forum.#id = result.lastInsertRowid;
             } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
-                console.log(e);
                 throw new Error('No se ha podido crear el foro', { cause: e });
             }
             return forum;
         }
 
-        static #delete(forum) {
+        static #delete(id_foro) {
             let result = null;
             try {
-                const titulo = forum.#titulo;
-                const descripcion = forum.#descripcion;
-                const estado = forum.#estado;
-                const datos = {titulo, descripcion, estado};
-    
-                result = this.#deleteStmt.run(datos);
+                result = this.#deleteStmt.run({id: id_foro});
     
             } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
                 throw new Error('No se ha podido eliminar el foro', { cause: e });
             }
-            return forum;
+            return;
         }
 
         static getForumById(id) {
-            console.log("Entro en getForumById")
             const forum = this.#getByIdStmt.get({ id });
             if (!forum) throw new Error('Foro no encontrado');
             return new Forum(forum.titulo, forum.descripcion, forum.estado, forum.username, forum.id);
@@ -355,80 +237,13 @@ export class Forum {
      */
     createPost(forumId, content, date, userId, username) {
         const post = ForumMessage.createComment(forumId, content, date, userId, username);
-        //this.#messages.set(id, post);
         return post.addReply();
-    }
-
-    /**
-     * Crea y añade una respuesta a un mensaje existente
-     */
-    createReply(id, forumId, content, date, userId, parentId) {
-        const parent = this.#messages.get(parentId);
-        if (!parent) throw new Error("Mensaje padre no encontrado");
-
-        const reply = ForumMessage.createReply(id, forumId, content, date, userId, parentId);
-        this.#messages.set(id, reply);
-        parent.addReply(reply);
-        return reply;
-    }
-
-    /**
-     * Añade un mensaje ya creado (útil para importar datos)
-     */
-    addMessage(message) {
-        if (!(message instanceof ForumMessage)) {
-            throw new Error("Solo se pueden agregar instancias de ForumMessage");
-        }
-
-        this.#messages.set(message.id, message);
-
-        // Si es respuesta, la añadimos al padre
-        if (message.type === MessageType.REPLY) {
-            const parent = this.#messages.get(message.parentId);
-            if (parent) {
-                parent.addReply(message);
-            }
-        }
-        
-        return this;
-    }
-
-    /**
-     * Elimina un mensaje y todas sus respuestas (si es original)
-     */
-    deleteMessage(id) {
-        const message = this.#messages.get(id);
-        if (!message) return false;
-        
-        // Si es original, eliminamos sus respuestas recursivamente
-        if (message.type === MessageType.ORIGINAL) {
-            for (const reply of message.replies) {
-                this.deleteMessage(reply.id);  // Eliminar respuestas
-            }
-        }
-        
-        // Si es respuesta, la eliminamos del array de replies del padre
-        if (message.type === MessageType.REPLY) {
-            const parent = this.#messages.get(message.parentId);
-            if (parent) {
-                parent.removeReply(id);  // Eliminar respuesta del padre
-            }
-        }
-        
-        // Elimina el mensaje de la base de datos
-        message.delete();  // Llamar al método delete de ForumMessage
-        
-        // Después de eliminar el mensaje, lo eliminamos del mapa de mensajes
-        this.#messages.delete(id);
-        
-        return true;
     }
 
 
     createForum(titulo, descripcion, estado, username) {
         // Validación básica de los parámetros
         if (!titulo || !descripcion || !estado) {
-            if(!estado && titulo && descripcion) console.log("Me falta estado, pero todo lo demas esta OK.")
             throw new Error("Todos los campos son obligatorios");
         }
 
@@ -453,26 +268,9 @@ export class Forum {
         ForumMessage.deleteCommentsByForumId(this.#id);
     
         // Elimina el foro de la base de datos
-        Forum.#deleteStmt.run({id: this.#id});
+        Forum.#delete(this.#id);
         return true;
     }   
-
-    
-
-    /**
-     * Obtiene un mensaje por su ID
-     */
-    getMessage(id) {
-        return this.#messages.get(id);
-    }
-
-    /**
-     * Obtiene todos los mensajes originales (posts principales)
-     */
-    getOriginalPosts() {
-        return Array.from(this.#messages.values())
-            .filter(msg => msg.type === MessageType.ORIGINAL);
-    }
 
     #id;
     #titulo;
@@ -517,23 +315,4 @@ export class Forum {
         if (this.#id === null) return Forum.#insert(this);
     }
 
-}
-
-export class ForoNoEncontrado extends Error {
-    /**
-     * 
-     * @param {string} titulo 
-     * @param {ErrorOptions} [options]
-     */
-    constructor(titulo, options) {
-        super(`Foro no encontrado: ${titulo}`, options);
-        this.name = 'ForoNoEncontrado';
-    }
-}
-
-export class ForoNoEncontradoPorID extends Error {
-    constructor(id, options) {
-        super(`La ID no corresponde con ningun foro: ${id}`, options);
-        this.name = 'ForoNoEncontradoID';
-    }
 }
