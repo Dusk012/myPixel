@@ -113,7 +113,7 @@ export async function createReply(req, res) {
         res.redirect(`/mensajes/thread/${parentId}`);          
     } catch (e) {
         res.redirect(`/mensajes/thread/${parentId}`);
-    }
+    };
 }
 
 export function editMessage(req, res) {
