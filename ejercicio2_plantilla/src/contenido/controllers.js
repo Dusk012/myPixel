@@ -6,6 +6,7 @@ import { Foto } from '../imagenes/imagenes.js';
 import session from 'express-session';
 import { promises as fs } from 'fs';
 import { Desafio } from '../contenido/desafios.js';
+import { Usuario } from '../usuarios/usuarios.js';
 
 
 export async function normal(req, res) {
@@ -148,25 +149,23 @@ export async function crearDesafio(req, res) {
     const { puntuacionObjetivo, descripcion, tipo } = req.body;
 
     try {
-        // Obtener el ID del usuario desde la sesión
-        const id_usuario = req.session?.userId;
+        // Obtener todos los usuarios de la base de datos
+        const usuarios = Usuario.getAll(); // Asegúrate de tener un método `getAll` en el modelo `Usuario`
 
-        if (!id_usuario) {
-            return res.status(400).json({ success: false, error: 'ID de usuario no encontrado en la sesión' });
-        }
+        // Crear el desafío para cada usuario
+        const fecha = new Date().toISOString();
+        usuarios.forEach(usuario => {
+            const nuevoDesafio = new Desafio(
+                puntuacionObjetivo,
+                descripcion,
+                tipo,
+                fecha,
+                usuario.id // Asociar el desafío al usuario
+            );
+            nuevoDesafio.persist();
+        });
 
-        // Crear el nuevo desafío
-        const nuevoDesafio = new Desafio(
-            puntuacionObjetivo,
-            descripcion,
-            tipo,
-            new Date().toISOString(),
-            id_usuario // Asociar el desafío al usuario de la sesión
-        );
-        nuevoDesafio.persist();
-
-        // Redirigir con un mensaje de éxito
-        res.redirect('/contenido/desafios?mensaje=Desafío creado con éxito');
+        res.redirect('/contenido/desafios?mensaje=Desafío creado con éxito para todos los usuarios');
     } catch (error) {
         console.error('Error al crear el desafío:', error);
         res.status(500).json({ success: false, error: 'Error al crear el desafío' });
@@ -174,11 +173,26 @@ export async function crearDesafio(req, res) {
 }
 
 export async function modificarDesafio(req, res) {
-    const { id, puntuacionObjetivo, descripcion, tipo } = req.body;
+    const { puntuacionObjetivo, descripcion, tipo, descripcionNueva, tipoNuevo } = req.body;
+
+    console.log(`Datos recibidos para modificar desafío:
+        puntuacionObjetivo=${puntuacionObjetivo},
+        descripcion=${descripcion},
+        tipo=${tipo},
+        descripcionNueva=${descripcionNueva},
+        tipoNuevo=${tipoNuevo}`);
 
     try {
-        Desafio.modificarDesafio(parseInt(id), parseInt(puntuacionObjetivo), descripcion, parseInt(tipo));
-        res.status(200).json({ success: true });
+        // Actualizar todos los desafíos con la misma descripción y tipo
+        Desafio.modificarDesafiosPorDescripcionYTipo(
+            descripcion,
+            tipo,
+            puntuacionObjetivo,
+            descripcionNueva,
+            tipoNuevo
+        );
+
+        res.status(200).json({ success: true, message: 'Desafíos modificados para todos los usuarios' });
     } catch (error) {
         console.error('Error al modificar el desafío:', error);
         res.status(500).json({ success: false, error: 'Error al modificar el desafío' });
@@ -186,12 +200,14 @@ export async function modificarDesafio(req, res) {
 }
 
 export async function eliminarDesafio(req, res) {
-    const { id } = req.params;
+    const { descripcion, tipo } = req.body;
+
+    console.log(`Datos recibidos para borrar desafío: descripcion=${descripcion}, tipo=${tipo}`);
 
     try {
-        // Llama al método para eliminar el desafío de la base de datos
-        await Desafio.deleteById(id);
-        res.status(200).json({ success: true, message: 'Desafío eliminado' });
+        Desafio.eliminarDesafiosPorDescripcionYTipo(descripcion, tipo);
+
+        res.status(200).json({ success: true, message: 'Desafíos eliminados para todos los usuarios' });
     } catch (error) {
         console.error('Error al borrar el desafío:', error);
         res.status(500).json({ success: false, error: 'Error al borrar el desafío' });
