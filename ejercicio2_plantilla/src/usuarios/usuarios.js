@@ -14,6 +14,7 @@ export class Usuario {
     static #listUsuarios = null;
     static #countUsuarios = null;
     static #checkUsername = null;
+    static #getAllStmt = null;
 
 
     static initStatements(db) {
@@ -26,6 +27,7 @@ export class Usuario {
         this.#listUsuarios = db.prepare('SELECT * FROM Usuarios ORDER BY id LIMIT @size OFFSET @offset');
         this.#countUsuarios = db.prepare('SELECT COUNT(*) AS numUsuarios FROM Usuarios').pluck();
         this.#checkUsername = db.prepare('SELECT 1 FROM Usuarios WHERE username = @username').pluck();
+        this.#getAllStmt = db.prepare('SELECT * FROM Usuarios');
     }
 
     static getUsuarioByUsername(username) {
@@ -108,6 +110,16 @@ export class Usuario {
         return usuario;
     }
 
+    static getAll() {
+        try {
+            const rows = this.#getAllStmt.all();
+            return rows.map(row => new Usuario(row.username, row.password, row.nombre, row.rol, row.id, row.foto_perfil));
+        } catch (error) {
+            console.error('Error al obtener todos los usuarios:', error);
+            throw error;
+        }
+    }
+
     #id;
     #username;
     #password;
@@ -181,11 +193,6 @@ export class Usuario {
         const nuevoUsuario = new Usuario(username, hashedPassword, nombre, rol, id, foto_perfil);
         // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
-    }
-
-
-    async setPassword(nuevoPassword) {
-        this.#password = await bcrypt.hash(nuevoPassword, 10);
     }
 }
 
