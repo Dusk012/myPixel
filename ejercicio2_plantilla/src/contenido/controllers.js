@@ -1,174 +1,294 @@
-import { validationResult, matchedData } from 'express-validator';
-import controllersRouter from './router.js';
-import { render } from '../utils/render.js';
-import { config } from '../config.js';
-import { Foto } from '../imagenes/imagenes.js';
-import session from 'express-session';
-import { promises as fs } from 'fs';
-import { Desafio } from '../contenido/desafios.js';
-import { Usuario } from '../usuarios/usuarios.js';
+export class Desafio {
+    static #insertStmt = null;
+    static #deleteStmt = null;
+    static #updateStmt = null;
+    static #getByIdStmt = null;
+    static #getAllStmt = null;
+    static #deleteByIdStmt = null;
+    static #insertDefaultDesafiosStmt = null;
+    static #updatePuntosStmt = null;
+    static #deleteByUserStmt = null;
+    static #deleteByDescripcionYTipoStmt = null;
 
+    static initStatements(db) {
+        this.#insertStmt = db.prepare(
+            'INSERT INTO Desafío (puntuacionObjetivo, descripcion, tipo, fecha, id_usuario) VALUES (@puntuacionObjetivo, @descripcion, @tipo, @fecha, @id_usuario)'
+        );
+        this.#deleteStmt = db.prepare('DELETE FROM Desafío WHERE id = @id');
+        this.#updateStmt = db.prepare(`
+            UPDATE Desafío
+            SET puntuacionObjetivo = @puntuacionObjetivo,
+                descripcion = @descripcionNueva,
+                tipo = @tipoNuevo
+            WHERE descripcion = @descripcion AND tipo = @tipo
+        `);
+        this.#getByIdStmt = db.prepare('SELECT * FROM Desafío WHERE id = @id');
+        this.#getAllStmt = db.prepare('SELECT * FROM Desafío');
+        this.#deleteByIdStmt = db.prepare('DELETE FROM Desafío WHERE id = ?');
+        this.#insertDefaultDesafiosStmt = db.prepare(`
+            INSERT INTO "Desafío" ("puntos", "puntuacionObjetivo", "id_usuario", "descripcion", "tipo", "fecha")
+            VALUES (?, ?, ?, ?, ?, ?)`
+        );
+        this.#updatePuntosStmt = db.prepare(`
+            UPDATE "Desafío"
+            SET puntos = puntos + 1
+            WHERE id_usuario = ? AND tipo = ? AND puntos < puntuacionObjetivo`
+        );
+        this.#deleteByUserStmt = db.prepare(`
+            DELETE FROM "Desafío"
+            WHERE id_usuario = ?
+        `);
+        this.#deleteByDescripcionYTipoStmt = db.prepare(`
+            DELETE FROM Desafío
+            WHERE descripcion = @descripcion AND tipo = @tipo
+        `);
+    }
 
-export async function normal(req, res) {
-    //let contenido = 'paginas/Usuarios/noRegistrado';
-    let contenido = 'paginas/Usuarios/normal';
-    let data = {};
-    let imagen = null;
-    //if (req.session.login) {
-        //contenido = 'paginas/Usuarios/normal';
-
-            //Para elegir la imagen aleatoriamente usamos ChatGpt
+    static #insert(desafio) {
         try {
-            const archivos = await fs.readdir(config.uploads);
-
-            if (archivos.length > 0) {
-                const randomIndex = Math.floor(Math.random() * archivos.length);
-                imagen = archivos[randomIndex];
-                const foto = await Foto.getFotoByContenido(imagen);
-                data.nombre = foto.nombre;
-                data.descripcion = foto.descripcion;
-                data.puntuacion = foto.puntuacion;
-            }
-            render(req, res, contenido, {
-                data,
-                imagen,
-                error: null
-            });
+            const datos = {
+                puntuacionObjetivo: desafio.#puntuacionObjetivo,
+                descripcion: desafio.#descripcion,
+                tipo: desafio.#tipo,
+                fecha: desafio.#fecha,
+                id_usuario: desafio.#id_usuario,
+            };
+            const result = this.#insertStmt.run(datos);
+            desafio.#id = result.lastInsertRowid;
+            return desafio;
         } catch (e) {
-            let error = 'Error con las imágenes: ' + e.message;
-            render(req, res, contenido, {
-                error,
-                data: {},
-                imagen: null
-            });
+            throw new Error('No se pudo crear el desafío', { cause: e });
         }
-    //}
-}
+    }
 
-export async function gestionPuntuacion(req, res) {
-    const contenido = req.body.contenido;
-    const puntuacion = req.body.puntuacion;
-    const userId = req.session?.userId; // Obtener el ID del usuario desde la sesión
-
-    try {
-        const foto = await Foto.getFotoByContenido(contenido);
-
-        if (foto) {
-            foto.puntuacion = puntuacion;
-            await Foto.actualizarFoto(foto);
-
-            // Incrementar los puntos del desafío de "likes"
-            if (userId) {
-                Desafio.incrementarPuntos(userId, 0); // Tipo 0 es para "likes"
-            }
-
-            // Incrementar likes globales
-            const globalLikes = Foto.incrementarGlobalLikes();
-            res.json({ success: true, globalLikes });
-        } else {
-            res.status(404).json({ success: false, error: 'Foto no encontrada' });
+    static #delete(desafio) {
+        try {
+            const datos = { id: desafio.#id };
+            this.#deleteStmt.run(datos);
+            return true;
+        } catch (e) {
+            throw new Error('No se pudo eliminar el desafío', { cause: e });
         }
-    } catch (e) {
-        console.error('Error en gestionPuntuacion:', e);
-        res.status(500).json({ success: false, error: e.message });
-    }
-}
-
-export async function viewDesafios(req, res) {
-    const userId = req.session?.userId; // Obtener el ID del usuario desde la sesión
-    let contenido = 'paginas/desafios/desafios'
-    if (!userId) {
-        return res.status(403).send('No tienes permiso para ver esta página.');
     }
 
-    try {
-        // Obtener los desafíos del usuario desde la base de datos
-        const desafios = await Desafio.getByUserId(userId);
-
-        // Renderizar la vista con los desafíos
-        res.render('pagina', {
-            contenido,
-            desafios,
-            session: req.session,
-            error: null
-        });
-    } catch (error) {
-        console.error('Error al obtener los desafíos:', error);
-        res.status(500).send('Error al cargar los desafíos.');
+    static #update(desafio) {
+        try {
+            const datos = {
+                id: desafio.#id,
+                puntuacionObjetivo: desafio.#puntuacionObjetivo,
+                descripcion: desafio.#descripcion,
+                tipo: desafio.#tipo,
+            };
+            this.#updateStmt.run(datos);
+            return desafio;
+        } catch (e) {
+            throw new Error('No se pudo actualizar el desafío', { cause: e });
+        }
     }
-}
 
-export function viewShop(req, res) {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/tienda/shop';
+    static getById(id) {
+        const row = this.#getByIdStmt.get({ id });
+        if (!row) throw new Error('Desafío no encontrado');
+        return new Desafio(row.puntuacionObjetivo, row.descripcion, row.tipo, row.fecha, row.id_usuario, row.id);
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
-}
-/*
-export function viewProfile(req, res) {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/Usuarios/profile';
+
+    static getAll() {
+        const rows = this.#getAllStmt.all();
+        return rows.map(
+            (row) => new Desafio(row.puntuacionObjetivo, row.descripcion, row.tipo, row.fecha, row.id_usuario, row.id)
+        );
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
-}
-*/
 
-export function viewAdmin(req, res) {
-    let contenido = 'paginas/noPermisos';
-    if (req.session.esAdmin) {
-        contenido = 'paginas/admin';
+    #id;
+    #puntuacionObjetivo;
+    #descripcion;
+    #tipo;
+    #fecha;
+    #id_usuario;
+
+    constructor(puntuacionObjetivo, descripcion, tipo, fecha, id_usuario = null, id = null) {
+        this.#id = id;
+        this.#puntuacionObjetivo = puntuacionObjetivo;
+        this.#descripcion = descripcion;
+        this.#tipo = tipo;
+        this.#fecha = fecha || new Date().toISOString();
+        this.#id_usuario = id_usuario;
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session
-    });
-}
 
-export function viewCoordinador(req, res) {
-    let contenido = 'paginas/Usuarios/noPermisos';
-    if (req.session.esAdmin) {
-        contenido = 'paginas/Usuarios/admin';
+    get id() {
+        return this.#id;
     }
-    res.render('pagina', {
-        contenido,
-        session: req.session
-    });
-}
 
-export async function crearDesafio(req, res) {
-    const { puntuacionObjetivo, descripcion, tipo } = req.body;
+    get puntuacionObjetivo() {
+        return this.#puntuacionObjetivo;
+    }
 
-    try {
-        // Obtener todos los usuarios de la base de datos
-        const usuarios = Usuario.getAll(); // Asegúrate de tener un método `getAll` en el modelo `Usuario`
+    get descripcion() {
+        return this.#descripcion;
+    }
 
-        // Crear el desafío para cada usuario
+    get tipo() {
+        return this.#tipo;
+    }
+
+    get fecha() {
+        return this.#fecha;
+    }
+
+    get id_usuario() {
+        return this.#id_usuario;
+    }
+
+    set puntuacionObjetivo(value) {
+        if (value > 0) this.#puntuacionObjetivo = value;
+        else throw new Error('La puntuación objetivo debe ser mayor a 0');
+    }
+
+    set descripcion(value) {
+        if (value.trim().length > 0) this.#descripcion = value.trim();
+        else throw new Error('La descripción no puede estar vacía');
+    }
+
+    set tipo(value) {
+        if ([0, 1, 2].includes(value)) this.#tipo = value;
+        else throw new Error('Tipo inválido');
+    }
+
+    persist() {
+        if (this.#id === null) return Desafio.#insert(this);
+        else return Desafio.#update(this);
+    }
+
+    delete() {
+        return Desafio.#delete(this);
+    }
+
+    static async getByUserId(userId) {
+        try {
+            const rows = this.#getAllStmt.all(); // Asegúrate de que initStatements esté configurado
+            return rows.filter(row => row.id_usuario === userId);
+        } catch (error) {
+            console.error('Error al obtener los desafíos del usuario:', error);
+            throw error;
+        }
+    }
+
+    static deleteById(id) {
+        try {
+          return this.#deleteByIdStmt.run(id);
+        } catch (error) {
+          console.error('Error al borrar el desafío:', error);
+          throw error;
+        }
+    }
+
+    static insertDefaultDesafios(userId) {
+        const defaultDesafios = [
+            { puntuacionObjetivo: 10, descripcion: '¡Da 10 likes!', tipo: 0 },
+            { puntuacionObjetivo: 50, descripcion: '¡Da 50 likes!', tipo: 0 },
+            { puntuacionObjetivo: 100, descripcion: '¡Da 100 likes!', tipo: 0 },
+            { puntuacionObjetivo: 5, descripcion: '¡Sube 5 fotos!', tipo: 1 },
+            { puntuacionObjetivo: 10, descripcion: '¡Sube 10 fotos!', tipo: 1 },
+            { puntuacionObjetivo: 25, descripcion: '¡Sube 25 fotos!', tipo: 1 },
+            { puntuacionObjetivo: 5, descripcion: '¡Escribe 5 comentarios!', tipo: 2 },
+            { puntuacionObjetivo: 25, descripcion: '¡Escribe 25 comentarios!', tipo: 2 },
+            { puntuacionObjetivo: 50, descripcion: '¡Escribe 50 comentarios!', tipo: 2 },
+        ];
+
         const fecha = new Date().toISOString();
-        usuarios.forEach(usuario => {
-            const nuevoDesafio = new Desafio(
-                puntuacionObjetivo,
+
+        try {
+            defaultDesafios.forEach(desafio => {
+                this.#insertDefaultDesafiosStmt.run(0, desafio.puntuacionObjetivo, userId, desafio.descripcion, desafio.tipo, fecha);
+            });
+        } catch (error) {
+            console.error('Error al insertar los desafíos predeterminados:', error);
+            throw error;
+        }
+    }
+
+    static incrementarPuntosLikes(userId) {
+        try {
+            const result = this.#updatePuntosStmt.run(userId);
+            if (result.changes === 0) {
+                console.log('No se actualizó ningún desafío de likes (puede que ya se haya completado).');
+            }
+        } catch (error) {
+            console.error('Error al incrementar los puntos del desafío de likes:', error);
+            throw error;
+        }
+    }
+
+    static incrementarPuntos(userId, tipo) {
+        try {
+            const result = this.#updatePuntosStmt.run(userId, tipo);
+            if (result.changes === 0) {
+                console.log(`No se actualizó ningún desafío del tipo ${tipo} (puede que ya se haya completado).`);
+            }
+        } catch (error) {
+            console.error(`Error al incrementar los puntos del desafío del tipo ${tipo}:`, error);
+            throw error;
+        }
+    }
+
+    static eliminarDesafiosPorUsuario(userId) {
+        try {
+            const result = this.#deleteByUserStmt.run(userId);
+            console.log(`Se eliminaron ${result.changes} desafíos del usuario con ID ${userId}`);
+        } catch (error) {
+            console.error('Error al eliminar los desafíos del usuario:', error);
+            throw error;
+        }
+    }
+
+    static modificarDesafio(id, puntuacionObjetivo, descripcion, tipo) {
+        try {
+            const datos = { id, puntuacionObjetivo, descripcion, tipo };
+            this.#updateStmt.run(datos);
+            console.log(`Desafío con ID ${id} modificado correctamente.`);
+        } catch (error) {
+            console.error('Error al modificar el desafío:', error);
+            throw error;
+        }
+    }
+
+    static modificarDesafiosPorDescripcionYTipo(descripcion, tipo, puntuacionObjetivo, descripcionNueva, tipoNuevo) {
+        try {
+            const datos = { descripcion, tipo, puntuacionObjetivo, descripcionNueva, tipoNuevo };
+            this.#updateStmt.run(datos);
+            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
+        } catch (error) {
+            console.error('Error al modificar los desafíos:', error);
+            throw error;
+        }
+    }
+
+    static modificarDesafiosPorDescripcionYTipo(descripcion, tipo, puntuacionObjetivo, descripcionNueva, tipoNuevo) {
+        try {
+            const datos = {
                 descripcion,
                 tipo,
-                fecha,
-                usuario.id // Asociar el desafío al usuario
-            );
-            nuevoDesafio.persist();
-        });
+                puntuacionObjetivo,
+                descripcionNueva,
+                tipoNuevo,
+            };
+            this.#updateStmt.run(datos);
+            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
+        } catch (error) {
+            console.error('Error al modificar los desafíos:', error);
+            throw error;
+        }
+    }
 
-        res.redirect('/contenido/desafios?mensaje=Desafío creado con éxito para todos los usuarios');
-    } catch (error) {
-        console.error('Error al crear el desafío:', error);
-        res.status(500).json({ success: false, error: 'Error al crear el desafío' });
+    static eliminarDesafiosPorDescripcionYTipo(descripcion, tipo) {
+        try {
+            const datos = { descripcion, tipo };
+            this.#deleteByDescripcionYTipoStmt.run(datos);
+            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} eliminados correctamente.`);
+        } catch (error) {
+            console.error('Error al eliminar los desafíos:', error);
+            throw error;
+        }
     }
 }
 
@@ -196,20 +316,5 @@ export async function modificarDesafio(req, res) {
     } catch (error) {
         console.error('Error al modificar el desafío:', error);
         res.status(500).json({ success: false, error: 'Error al modificar el desafío' });
-    }
-}
-
-export async function eliminarDesafio(req, res) {
-    const { descripcion, tipo } = req.body;
-
-    console.log(`Datos recibidos para borrar desafío: descripcion=${descripcion}, tipo=${tipo}`);
-
-    try {
-        Desafio.eliminarDesafiosPorDescripcionYTipo(descripcion, tipo);
-
-        res.status(200).json({ success: true, message: 'Desafíos eliminados para todos los usuarios' });
-    } catch (error) {
-        console.error('Error al borrar el desafío:', error);
-        res.status(500).json({ success: false, error: 'Error al borrar el desafío' });
     }
 }
