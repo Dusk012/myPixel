@@ -1,7 +1,7 @@
 import express from 'express';
 import { body} from 'express-validator';
 import { autenticado } from '../middleware/auth.js';
-import { viewLogin, doLogin, doLogout, viewRegister, doRegister, perfilGet, actualizarFotoPerfil, darseDeBaja } from './controllers.js';
+import { viewLogin, doLogin, doLogout, viewRegister, doRegister, perfilGet, actualizarFotoPerfil, darseDeBaja, viewChangePassword, doChangePassword } from './controllers.js';
 import asyncHandler from 'express-async-handler';
 
 const usuariosRouter = express.Router();
@@ -35,5 +35,16 @@ usuariosRouter.post('/perfil', asyncHandler(actualizarFotoPerfil));
 
 // Ruta para darse de baja
 usuariosRouter.post('/darseDeBaja', asyncHandler(darseDeBaja));
+
+
+usuariosRouter.get('/cambiar-password', autenticado(), asyncHandler(viewChangePassword));
+usuariosRouter.post('/cambiar-password',
+    body('currentPassword', 'La contraseña actual no puede estar vacía').trim().notEmpty(),
+    body('newPassword', 'La nueva contraseña debe tener entre 6 y 10 caracteres').trim().isLength({ min: 6, max: 10 }),
+    body('confirmPassword', 'La confirmación no coincide').custom((value, { req }) => {
+        return value === req.body.newPassword;
+    }),
+    asyncHandler(doChangePassword)
+);
 
 export default usuariosRouter;

@@ -214,3 +214,45 @@ export async function darseDeBaja(req, res) {
         });
     }
 }
+
+export function viewChangePassword(req, res) {
+    render(req, res, 'paginas/Usuarios/changePassword', {
+        datos: {},
+        errores: {},
+        error: null
+    });
+}
+
+export async function doChangePassword(req, res) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return render(req, res, 'paginas/Usuarios/changePassword', {
+            errores,
+            datos,
+            error: null
+        });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    const username = req.session.username;
+
+    try {
+        // Verify current password
+        const usuario = await Usuario.login(username, currentPassword);
+        
+        // Change password
+        usuario.password = newPassword; // This will hash the new password
+        usuario.persist();
+
+        res.setFlash('Contraseña cambiada con éxito');
+        return res.redirect('/usuarios/perfil');
+    } catch (e) {
+        return render(req, res, 'paginas/Usuarios/changePassword', {
+            datos: req.body,
+            errores: {},
+            error: 'La contraseña actual no es correcta'
+        });
+    }
+}

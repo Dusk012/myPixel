@@ -181,7 +181,6 @@ async function usernameDisponible(e) {
         }
 
         username.reportValidity();
-        // Coloca tu código aquí
     } catch (err) {
         console.error(`Error: `, err);
     }

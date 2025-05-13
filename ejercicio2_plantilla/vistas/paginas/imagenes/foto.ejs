@@ -6,7 +6,7 @@
       <div class="campo">
         
         <% if (userFoto) { %>
-          <label for="nombre">Nombre de la foto:</label>
+          <label for="nombre">Nombre de la foto (edit):</label>
           <input type="text" id="nombre" name="nombre" value="<%= foto.nombre %>">
         <% } else { %>
           <label><%= foto.nombre %></label>
@@ -19,8 +19,8 @@
 
       <div class="campo">
         <% if (userFoto) { %>
-          <label for="descripcion">Descripción:</label>
-          <textarea id="descripcion" name="descripcion"><%= foto.descripcion %></textarea>
+          <label for="descripcion">Descripción (edit):</label>
+          <input type="text" id="descripcion" name="descripcion" value="<%= foto.descripcion %>">
         <% } else { %>
           <label class="salto-linea">Descripción: <%= foto.descripcion %></label>
         <% } %>

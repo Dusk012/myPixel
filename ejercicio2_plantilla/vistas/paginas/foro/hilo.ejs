@@ -17,7 +17,9 @@
               <strong class="user-title-forum"><%= reply.username %></strong>
               <em class="content-comment"><%= reply.content %></em>
               <p class="comentario-fecha">
-                <time datetime="<%= reply.date %>">Publicado el <%= reply.date %></time>
+               <time datetime="<%= reply.date %>">Publicado el 
+                <%= new Date(reply.date).toLocaleDateString('es-ES', 
+                { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></time>
               </p>
 
               <% if (reply.editado === 'S') { %>
@@ -32,7 +34,7 @@
 
               <% if (session.username === reply.username) { %>
                 <button class="btn-edit-foro" onclick="mostrarFormulario(<%= reply.id %>)">Editar comentario</button>
-                <form id="formulario-<%= reply.id %>" action="/mensajes/edit/<%= reply.id %>?idForo=<%= forum.id %>" method="POST" style="display: none; margin-top: 10px;">
+                <form id="formulario-<%= reply.id %>" action="/mensajes/edit/<%= reply.id %>?idForo=<%= forum.id %>" method="POST" hidden>
                   <label for="content-<%= reply.id %>">Comentario:</label>
                   <textarea name="content" id="content-<%= reply.id %>" rows="4" required><%= reply.content %></textarea>
                   <button type="submit">Guardar edición</button>
