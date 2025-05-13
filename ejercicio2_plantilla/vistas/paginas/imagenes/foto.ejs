@@ -48,7 +48,7 @@
       <% } %>
     </form>
     
-    <% if (userFoto) { %>
+    <% if (userFoto || session.rol === 'A') { %>
       <form action="/imagenes/foto/delete" method="POST">
         <input type="hidden" name="id" value="<%= foto.id %>">
         <input type="hidden" name="contenido" value="<%= foto.contenido %>">

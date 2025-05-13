@@ -19,15 +19,18 @@ export async function normal(req, res) {
 
             //Para elegir la imagen aleatoriamente usamos ChatGpt
         try {
-            const archivos = await fs.readdir(config.uploads);
+            const archivos = await fs.readdir(config.uploads)
 
+             let foto = null;
             if (archivos.length > 0) {
-                const randomIndex = Math.floor(Math.random() * archivos.length);
-                imagen = archivos[randomIndex];
-                const foto = await Foto.getFotoByContenido(imagen);
-                data.nombre = foto.nombre;
-                data.descripcion = foto.descripcion;
-                data.puntuacion = foto.puntuacion;
+                do {
+                    const randomIndex = Math.floor(Math.random() * archivos.length);
+                    imagen = archivos[randomIndex];
+                    foto = await Foto.getFotoByContenido(imagen);
+                    data.nombre = foto.nombre;
+                    data.descripcion = foto.descripcion;
+                    data.puntuacion = foto.puntuacion;
+                } while (foto.estado !== 'Visible');
             }
             render(req, res, contenido, {
                 data,

@@ -12,34 +12,34 @@ export class Desafio {
 
     static initStatements(db) {
         this.#insertStmt = db.prepare(
-            'INSERT INTO Desafío (puntuacionObjetivo, descripcion, tipo, fecha, id_usuario) VALUES (@puntuacionObjetivo, @descripcion, @tipo, @fecha, @id_usuario)'
+            'INSERT INTO Desafio (puntuacionObjetivo, descripcion, tipo, fecha, id_usuario) VALUES (@puntuacionObjetivo, @descripcion, @tipo, @fecha, @id_usuario)'
         );
-        this.#deleteStmt = db.prepare('DELETE FROM Desafío WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM Desafio WHERE id = @id');
         this.#updateStmt = db.prepare(`
-            UPDATE Desafío
+            UPDATE Desafio
             SET puntuacionObjetivo = @puntuacionObjetivo,
                 descripcion = @descripcionNueva,
                 tipo = @tipoNuevo
             WHERE descripcion = @descripcion AND tipo = @tipo
         `);
-        this.#getByIdStmt = db.prepare('SELECT * FROM Desafío WHERE id = @id');
-        this.#getAllStmt = db.prepare('SELECT * FROM Desafío');
-        this.#deleteByIdStmt = db.prepare('DELETE FROM Desafío WHERE id = ?');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Desafio WHERE id = @id');
+        this.#getAllStmt = db.prepare('SELECT * FROM Desafio');
+        this.#deleteByIdStmt = db.prepare('DELETE FROM Desafio WHERE id = ?');
         this.#insertDefaultDesafiosStmt = db.prepare(`
-            INSERT INTO "Desafío" ("puntos", "puntuacionObjetivo", "id_usuario", "descripcion", "tipo", "fecha")
+            INSERT INTO "Desafio" ("puntos", "puntuacionObjetivo", "id_usuario", "descripcion", "tipo", "fecha")
             VALUES (?, ?, ?, ?, ?, ?)`
         );
         this.#updatePuntosStmt = db.prepare(`
-            UPDATE "Desafío"
+            UPDATE "Desafio"
             SET puntos = puntos + 1
             WHERE id_usuario = ? AND tipo = ? AND puntos < puntuacionObjetivo`
         );
         this.#deleteByUserStmt = db.prepare(`
-            DELETE FROM "Desafío"
+            DELETE FROM "Desafio"
             WHERE id_usuario = ?
         `);
         this.#deleteByDescripcionYTipoStmt = db.prepare(`
-            DELETE FROM Desafío
+            DELETE FROM Desafio
             WHERE descripcion = @descripcion AND tipo = @tipo
         `);
     }
@@ -88,7 +88,7 @@ export class Desafio {
 
     static getById(id) {
         const row = this.#getByIdStmt.get({ id });
-        if (!row) throw new Error('Desafío no encontrado');
+        if (!row) throw new Error('Desafio no encontrado');
         return new Desafio(row.puntuacionObjetivo, row.descripcion, row.tipo, row.fecha, row.id_usuario, row.id);
     }
 
@@ -245,7 +245,7 @@ export class Desafio {
         try {
             const datos = { id, puntuacionObjetivo, descripcion, tipo };
             this.#updateStmt.run(datos);
-            console.log(`Desafío con ID ${id} modificado correctamente.`);
+            console.log(`Desafio con ID ${id} modificado correctamente.`);
         } catch (error) {
             console.error('Error al modificar el desafío:', error);
             throw error;
@@ -256,7 +256,7 @@ export class Desafio {
         try {
             const datos = { descripcion, tipo, puntuacionObjetivo, descripcionNueva, tipoNuevo };
             this.#updateStmt.run(datos);
-            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
+            console.log(`Desafios con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
         } catch (error) {
             console.error('Error al modificar los desafíos:', error);
             throw error;
@@ -273,7 +273,7 @@ export class Desafio {
                 tipoNuevo,
             };
             this.#updateStmt.run(datos);
-            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
+            console.log(`Desafios con descripción "${descripcion}" y tipo ${tipo} modificados correctamente.`);
         } catch (error) {
             console.error('Error al modificar los desafíos:', error);
             throw error;
@@ -284,7 +284,7 @@ export class Desafio {
         try {
             const datos = { descripcion, tipo };
             this.#deleteByDescripcionYTipoStmt.run(datos);
-            console.log(`Desafíos con descripción "${descripcion}" y tipo ${tipo} eliminados correctamente.`);
+            console.log(`Desafios con descripción "${descripcion}" y tipo ${tipo} eliminados correctamente.`);
         } catch (error) {
             console.error('Error al eliminar los desafíos:', error);
             throw error;
@@ -312,7 +312,7 @@ export async function modificarDesafio(req, res) {
             tipoNuevo
         );
 
-        res.status(200).json({ success: true, message: 'Desafíos modificados para todos los usuarios' });
+        res.status(200).json({ success: true, message: 'Desafios modificados para todos los usuarios' });
     } catch (error) {
         console.error('Error al modificar el desafío:', error);
         res.status(500).json({ success: false, error: 'Error al modificar el desafío' });

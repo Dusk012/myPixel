@@ -194,6 +194,10 @@ export class Usuario {
         // Persistir el usuario en la base de datos
         return nuevoUsuario.persist();
     }
+
+    async setPassword(nuevoPassword) {
+        this.#password = await bcrypt.hash(nuevoPassword, 10);
+    }
 }
 
 export class UsuarioNoEncontrado extends Error {
