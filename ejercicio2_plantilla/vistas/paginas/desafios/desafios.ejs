@@ -28,7 +28,13 @@
             <% } %>
           </p>
           <% if (session.rol === 'A') { %>
-            <button class="botonborrardesafio" data-id="<%= desafio.id %>">Borrar</button>
+            <button
+                class="botonborrardesafio"
+                data-descripcion="<%= desafio.descripcion %>"
+                data-tipo="<%= desafio.tipo %>"
+            >
+                Borrar
+            </button>
             <button class="botonmodificardesafio" data-id="<%= desafio.id %>" 
                     data-descripcion="<%= desafio.descripcion %>" 
                     data-puntuacion="<%= desafio.puntuacionObjetivo %>" 
@@ -65,19 +71,27 @@
 
   <!-- Popup para modificar desafío -->
   <div id="popupModificar" class="popup" style="display: none;">
-    <form id="formModificarDesafio">
+    <form id="formModificarDesafio" action="/contenido/desafios/modificar" method="POST">
       <h2>Modificar Desafío</h2>
-      <input type="hidden" id="modificarDesafioId" name="id">
-      <label for="modificarDescripcion">Descripción:</label>
-      <textarea id="modificarDescripcion" name="descripcion" rows="3" required></textarea>
+      
+      <!-- Campos ocultos para los valores actuales -->
+      <input type="hidden" id="modificarDescripcionActual" name="descripcion">
+      <input type="hidden" id="modificarTipoActual" name="tipo">
+
+      <!-- Campos visibles para los nuevos valores -->
+      <label for="modificarDescripcionNueva">Nueva Descripción:</label>
+      <textarea id="modificarDescripcionNueva" name="descripcionNueva" rows="3" required></textarea>
+      
       <label for="modificarPuntuacionObjetivo">Puntuación Objetivo:</label>
       <input type="number" id="modificarPuntuacionObjetivo" name="puntuacionObjetivo" required>
-      <label for="modificarTipo">Tipo:</label>
-      <select id="modificarTipo" name="tipo" required>
+      
+      <label for="modificarTipoNuevo">Nuevo Tipo:</label>
+      <select id="modificarTipoNuevo" name="tipoNuevo" required>
         <option value="0">Likes</option>
         <option value="1">Fotos Subidas</option>
         <option value="2">Comentarios</option>
       </select>
+      
       <button type="submit">Guardar Cambios</button>
       <button type="button" id="cerrarPopup">Cancelar</button>
     </form>
