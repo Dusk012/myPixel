@@ -40,25 +40,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Manejar la eliminación de desafíos
     const botonesBorrar = document.querySelectorAll('.botonborrardesafio');
+
     botonesBorrar.forEach(boton => {
         boton.addEventListener('click', async () => {
-            const desafioId = boton.getAttribute('data-id');
+            const descripcion = boton.getAttribute('data-descripcion');
+            const tipo = boton.getAttribute('data-tipo');
 
-            if (confirm('¿Estás segur@ de que deseas borrar este desafío?')) {
+            console.log(`Datos obtenidos del botón: descripcion=${descripcion}, tipo=${tipo}`);
+
+            if (confirm(`¿Estás segur@ de que deseas borrar el desafío "${descripcion}"?`)) {
                 try {
-                    const response = await fetch(`/contenido/desafios/${desafioId}`, {
-                        method: 'DELETE',
+                    const response = await fetch(`/contenido/desafios/eliminar`, {
+                        method: 'POST', // Cambiado a POST
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ descripcion, tipo }),
                     });
 
                     if (response.ok) {
-                        alert('¡Desafío borrado con éxito!');
+                        alert('¡Desafío eliminado con éxito!');
                         location.reload();
                     } else {
-                        alert('Hubo un error al borrar el desafío.');
+                        alert('Hubo un error al eliminar el desafío.');
                     }
                 } catch (error) {
-                    console.error('Error al borrar el desafío:', error);
-                    alert('Error al borrar el desafío.');
+                    console.error('Error al eliminar el desafío:', error);
+                    alert('Error al eliminar el desafío.');
                 }
             }
         });
@@ -66,32 +72,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Manejar la modificación de desafíos
     const botonesModificar = document.querySelectorAll('.botonmodificardesafio');
-    const popup = document.getElementById('popupModificar');
+    const popupModificar = document.getElementById('popupModificar');
     const formModificar = document.getElementById('formModificarDesafio');
-    const cerrarPopup = document.getElementById('cerrarPopup');
+
+    const descripcionActualInput = document.getElementById('modificarDescripcionActual');
+    const tipoActualInput = document.getElementById('modificarTipoActual');
+    const descripcionNuevaInput = document.getElementById('modificarDescripcionNueva');
+    const puntuacionObjetivoInput = document.getElementById('modificarPuntuacionObjetivo');
+    const tipoNuevoInput = document.getElementById('modificarTipoNuevo');
 
     botonesModificar.forEach(boton => {
         boton.addEventListener('click', () => {
-            const id = boton.getAttribute('data-id');
+            // Obtener los datos del desafío desde los atributos del botón
             const descripcion = boton.getAttribute('data-descripcion');
-            const puntuacion = boton.getAttribute('data-puntuacion');
+            const puntuacionObjetivo = boton.getAttribute('data-puntuacion');
             const tipo = boton.getAttribute('data-tipo');
 
-            // Rellenar los campos del formulario "Modificar Desafío"
-            document.getElementById('modificarDesafioId').value = id;
-            document.getElementById('modificarDescripcion').value = descripcion;
-            document.getElementById('modificarPuntuacionObjetivo').value = puntuacion;
-            document.getElementById('modificarTipo').value = tipo;
+            // Rellenar los campos del formulario
+            descripcionActualInput.value = descripcion;
+            tipoActualInput.value = tipo;
+            descripcionNuevaInput.value = descripcion; // Inicialmente igual a la actual
+            puntuacionObjetivoInput.value = puntuacionObjetivo;
+            tipoNuevoInput.value = tipo; // Inicialmente igual al actual
 
-            popup.style.display = 'block';
+            // Mostrar el popup
+            popupModificar.style.display = 'block';
         });
     });
 
-    if (cerrarPopup) {
-        cerrarPopup.addEventListener('click', () => {
-            popup.style.display = 'none';
-        });
-    }
+    // Cerrar el popup
+    document.getElementById('cerrarPopup').addEventListener('click', () => {
+        popupModificar.style.display = 'none';
+    });
 
     if (formModificar) {
         formModificar.addEventListener('submit', async (event) => {
