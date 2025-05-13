@@ -28,5 +28,6 @@ contenidoRouter.get('/likes/global', (req, res) => {const globalLikes = Foto.obt
 contenidoRouter.post('/desafios/crear', express.json(), autenticado('A'), asyncHandler(crearDesafio));
 contenidoRouter.post('/desafios/modificar', express.json(), autenticado('A'), asyncHandler(modificarDesafio));
 contenidoRouter.delete('/desafios/:id',autenticado('A') , asyncHandler(eliminarDesafio));
+contenidoRouter.post('/desafios/eliminar', express.json(), autenticado('A'), asyncHandler(eliminarDesafio));
 
 export default contenidoRouter;
