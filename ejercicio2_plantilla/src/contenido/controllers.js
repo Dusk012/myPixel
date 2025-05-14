@@ -10,12 +10,11 @@ import { Usuario } from '../usuarios/usuarios.js';
 
 
 export async function normal(req, res) {
-    //let contenido = 'paginas/Usuarios/noRegistrado';
-    let contenido = 'paginas/Usuarios/normal';
+    let contenido = 'paginas/Usuarios/noRegistrado';
     let data = {};
     let imagen = null;
-    //if (req.session.login) {
-        //contenido = 'paginas/Usuarios/normal';
+    if (req.session.login) {
+        contenido = 'paginas/Usuarios/normal';
 
             //Para elegir la imagen aleatoriamente usamos ChatGpt
         try {
@@ -45,7 +44,7 @@ export async function normal(req, res) {
                 imagen: null
             });
         }
-    //}
+    }
 }
 
 export async function gestionPuntuacion(req, res) {
@@ -99,53 +98,6 @@ export async function viewDesafios(req, res) {
         console.error('Error al obtener los desafíos:', error);
         res.status(500).send('Error al cargar los desafíos.');
     }
-}
-
-export function viewShop(req, res) {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/tienda/shop';
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
-}
-/*
-export function viewProfile(req, res) {
-    let contenido = 'paginas/Usuarios/viewLogin';
-    if (req.session.login) {
-        contenido = 'paginas/Usuarios/profile';
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session,
-        error: null
-    });
-}
-*/
-
-export function viewAdmin(req, res) {
-    let contenido = 'paginas/noPermisos';
-    if (req.session.esAdmin) {
-        contenido = 'paginas/admin';
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session
-    });
-}
-
-export function viewCoordinador(req, res) {
-    let contenido = 'paginas/Usuarios/noPermisos';
-    if (req.session.esAdmin) {
-        contenido = 'paginas/Usuarios/admin';
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session
-    });
 }
 
 export async function crearDesafio(req, res) {

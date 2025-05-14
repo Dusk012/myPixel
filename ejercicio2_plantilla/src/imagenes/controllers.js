@@ -181,6 +181,7 @@ export async function viewBusqueda(req, res) {
     if (req.session.login) {
         contenido = 'paginas/imagenes/buscar';
         fotos = Foto.getFotosByTitle(busq, id);
+        fotos = fotos.filter(foto => foto.estado !== 'Oculto');
     }
     const usuario = matchedData(req);
     render(req, res, contenido, {
