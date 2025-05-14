@@ -1,4 +1,9 @@
 BEGIN TRANSACTION;
+INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (1,'PRTS','$2b$10$QCMN3UgIDT7eKzNhdYgfLe6FuQda5rGBB.cdntVMf.rVudrHsDZae','A','Priestess',1,0,'ACTIVO',NULL,4);
+INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (2,'ZOOT','$2b$10$A42DoLc6Bd8TfxwQOwFr/ulM/RP8Z45spax6Y2cwwtS3dK8hdpSQ6','A','Zeroth',1,0,'ACTIVO',NULL,1);
+INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (3,'Amiya','$2b$10$sVtcUUlRZfQ967CnlQcO/uzeXPP1dA7Jf3ZSWpAvz61/5AGOINMhe','U','AMIYA',1,0,'ACTIVO',NULL,1);
+INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (4,'Theresa','$2b$10$UM0nBPj7WEPjxsJVO3fU.eXcyAxYhn9Q1PPdjE7i7kgau78ovtfIC','U','Theresa',1,0,'ACTIVO',NULL,1);
+INSERT INTO "Foros" ("id","titulo","descripcion","estado","username") VALUES (1,'I will be watching you','Be careful','Activo','PRTS');
 INSERT INTO "Comentarios" ("id","id_foro","contenido","fecha","id_usuario","username","editado") VALUES (2,1,'Doctor...','2025-05-11T13:03:28.108Z',1,'PRTS',NULL);
 INSERT INTO "Comentarios" ("id","id_foro","contenido","fecha","id_usuario","username","editado") VALUES (3,1,'Why?','2025-05-11T13:03:39.438Z',4,'Theresa',NULL);
 INSERT INTO "Desafio" ("puntos","puntuacionObjetivo","id","descripcion","fecha","id_usuario","tipo") VALUES (4,10,1,'¡Da 10 likes!','2025-05-11T12:47:59.605Z',1,0);
@@ -41,7 +46,7 @@ INSERT INTO "Desafio" ("puntos","puntuacionObjetivo","id","descripcion","fecha",
 INSERT INTO "Desafio" ("puntos","puntuacionObjetivo","id","descripcion","fecha","id_usuario","tipo") VALUES (0,42,38,'Prueba II','2025-05-13T17:04:49.749Z',2,0);
 INSERT INTO "Desafio" ("puntos","puntuacionObjetivo","id","descripcion","fecha","id_usuario","tipo") VALUES (0,42,39,'Prueba II','2025-05-13T17:04:49.749Z',3,0);
 INSERT INTO "Desafio" ("puntos","puntuacionObjetivo","id","descripcion","fecha","id_usuario","tipo") VALUES (0,42,40,'Prueba II','2025-05-13T17:04:49.749Z',4,0);
-INSERT INTO "Foros" ("id","titulo","descripcion","estado","username") VALUES (1,'I will be watching you','Be careful','Activo','PRTS');
+
 INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","id_usuario","id_foro","contenido") VALUES (1,'Dusk','Why not','2025-05-11T13:04:11.301Z',4,'Oculto','PRTS',NULL,'b5d5d43bd574db75558a0c45e8409c23');
 INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","id_usuario","id_foro","contenido") VALUES (2,'Happy 6th anniversary','Ready for more','2025-05-11T13:05:31.129Z',3,'Visible','Theresa',NULL,'345fa7ef6a26c5af7382a5f3536bf1d8');
 INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","id_usuario","id_foro","contenido") VALUES (3,'Imagen 1','primera imagen','2025-05-14T14:28:59.468Z',0,'Visible','ZOOT',NULL,'80f70d7c5c28f2eeec9a17f3e89b8a43');
@@ -52,8 +57,5 @@ INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","
 INSERT INTO "Fotos" ("id","nombre","descripcion","fecha","puntuacion","estado","id_usuario","id_foro","contenido") VALUES (8,'Última','No sabía si subir esta foto, pero al final dije que si que esto era lo que el público quería.','2025-05-14T14:32:43.358Z',0,'Oculto','ZOOT',NULL,'34e96b07eda887bcbf152a6067691b35');
 INSERT INTO "Productos" ("id","nombre","descripcion","precio","imagen","estado","usuario_id","fecha_creacion") VALUES (1,'Last view','I will wait you until the end of the time',100.0,'6b0844200828c817c80f3e3be2cb4205','S',1,'2025-05-11 13:01:06');
 INSERT INTO "Productos" ("id","nombre","descripcion","precio","imagen","estado","usuario_id","fecha_creacion") VALUES (2,'The last Texas','Texas x Lappland',150.0,'7267c91f51bdb9b6a0522429cfd813d4','P',4,'2025-05-11 13:01:45');
-INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (1,'PRTS','$2b$10$QCMN3UgIDT7eKzNhdYgfLe6FuQda5rGBB.cdntVMf.rVudrHsDZae','A','Priestess',1,0,'ACTIVO',NULL,4);
-INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (2,'ZOOT','$2b$10$A42DoLc6Bd8TfxwQOwFr/ulM/RP8Z45spax6Y2cwwtS3dK8hdpSQ6','A','Zeroth',1,0,'ACTIVO',NULL,1);
-INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (3,'Amiya','$2b$10$sVtcUUlRZfQ967CnlQcO/uzeXPP1dA7Jf3ZSWpAvz61/5AGOINMhe','U','AMIYA',1,0,'ACTIVO',NULL,1);
-INSERT INTO "Usuarios" ("id","username","password","rol","nombre","nivel","reputacion","estado","fecha_registro","foto_perfil") VALUES (4,'Theresa','$2b$10$UM0nBPj7WEPjxsJVO3fU.eXcyAxYhn9Q1PPdjE7i7kgau78ovtfIC','U','Theresa',1,0,'ACTIVO',NULL,1);
+
 COMMIT;
